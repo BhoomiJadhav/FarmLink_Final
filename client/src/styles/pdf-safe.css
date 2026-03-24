@@ -1,0 +1,14 @@
+.pdf-root,
+.pdf-root * {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border-color: #cccccc !important;
+}
+
+/* Explicitly override Tailwind background utilities */
+.pdf-root .bg-blue-50,
+.pdf-root .bg-gray-50,
+.pdf-root .bg-white {
+  background-color: #ffffff !important;
+}

@@ -1,0 +1,13 @@
+{
+  "appName": "FarmLink",
+  "tagline": "Grow, Harvest, Succeed",
+  "welcomeBack": "Welcome Back",
+  "email": "Email Address",
+  "password": "Password",
+  "signIn": "Sign in",
+  "signingIn": "Signing in...",
+  "orContinueWith": "or continue with",
+  "noAccount": "Don’t have an account? Sign up",
+  "googleLoginFailed": "Google login failed. Please try again.",
+  "loginFailed": "Login failed"
+}

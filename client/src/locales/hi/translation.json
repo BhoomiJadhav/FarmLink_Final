@@ -1,0 +1,13 @@
+{
+  "appName": "फ़ार्मलिंक",
+  "tagline": "मेहनत बोओ, खुशहाली काटो",
+  "welcomeBack": "वापसी पर स्वागत है",
+  "email": "ईमेल पता",
+  "password": "पासवर्ड",
+  "signIn": "साइन इन करें",
+  "signingIn": "साइन इन हो रहा है...",
+  "orContinueWith": "या इसके साथ जारी रखें",
+  "noAccount": "खाता नहीं है? साइन अप करें",
+  "googleLoginFailed": "Google लॉगिन असफल। कृपया पुनः प्रयास करें।",
+  "loginFailed": "लॉगिन विफल"
+}

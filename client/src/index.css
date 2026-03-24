@@ -1,0 +1,300 @@
+/* ---- Fonts (imported here so index.html remains unchanged) ---- */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap");
+
+/* ---- Tailwind directives ---- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Your original helpers kept (merged) ---- */
+body {
+  @apply font-sans bg-farm-bg;
+}
+
+.input {
+  @apply border rounded-md p-2 w-full;
+}
+
+.btn-green {
+  @apply bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded;
+}
+
+/* Your custom utilities/animations (kept) */
+@layer utilities {
+  @keyframes ticker-scroll {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  .ticker-track {
+    animation: ticker-scroll 22s linear infinite;
+  }
+  .group:hover .ticker-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1.08);
+      opacity: 0.4;
+    }
+  }
+  .animate-pulse-ring {
+    animation: pulse-ring 2.4s ease-in-out infinite alternate;
+  }
+}
+
+/* ---- Contract UI custom styles (merged / non-conflicting) ---- */
+
+/* color tokens */
+:root {
+  --bg-cream: #f6f4f1;
+  --card: #ffffff;
+  --muted: #8b9a91;
+  --accent: #0f766e; /* teal/green */
+  --accent-2: #f0f7f5;
+  --soft-border: rgba(15, 118, 110, 0.08);
+}
+
+/* base app */
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
+  background: var(--bg-cream);
+  color: #17312a;
+}
+
+/* headings use Playfair for the "contract" look */
+.headline {
+  font-family: "Playfair Display", serif;
+}
+
+/* subtle card */
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(20, 30, 30, 0.06);
+  border: 1px solid var(--soft-border);
+}
+
+/* preview page (A4-like) */
+.preview-page {
+  min-height: 1122px;
+  width: 794px; /* a4 at ~96dpi */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* pill-tab sizing */
+.tabs-pill button {
+  height: 40px;
+}
+
+/* badge style used in preview header */
+.badge {
+  background: linear-gradient(180deg, #ecfbf9, #dff6f3);
+  color: var(--accent);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid rgba(15, 118, 110, 0.08);
+}
+
+/* inputs/textarea tone */
+.form-field input,
+.form-field textarea,
+.form-field select,
+input,
+textarea,
+select {
+  background: #fcfbfa;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  padding: 12px;
+  border-radius: 10px;
+  outline: none;
+  transition:
+    box-shadow 0.12s,
+    border-color 0.12s;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.06);
+  border-color: var(--accent);
+}
+
+/* subtle divider used inside preview */
+.faint-divider {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin: 18px 0;
+}
+
+/* preview header buttons */
+.preview-actions .btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* utility - no print helper */
+.no-print {
+  display: block;
+}
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* small responsive tweaks */
+@media (max-width: 1100px) {
+  .preview-page {
+    width: 100%;
+    min-height: auto;
+  }
+  .card {
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+  }
+}
+
+/* extra small helpers used in components */
+.kv-title {
+  font-size: 0.85rem;
+  color: #5f6b66;
+}
+.kv-value {
+  font-size: 1rem;
+  color: #15332b;
+  margin-top: 0.35rem;
+}
+
+/* apply consistent rounded appearance for inputs used in our editor */
+.form-field input,
+.form-field textarea {
+  border-radius: 12px;
+}
+
+/* keep existing farm-bg usage: if you have a tailwind class for bg-farm-bg, keep it; otherwise default fallback background */
+.bg-farm-bg {
+  background: var(--bg-cream);
+}
+
+/* small "pill" for tabs active state */
+.tab-pill-active {
+  background: var(--card);
+  box-shadow: 0 3px 10px rgba(16, 36, 30, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* final tiny spacing helpers */
+.mt-2-5 {
+  margin-top: 0.625rem;
+} /* 10px */
+.px-3-5 {
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+} /* 14px */
+@media print {
+  body::before {
+    content: "DRAFT – NOT LEGALLY BINDING";
+    position: fixed;
+    top: 40%;
+    left: 10%;
+    font-size: 48px;
+    color: rgba(0, 0, 0, 0.15);
+    transform: rotate(-30deg);
+    z-index: 9999;
+  }
+}
+.contract-document::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/src/assets/farmlink-logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 280px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.contract-document > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Print-specific rules */
+@media print {
+  body {
+    background: white;
+  }
+}
+/* =========================================================
+   CONTRACT-SPECIFIC PRINT STYLES (ISOLATED)
+   ========================================================= */
+
+@media print {
+  /* Hide everything by default */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Show ONLY contract area */
+  .contract-print-scope,
+  .contract-print-scope * {
+    visibility: visible !important;
+  }
+
+  /* Position contract at top-left of page */
+  .contract-print-scope {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+  }
+
+  /* Neutralize other global print effects */
+  body::before {
+    content: none !important;
+  }
+
+  /* Ensure colors are exact */
+  .contract-print-scope {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-in-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
