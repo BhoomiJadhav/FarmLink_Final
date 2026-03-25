@@ -258,9 +258,14 @@ const getMyNegotiations = async (req, res) => {
 
     const field = role === "BUYER" ? "buyerId" : "farmerId";
 
+    // const negotiations = await Negotiation.find({
+    //   [field]: userId,
+    //   status: "ACTIVE",
+    // })
+    //   .populate("contractId")
+    //   .sort({ updatedAt: -1 });
     const negotiations = await Negotiation.find({
-      [field]: userId,
-      status: "ACTIVE",
+      $or: [{ farmerId: userId }, { buyerId: userId }],
     })
       .populate("contractId")
       .sort({ updatedAt: -1 });

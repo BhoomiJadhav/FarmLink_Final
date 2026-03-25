@@ -31,7 +31,7 @@ import GpsTest from "./pages/buyer/driver/GpsTest.jsx";
 import ViewContractDocument from "./pages/cultivation/ViewContractDocument.jsx";
 import Notifications from "./pages/Dashboard/Notifications.jsx";
 import DriverCultivationDelivery from "./pages/cultivation/DriverCultivationDelivery.jsx";
-
+import FarmerPolicy from "./pages/Dashboard/FarmerPolicy.jsx";
 import AppLayout from "./layouts/appLayout";
 import "./styles/pdf-safe.css";
 
@@ -167,8 +167,12 @@ const App = () => {
             <Route path="/delivery/gps-test" element={<GpsTest />} />
             <Route path="/farmer/:id/profile" element={<ProfilePage />} />
 
-            <Route
+            {/* <Route
               path="/cultivation/contract-tracking/:contractId"
+              element={<CultivationContractTracking />}
+            /> */}
+            <Route
+              path="/cultivation/contract-tracking"
               element={<CultivationContractTracking />}
             />
 
@@ -193,6 +197,7 @@ const App = () => {
               path="/buyer/negotiations"
               element={<NegotiationsHub userRole="BUYER" />}
             />
+            <Route path="/farmer/policy" element={<FarmerPolicy />} />
           </Routes>
         </ContractProvider>
       </BrowserRouter>

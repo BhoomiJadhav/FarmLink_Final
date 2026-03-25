@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "../api/axios";
 
 import NegotiationChatBubble from "./NegotiationChatBubble";
@@ -17,7 +17,11 @@ const NegotiationChat = ({ negotiationId, userRole }) => {
       fetchNegotiation();
     }
   }, [negotiationId]);
+  const bottomRef = useRef();
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [negotiation]);
   const fetchNegotiation = async () => {
     try {
       setLoading(true);
@@ -103,7 +107,10 @@ const NegotiationChat = ({ negotiationId, userRole }) => {
       (!isMidpoint && negotiation.currentTurn === currentUserRole));
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
+    <div
+      className="flex flex-col h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]
+bg-gray-100 "
+    >
       {/* Header */}
       <div className="p-4 border-b bg-white">
         <NegotiationHeader contract={contract} />
@@ -111,13 +118,15 @@ const NegotiationChat = ({ negotiationId, userRole }) => {
 
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-        {negotiation.messages.map((msg, index) => (
-          <NegotiationChatBubble
-            key={index}
-            message={msg}
-            currentUserRole={currentUserRole}
-          />
-        ))}
+        {[...negotiation.messages]
+          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+          .map((msg, index) => (
+            <NegotiationChatBubble
+              key={index}
+              message={msg}
+              currentUserRole={currentUserRole}
+            />
+          ))}
       </div>
 
       {/* Actions */}
@@ -154,6 +163,7 @@ const NegotiationChat = ({ negotiationId, userRole }) => {
           Negotiation Rejected
         </div>
       )}
+      <div ref={bottomRef} />
     </div>
   );
 };
