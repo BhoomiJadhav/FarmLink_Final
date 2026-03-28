@@ -1,7 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../Controllers/authController");
-const { protect, checkProfileCompletion } = require("../middleware/auth");
+const {
+  protect,
+  checkProfileCompletion,
+  authorize,
+} = require("../middleware/auth");
+
+const {
+  getAllUsers,
+  verifyFarmerPolicy,
+} = require("../Controllers/adminController");
 
 // Manual authentication
 router.post("/register", authController.register);
@@ -26,4 +35,11 @@ router.get("/me", protect, (req, res) => {
 router.get("/dashboard", protect, checkProfileCompletion, (req, res) => {
   res.json({ message: "Welcome to dashboard" });
 });
+router.get("/users", protect, authorize("admin"), getAllUsers);
+router.patch(
+  "/farmers/:id/verify-policy",
+  protect,
+  authorize("admin"),
+  verifyFarmerPolicy,
+);
 module.exports = router;

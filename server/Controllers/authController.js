@@ -49,8 +49,8 @@ exports.register = async (req, res) => {
             ? `/farmer/dashboard`
             : "/farmer/complete-profile"
           : user.isProfileComplete
-          ? `/buyer/dashboard`
-          : "/buyer/complete-profile",
+            ? `/buyer/dashboard`
+            : "/buyer/complete-profile",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -67,7 +67,9 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Invalid credentials" });
     }
-
+    if (user.role === "admin" && user.email !== "admin@farmlink.com") {
+      return res.status(403).json({ message: "Unauthorized admin access" });
+    }
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -78,6 +80,9 @@ exports.login = async (req, res) => {
     }
 
     // Generate token
+    if (user.status === "blocked") {
+      return res.status(403).json({ message: "User is blocked by admin" });
+    }
     const token = generateToken(user);
 
     res.status(200).json({
@@ -91,14 +96,24 @@ exports.login = async (req, res) => {
         id: user._id,
       },
 
+      // redirectTo:
+      //   user.role === "farmer"
+      //     ? user.isProfileComplete
+      //       ? `/farmer/dashboard`
+      //       : "/farmer/complete-profile"
+      //     : user.isProfileComplete
+      //     ? `/buyer/dashboard`
+      //     : "/buyer/complete-profile",
       redirectTo:
-        user.role === "farmer"
-          ? user.isProfileComplete
-            ? `/farmer/dashboard`
-            : "/farmer/complete-profile"
-          : user.isProfileComplete
-          ? `/buyer/dashboard`
-          : "/buyer/complete-profile",
+        user.role === "admin"
+          ? "/admin/dashboard"
+          : user.role === "farmer"
+            ? user.isProfileComplete
+              ? `/farmer/dashboard`
+              : "/farmer/complete-profile"
+            : user.isProfileComplete
+              ? `/buyer/dashboard`
+              : "/buyer/complete-profile",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -162,8 +177,8 @@ exports.googleLogin = async (req, res) => {
             ? `/farmer/dashboard`
             : "/farmer/complete-profile"
           : user.isProfileComplete
-          ? `/buyer/dashboard`
-          : "/buyer/complete-profile",
+            ? `/buyer/dashboard`
+            : "/buyer/complete-profile",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

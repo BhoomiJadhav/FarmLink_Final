@@ -153,13 +153,25 @@ const HarvestSaleContractSchema = new mongoose.Schema(
       },
       deliveredAt: Date,
     },
+    contractStatus: {
+      type: String,
+      enum: ["ACTIVE", "FROZEN", "CANCELLED", "COMPLETED"],
+      default: "ACTIVE",
+    },
+
+    adminOverride: {
+      isFrozen: { type: Boolean, default: false },
+      frozenBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      reason: String,
+      actionAt: Date,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = Contract.discriminator(
   "HARVEST_SALE",
-  HarvestSaleContractSchema
+  HarvestSaleContractSchema,
 );

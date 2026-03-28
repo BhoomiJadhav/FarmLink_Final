@@ -33,6 +33,9 @@ import Notifications from "./pages/Dashboard/Notifications.jsx";
 import DriverCultivationDelivery from "./pages/cultivation/DriverCultivationDelivery.jsx";
 import FarmerPolicy from "./pages/Dashboard/FarmerPolicy.jsx";
 import AppLayout from "./layouts/appLayout";
+import FarmerHarvestListings from "./pages/Dashboard/FarmerHarvestListings.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import UsersPage from "./pages/admin/UsersPage.jsx";
 import "./styles/pdf-safe.css";
 
 const App = () => {
@@ -53,6 +56,7 @@ const App = () => {
 
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+
             <Route path="/termsofservice" element={<TermsOfService />} />
             <Route path="/privacypolicy" element={<PrivacyPolicy />} />
             <Route
@@ -63,6 +67,8 @@ const App = () => {
                 </PrivateRoute>
               }
             />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<UsersPage />} />
             <Route path="/farmer/harvest-crop" element={<HarvestedCrop />} />
             {/* Farmer Dashboard */}
             <Route
@@ -159,6 +165,10 @@ const App = () => {
             <Route
               path="/farmer/harvest-contracts/:id"
               element={<HarvestContractDetail />}
+            />
+            <Route
+              path="/farmer/harvest-listings"
+              element={<FarmerHarvestListings />}
             />
             <Route
               path="/delivery/track/:contractId"

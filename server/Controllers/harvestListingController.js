@@ -152,7 +152,7 @@ const updateHarvestListingStatus = async (listingId, status) => {
   return await HarvestListing.findByIdAndUpdate(
     listingId,
     { status },
-    { new: true }
+    { new: true },
   );
 };
 
@@ -180,11 +180,34 @@ const getHarvestListingById = async (req, res) => {
     });
   }
 };
+const updateListing = async (req, res) => {
+  try {
+    const updated = await HarvestListing.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
 
+    res.json({ success: true, listing: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+const deleteListing = async (req, res) => {
+  try {
+    await HarvestListing.findByIdAndDelete(req.params.id);
+
+    res.json({ success: true, message: "Deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 module.exports = {
   createHarvestListing,
   getOpenHarvestListings,
   getFarmerHarvestListings,
   updateHarvestListingStatus,
   getHarvestListingById,
+  updateListing,
+  deleteListing,
 };

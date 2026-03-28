@@ -69,7 +69,10 @@ const disputeSchema = new mongoose.Schema(
     adminResponse: {
       type: String,
     },
-
+    handledBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     resolvedAt: Date,
   },
   { timestamps: true },

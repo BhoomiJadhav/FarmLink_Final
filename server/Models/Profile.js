@@ -1,37 +1,3 @@
-// const mongoose = require("mongoose");
-
-// const profileSchema = new mongoose.Schema({
-//   userId: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "User",
-//     required: true,
-//     unique: true,
-//   },
-//   personal: {
-//     fullName: String,
-//     phone: String,
-//     email: String,
-//     dob: String,
-//     governmentId: String,
-//     address: String,
-//   },
-//   farm: {
-//     name: String,
-//     address: String,
-//     size: String,
-//     since: String,
-//     activities: [String],
-//     soilType: String,
-//     waterSource: String,
-//   },
-//   preferences: {
-//     interests: [String],
-//     communication: String,
-//     language: String,
-//     additionalInfo: String,
-//   },
-// });
-// module.exports = mongoose.model("Profile", profileSchema);
 const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema({
@@ -67,6 +33,19 @@ const profileSchema = new mongoose.Schema({
     type: String,
     enum: ["AVAILABLE", "NEGOTIATING", "CONTRACTED"],
     default: "AVAILABLE",
+  },
+  policyVerification: {
+    status: {
+      type: String,
+      enum: ["PENDING", "APPROVED", "REJECTED"],
+      default: "PENDING",
+    },
+    verifiedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    verifiedAt: Date,
+    remarks: String,
   },
 });
 

@@ -2,7 +2,8 @@ const Dispute = require("../Models/Dispute");
 const Contract = require("../Models/CultivationContract");
 const Notification = require("../Models/Notification");
 const { emitToUser } = require("../socket/socket");
-
+const CultivationContract = require("../Models/CultivationContract");
+const HarvestContract = require("../Models/HarvestSaleContract");
 // Create Dispute
 exports.createDispute = async (req, res) => {
   try {
@@ -114,5 +115,31 @@ exports.resolveDispute = async (req, res) => {
   } catch (err) {
     console.error("Resolve dispute error:", err);
     res.status(500).json({ error: "Failed to resolve dispute" });
+  }
+};
+
+exports.freezeContract = async (req, res) => {
+  try {
+    let contract =
+      (await CultivationContract.findById(req.params.id)) ||
+      (await HarvestContract.findById(req.params.id));
+
+    if (!contract) {
+      return res.status(404).json({ message: "Contract not found" });
+    }
+
+    contract.contractStatus = "FROZEN";
+    contract.adminOverride = {
+      isFrozen: true,
+      frozenBy: req.user._id,
+      reason: req.body.reason,
+      actionAt: new Date(),
+    };
+
+    await contract.save();
+
+    res.json({ success: true, message: "Contract frozen" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
