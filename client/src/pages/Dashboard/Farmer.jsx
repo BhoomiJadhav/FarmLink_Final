@@ -1197,6 +1197,481 @@
 
 
 
+// import React, { useEffect, useState, useMemo } from "react";
+// import api from "../../api/axios";
+// import {
+//   FileText,
+//   MessageSquare,
+//   CheckCircle2,
+//   Timer,
+//   TrendingUp,
+//   TrendingDown,
+//   ArrowRight,
+//   Sparkles,
+//   Landmark,
+//   ExternalLink
+// } from "lucide-react";
+
+// import Sidebar from "../../components/Sidebar.jsx";
+// import Topbar from "../../components/topNav.jsx";
+// import { useNavigate } from "react-router-dom";
+
+// /* ---------- STAT CARD (UPGRADED UI) ---------- */
+// function StatCard({ title, value, icon: Icon }) {
+//   return (
+//     <div className="bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+//       {/* Decorative background blob */}
+//       <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-emerald-50 rounded-full opacity-50 blur-2xl pointer-events-none transition-transform group-hover:scale-110"></div>
+      
+//       <div className="flex justify-between items-center relative z-10">
+//         <div>
+//           <p className="text-[13px] font-semibold text-slate-500 uppercase tracking-wider mb-1">{title}</p>
+//           <h2 className="text-3xl font-extrabold text-[#064e3b]">{value}</h2>
+//         </div>
+//         <div className="p-3.5 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 shadow-sm">
+//           <Icon size={24} strokeWidth={2.5} />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default function FarmerDashboard() {
+//   const navigate = useNavigate();
+//   const [profileData, setProfileData] = useState(null);
+//   const [contracts, setContracts] = useState([]);
+
+//   const [stats, setStats] = useState({
+//     totalContracts: 0,
+//     pendingRequests: 0,
+//     acceptedDeals: 0,
+//     activeNegotiations: 0,
+//   });
+//   const [marketTrends, setMarketTrends] = useState([]);
+//   const [marketSourceLabel, setMarketSourceLabel] = useState("Live");
+
+//   const tickerData = useMemo(() => {
+//     if (!Array.isArray(marketTrends)) return [];
+//     return [...marketTrends, ...marketTrends];
+//   }, [marketTrends]);
+
+//   /* ---------- LOAD PROFILE ---------- */
+//   useEffect(() => {
+//     async function loadProfile() {
+//       try {
+//         const res = await api.get("/profile/me");
+//         const payload = res.data;
+
+//         const dashboard = payload.dashboard || {};
+
+//         const cultivation = dashboard.cultivationContracts || [];
+//         const harvest = dashboard.harvestContracts || [];
+
+//         const allContracts = [
+//           ...cultivation.map((c) => ({ ...c, type: "CULTIVATION" })),
+//           ...harvest.map((c) => ({ ...c, type: "HARVEST" })),
+//         ];
+
+//         setContracts(allContracts);
+//         setProfileData(payload);
+
+//         setStats({
+//           totalContracts: dashboard.totalContracts || allContracts.length,
+//           pendingRequests: allContracts.filter((c) => c.status === "PENDING")
+//             .length,
+//           acceptedDeals: allContracts.filter((c) =>
+//             ["ACTIVE", "ACCEPTED"].includes(c.status),
+//           ).length,
+//           activeNegotiations: allContracts.filter(
+//             (c) => c.status === "NEGOTIATING",
+//           ).length,
+//         });
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     }
+
+//     loadProfile();
+//   }, []);
+
+//   /* ---------- MARKET ---------- */
+//   useEffect(() => {
+//     async function loadMarket() {
+//       try {
+//         const res = await api.get("/market");
+
+//         console.log("MARKET:", res.data);
+
+//         const data = res.data?.prices || res.data?.data || res.data || [];
+
+//         if (Array.isArray(data) && data.length) {
+//           setMarketTrends(data);
+//           setMarketSourceLabel("Live");
+//         } else {
+//           throw new Error("No data");
+//         }
+//       } catch (err) {
+//         console.log("Using fallback market data");
+
+//         const fallback = [
+//           { name: "Wheat", price: "₹2200", changePercent: 2.1 },
+//           { name: "Rice", price: "₹3500", changePercent: -1.2 },
+//           { name: "Cotton", price: "₹6800", changePercent: 3.5 },
+//         ];
+
+//         setMarketTrends(fallback);
+//         setMarketSourceLabel("Cached");
+//       }
+//     }
+
+//     loadMarket();
+//   }, []);
+
+//   /* ---------- NEXT ACTION LOGIC ---------- */
+//   function getNextAction(c) {
+//     if (c.payments?.some((p) => p.status === "DUE")) {
+//       return { label: "Complete Payment", priority: "high" };
+//     }
+
+//     if (c.cultivationStages?.some((s) => s.status === "PENDING")) {
+//       return { label: "Update Stage", priority: "medium" };
+//     }
+
+//     if (c.status === "PENDING") {
+//       return { label: "Respond to Request", priority: "high" };
+//     }
+
+//     return { label: "On Track", priority: "low" };
+//   }
+
+//   return (
+//     <div className="flex h-screen bg-[#f4f6f8] font-sans text-slate-800 overflow-hidden">
+//       <div className="h-full flex-shrink-0 z-30 shadow-2xl bg-white">
+//         <Sidebar />
+//       </div>
+
+//       <main className="flex-1 flex flex-col h-full overflow-y-auto relative scroll-smooth">
+        
+//         <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto w-full flex-1">
+//           <Topbar profileData={profileData} />
+
+//           {/* HEADER */}
+//           <div className="mt-2">
+//             <h1 className="text-3xl md:text-[38px] font-bold text-[#064e3b] font-serif tracking-tight">
+//               Welcome back, {profileData?.user?.name || "Farmer"}
+//             </h1>
+//             <p className="text-[15px] text-slate-500 mt-2 font-medium">
+//               Here is an overview of your contracts and farm operations today. 🌱
+//             </p>
+//           </div>
+
+//           {/* STATS */}
+//           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+//             <StatCard title="Total Contracts" value={stats.totalContracts} icon={FileText} />
+//             <StatCard title="Pending" value={stats.pendingRequests} icon={Timer} />
+//             <StatCard title="Active Deals" value={stats.acceptedDeals} icon={CheckCircle2} />
+//             <StatCard title="Negotiations" value={stats.activeNegotiations} icon={MessageSquare} />
+//           </div>
+
+//           {/* QUICK ACTIONS */}
+//           <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+//             <h2 className="text-[18px] font-bold text-[#064e3b] mb-5 flex items-center gap-2 font-serif">
+//               <div className="p-1.5 bg-yellow-100 rounded-lg text-yellow-600">
+//                 <Sparkles size={18} />
+//               </div>
+//               Quick Actions
+//             </h2>
+
+//             <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+//               <button
+//                 onClick={() => navigate("/farmer/harvest-crop")}
+//                 className="group p-5 rounded-xl border border-emerald-100 bg-[#fcfdfc] hover:bg-emerald-50 hover:border-emerald-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
+//               >
+//                 <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">🌾</div>
+//                 <p className="font-bold text-emerald-900">Create Harvest</p>
+//               </button>
+
+//               <button
+//                 onClick={() => navigate("/farmer/contracts")}
+//                 className="group p-5 rounded-xl border border-blue-100 bg-[#fcfdff] hover:bg-blue-50 hover:border-blue-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
+//               >
+//                 <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">📄</div>
+//                 <p className="font-bold text-blue-900">All Contracts</p>
+//               </button>
+
+//               <button
+//                 onClick={() => navigate("/farmer/harvest-contracts")}
+//                 className="group p-5 rounded-xl border border-amber-100 bg-[#fffcf8] hover:bg-amber-50 hover:border-amber-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
+//               >
+//                 <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">📍</div>
+//                 <p className="font-bold text-amber-900">Harvest Contracts</p>
+//               </button>
+
+//               <button
+//                 onClick={() => navigate("/farmer/negotiations")}
+//                 className="group p-5 rounded-xl border border-purple-100 bg-[#fdfcff] hover:bg-purple-50 hover:border-purple-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
+//               >
+//                 <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">💬</div>
+//                 <p className="font-bold text-purple-900">Negotiations</p>
+//               </button>
+//             </div>
+//           </div>
+
+//           {/* MAIN GRID */}
+//           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            
+//             {/* ACTIVE CONTRACTS */}
+//             <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+//               <h2 className="text-[20px] font-bold text-[#064e3b] mb-6 font-serif">Active Contracts</h2>
+
+//               {contracts.length === 0 ? (
+//                 <div className="p-8 text-center border-2 border-dashed border-slate-100 rounded-xl">
+//                   <p className="text-slate-400 font-medium">No contracts yet.</p>
+//                 </div>
+//               ) : (
+//                 <div className="space-y-4">
+//                   {contracts.map((c, i) => {
+//                     const cropName = c.cropName || c.harvestDetails?.cropName;
+
+//                     return (
+//                       <div
+//                         key={c.contractId || i}
+//                         className="p-5 rounded-xl border border-slate-100 bg-[#fbfcfb] hover:border-emerald-400 hover:shadow-[0_4px_15px_rgb(0,0,0,0.0)] transition-all"
+//                       >
+//                         {/* TOP */}
+//                         <div className="flex justify-between items-start mb-1">
+//                           <h4 className="text-[16px] font-bold text-slate-800">{cropName}</h4>
+//                           <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-md tracking-wider">
+//                             {c.type}
+//                           </span>
+//                         </div>
+
+//                         {/* STATUS */}
+//                         <p className="text-[13px] text-slate-500 mb-3">
+//                           Status: <span className="font-semibold text-slate-700">{c.status}</span>
+//                         </p>
+
+//                         {/* DETAILS */}
+//                         <div className="grid grid-cols-2 gap-3 p-3 bg-white rounded-lg border border-slate-50 text-[13px] text-slate-600 mb-3 shadow-sm">
+//                           {c.type === "CULTIVATION" ? (
+//                             <>
+//                               <p className="font-medium">🌾 Area: <span className="text-slate-800">{c.area || "-"}</span></p>
+//                               <p className="font-medium">📦 Yield: <span className="text-slate-800">{c.expectedYield || "-"}</span></p>
+//                             </>
+//                           ) : c.type === "HARVEST" ? (
+//                             <>
+//                               <p className="font-medium">📦 Qty: <span className="text-slate-800">{c.harvestDetails?.quantity || "-"}</span></p>
+//                               <p className="font-medium">💰 Price: <span className="text-slate-800">₹{c.pricePerUnit || "-"}</span></p>
+//                             </>
+//                           ) : null}
+//                         </div>
+
+//                         {/* PROGRESS */}
+//                         {c.tracking && (
+//                           <div className="mb-4">
+//                             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+//                               <div
+//                                 className="h-full bg-[#10b981] rounded-full transition-all duration-500"
+//                                 style={{ width: `${c.tracking.progressPercent || 0}%` }}
+//                               />
+//                             </div>
+//                             <div className="flex justify-between text-[12px] mt-1.5 text-slate-500 font-medium">
+//                               <span>{c.tracking.currentStage || "Not started"}</span>
+//                               <span className="text-emerald-600 font-bold">{c.tracking.progressPercent || 0}%</span>
+//                             </div>
+//                           </div>
+//                         )}
+
+//                         {/* BUTTON */}
+//                         <button
+//                           onClick={() =>
+//                             navigate(
+//                               c.type === "CULTIVATION"
+//                                 ? `/cultivation/contract-tracking/${c.contractId}`
+//                                 : `/farmer/harvest-contract-tracking/${c.contractId}`,
+//                             )
+//                           }
+//                           className="w-full mt-1 py-2.5 bg-white border border-slate-200 text-[13px] text-slate-700 font-bold rounded-lg hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors flex items-center justify-center gap-1.5"
+//                         >
+//                           View Details <ArrowRight size={14} />
+//                         </button>
+//                       </div>
+//                     );
+//                   })}
+//                 </div>
+//               )}
+//             </div>
+
+//             {/* RIGHT COLUMN: GOVT SCHEMES & INSIGHTS */}
+//             <div className="flex flex-col gap-8">
+              
+//               {/* GOVT SCHEMES & RELIEF (Replaced Action Required) */}
+//               <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+//                 <h2 className="text-[20px] font-bold text-[#064e3b] mb-5 font-serif flex items-center gap-2">
+//                   <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+//                     <Landmark size={18} />
+//                   </div>
+//                   Govt. Schemes & Relief
+//                 </h2>
+
+//                 <div className="space-y-3">
+//                   {/* Scheme 1 */}
+//                   <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-blue-50 hover:border-blue-200 transition-colors cursor-pointer">
+//                     <div className="flex justify-between items-start mb-1.5">
+//                       <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-blue-800 transition-colors">PM Fasal Bima Yojana (PMFBY)</h4>
+//                       <ExternalLink size={14} className="text-slate-400 group-hover:text-blue-600" />
+//                     </div>
+//                     <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
+//                       Comprehensive crop insurance against unpreventable natural risks like droughts, floods, and pests.
+//                     </p>
+//                   </div>
+
+//                   {/* Scheme 2 */}
+//                   <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-emerald-50 hover:border-emerald-200 transition-colors cursor-pointer">
+//                     <div className="flex justify-between items-start mb-1.5">
+//                       <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-emerald-800 transition-colors">PM-KISAN Samman Nidhi</h4>
+//                       <ExternalLink size={14} className="text-slate-400 group-hover:text-emerald-600" />
+//                     </div>
+//                     <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
+//                       Direct income support of ₹6,000 per year for all landholding farmer families.
+//                     </p>
+//                   </div>
+
+//                   {/* Scheme 3 */}
+//                   <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-amber-50 hover:border-amber-200 transition-colors cursor-pointer">
+//                     <div className="flex justify-between items-start mb-1.5">
+//                       <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-amber-800 transition-colors">Disaster Relief Fund (NDRF)</h4>
+//                       <ExternalLink size={14} className="text-slate-400 group-hover:text-amber-600" />
+//                     </div>
+//                     <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
+//                       Immediate financial assistance during severe natural calamities like cyclones or extreme rainfall.
+//                     </p>
+//                   </div>
+//                 </div>
+
+//                 <button className="w-full mt-4 py-2.5 text-[13px] font-bold text-[#064e3b] hover:bg-emerald-50 rounded-lg transition-colors border border-slate-100 hover:border-emerald-200 flex items-center justify-center gap-1.5">
+//                   Browse All Schemes <ArrowRight size={14} />
+//                 </button>
+//               </div>
+
+//               {/* INSIGHTS */}
+//               <div className="bg-gradient-to-br from-[#064e3b] to-[#047857] p-7 rounded-2xl shadow-lg text-white relative overflow-hidden">
+//                 {/* Decorative circles */}
+//                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full"></div>
+//                 <div className="absolute top-10 -right-5 w-16 h-16 bg-white opacity-10 rounded-full"></div>
+                
+//                 <h2 className="font-bold text-[20px] mb-4 font-serif flex items-center gap-2">
+//                   <div className="bg-white/20 p-1.5 rounded-lg">📈</div> Insights
+//                 </h2>
+//                 <ul className="text-[14px] text-emerald-50 space-y-3 font-medium">
+//                   <li className="flex items-center gap-2">
+//                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+//                     You have {stats.acceptedDeals} active contracts operating smoothly.
+//                   </li>
+//                   <li className="flex items-center gap-2">
+//                     <span className="w-1.5 h-1.5 rounded-full bg-amber-300"></span>
+//                     {stats.pendingRequests} pending requests awaiting your response.
+//                   </li>
+//                   <li className="flex items-center gap-2">
+//                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+//                     Primary focus crop: {contracts[0]?.cropName || "N/A"}.
+//                   </li>
+//                 </ul>
+//               </div>
+
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* MARKET TICKER - Sticky Bottom */}
+//         <div className="sticky bottom-0 mt-auto h-14 bg-[#064e3b] border-t border-[#047857] flex items-center shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-40 overflow-hidden">
+          
+//           {/* Label Section */}
+//           <div className="px-6 h-full flex items-center bg-[#022c22] border-r border-[#047857] z-20 relative shadow-[4px_0_15px_rgba(0,0,0,0.2)]">
+//             <div className="flex items-center gap-2">
+//               <div className="relative">
+//                 <div className="h-2 w-2 rounded-full bg-[#10b981] animate-ping absolute inset-0 opacity-75" />
+//                 <div className="h-2 w-2 rounded-full bg-[#10b981] relative" />
+//               </div>
+//               <span className="text-[13px] font-extrabold text-white tracking-widest uppercase">
+//                 Market
+//               </span>
+//             </div>
+//             <span className="ml-3 text-[10px] text-emerald-200 border border-emerald-800 px-1.5 py-0.5 rounded bg-black/20 font-bold">
+//               {marketSourceLabel}
+//             </span>
+//           </div>
+
+//           {/* Scrolling Ticker Section */}
+//           <div className="flex-1 relative h-full flex items-center">
+//             {/* CSS defined animation class */}
+//             <div className="animate-marquee flex items-center gap-12 whitespace-nowrap pl-6">
+//               {(Array.isArray(tickerData) ? tickerData : []).map(
+//                 (item, index) => {
+//                   const positive =
+//                     String(item.change ?? item.changePercent ?? "").startsWith(
+//                       "+",
+//                     ) || item.changePercent > 0;
+
+//                   const Icon = positive ? TrendingUp : TrendingDown;
+
+//                   return (
+//                     <div
+//                       key={`${item.name}-${index}`}
+//                       className="flex items-center gap-3"
+//                     >
+//                       <span className="text-[14px] font-bold text-white">
+//                         {item.crop || item.name}
+//                       </span>
+
+//                       <span className="text-[14px] font-mono font-medium text-emerald-100">
+//                         {item.price}
+//                       </span>
+
+//                       <span
+//                         className={`flex items-center gap-1 text-[11px] font-extrabold px-1.5 py-0.5 rounded ${
+//                           positive
+//                             ? "text-[#10b981] bg-[#10b981]/20"
+//                             : "text-red-400 bg-red-400/20"
+//                         }`}
+//                       >
+//                         <Icon className="h-3 w-3" strokeWidth={3} />
+//                         {item.change ??
+//                           (item.changePercent !== undefined
+//                             ? `${item.changePercent > 0 ? "+" : ""}${item.changePercent}%`
+//                             : "")}
+//                       </span>
+//                     </div>
+//                   );
+//                 },
+//               )}
+//             </div>
+
+//             {/* Gradient Fade Edges for smooth scroll appearance */}
+//             <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#064e3b] to-transparent pointer-events-none z-10" />
+//             <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#064e3b] to-transparent pointer-events-none z-10" />
+//           </div>
+//         </div>
+
+//       </main>
+
+//       {/* Global styles for the continuous marquee animation */}
+//       <style dangerouslySetInnerHTML={{__html: `
+//         @keyframes marquee {
+//           0% { transform: translateX(0); }
+//           100% { transform: translateX(-50%); }
+//         }
+//         .animate-marquee {
+//           animation: marquee 25s linear infinite;
+//         }
+//         .animate-marquee:hover {
+//           animation-play-state: paused;
+//         }
+//       `}} />
+//     </div>
+//   );
+// }
+
 import React, { useEffect, useState, useMemo } from "react";
 import api from "../../api/axios";
 import {
@@ -1205,32 +1680,27 @@ import {
   CheckCircle2,
   Timer,
   TrendingUp,
-  TrendingDown,
   ArrowRight,
   Sparkles,
   Landmark,
-  ExternalLink
 } from "lucide-react";
 
 import Sidebar from "../../components/Sidebar.jsx";
 import Topbar from "../../components/topNav.jsx";
+import ProfileModal from "../../components/profileModal.jsx";
 import { useNavigate } from "react-router-dom";
 
-/* ---------- STAT CARD (UPGRADED UI) ---------- */
+/* ---------- COMPACT STAT CARD ---------- */
 function StatCard({ title, value, icon: Icon }) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
-      {/* Decorative background blob */}
-      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-emerald-50 rounded-full opacity-50 blur-2xl pointer-events-none transition-transform group-hover:scale-110"></div>
-      
-      <div className="flex justify-between items-center relative z-10">
-        <div>
-          <p className="text-[13px] font-semibold text-slate-500 uppercase tracking-wider mb-1">{title}</p>
-          <h2 className="text-3xl font-extrabold text-[#064e3b]">{value}</h2>
-        </div>
-        <div className="p-3.5 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 shadow-sm">
-          <Icon size={24} strokeWidth={2.5} />
-        </div>
+    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center justify-between group overflow-hidden relative transition-all duration-300 hover:shadow-md">
+      <div className="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-20 bg-emerald-50 rounded-full opacity-40 blur-xl pointer-events-none group-hover:scale-125 transition-transform"></div>
+      <div className="relative z-10">
+        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">{title}</p>
+        <h2 className="text-2xl font-black text-[#064e3b]">{value}</h2>
+      </div>
+      <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
+        <Icon size={20} strokeWidth={2.5} />
       </div>
     </div>
   );
@@ -1240,7 +1710,7 @@ export default function FarmerDashboard() {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
   const [contracts, setContracts] = useState([]);
-
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const [stats, setStats] = useState({
     totalContracts: 0,
     pendingRequests: 0,
@@ -1248,426 +1718,206 @@ export default function FarmerDashboard() {
     activeNegotiations: 0,
   });
   const [marketTrends, setMarketTrends] = useState([]);
-  const [marketSourceLabel, setMarketSourceLabel] = useState("Live");
 
+  // Repetition for a smoother infinite loop
   const tickerData = useMemo(() => {
-    if (!Array.isArray(marketTrends)) return [];
-    return [...marketTrends, ...marketTrends];
+    if (!Array.isArray(marketTrends) || marketTrends.length === 0) return [];
+    return [...marketTrends, ...marketTrends, ...marketTrends, ...marketTrends];
   }, [marketTrends]);
 
-  /* ---------- LOAD PROFILE ---------- */
   useEffect(() => {
     async function loadProfile() {
       try {
         const res = await api.get("/profile/me");
         const payload = res.data;
-
         const dashboard = payload.dashboard || {};
-
         const cultivation = dashboard.cultivationContracts || [];
         const harvest = dashboard.harvestContracts || [];
-
         const allContracts = [
-          ...cultivation.map((c) => ({ ...c, type: "CULTIVATION" })),
-          ...harvest.map((c) => ({ ...c, type: "HARVEST" })),
+          ...cultivation.map(c => ({ ...c, type: "CULTIVATION" })), 
+          ...harvest.map(c => ({ ...c, type: "HARVEST" }))
         ];
-
         setContracts(allContracts);
         setProfileData(payload);
-
         setStats({
           totalContracts: dashboard.totalContracts || allContracts.length,
-          pendingRequests: allContracts.filter((c) => c.status === "PENDING")
-            .length,
-          acceptedDeals: allContracts.filter((c) =>
-            ["ACTIVE", "ACCEPTED"].includes(c.status),
-          ).length,
-          activeNegotiations: allContracts.filter(
-            (c) => c.status === "NEGOTIATING",
-          ).length,
+          pendingRequests: allContracts.filter(c => c.status === "PENDING").length,
+          acceptedDeals: allContracts.filter(c => ["ACTIVE", "ACCEPTED"].includes(c.status)).length,
+          activeNegotiations: allContracts.filter(c => c.status === "NEGOTIATING").length,
         });
-      } catch (err) {
-        console.error(err);
-      }
+      } catch (err) { console.error(err); }
     }
-
     loadProfile();
   }, []);
 
-  /* ---------- MARKET ---------- */
   useEffect(() => {
     async function loadMarket() {
       try {
         const res = await api.get("/market");
-
-        console.log("MARKET:", res.data);
-
         const data = res.data?.prices || res.data?.data || res.data || [];
-
         if (Array.isArray(data) && data.length) {
           setMarketTrends(data);
-          setMarketSourceLabel("Live");
-        } else {
-          throw new Error("No data");
-        }
+        } else { throw new Error("No data"); }
       } catch (err) {
-        console.log("Using fallback market data");
-
         const fallback = [
-          { name: "Wheat", price: "₹2200", changePercent: 2.1 },
-          { name: "Rice", price: "₹3500", changePercent: -1.2 },
-          { name: "Cotton", price: "₹6800", changePercent: 3.5 },
+          { name: "Wheat", price: "₹2200", changePercent: 2.1 }, 
+          { name: "Rice", price: "₹3500", changePercent: -1.2 }, 
+          { name: "Cotton", price: "₹6800", changePercent: 3.5 }
         ];
-
         setMarketTrends(fallback);
-        setMarketSourceLabel("Cached");
       }
     }
-
     loadMarket();
   }, []);
 
-  /* ---------- NEXT ACTION LOGIC ---------- */
-  function getNextAction(c) {
-    if (c.payments?.some((p) => p.status === "DUE")) {
-      return { label: "Complete Payment", priority: "high" };
-    }
-
-    if (c.cultivationStages?.some((s) => s.status === "PENDING")) {
-      return { label: "Update Stage", priority: "medium" };
-    }
-
-    if (c.status === "PENDING") {
-      return { label: "Respond to Request", priority: "high" };
-    }
-
-    return { label: "On Track", priority: "low" };
-  }
+  const logout = () => {
+    localStorage.clear();
+    window.location.href = "/login";
+  };
 
   return (
     <div className="flex h-screen bg-[#f4f6f8] font-sans text-slate-800 overflow-hidden">
       <div className="h-full flex-shrink-0 z-30 shadow-2xl bg-white">
-        <Sidebar />
+        <Sidebar onLogout={logout} />
       </div>
 
-      <main className="flex-1 flex flex-col h-full overflow-y-auto relative scroll-smooth">
-        
-        <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto w-full flex-1">
-          <Topbar profileData={profileData} />
-
-          {/* HEADER */}
-          <div className="mt-2">
-            <h1 className="text-3xl md:text-[38px] font-bold text-[#064e3b] font-serif tracking-tight">
-              Welcome back, {profileData?.user?.name || "Farmer"}
-            </h1>
-            <p className="text-[15px] text-slate-500 mt-2 font-medium">
-              Here is an overview of your contracts and farm operations today. 🌱
-            </p>
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+        <div className="space-y-4 max-w-7xl mx-auto w-full flex-1 flex flex-col overflow-hidden">
+          
+          {/* TOPBAR - FLUSH (No margin) */}
+          <div className="flex-shrink-0 w-full">
+            <Topbar 
+              profileData={profileData} 
+              onOpenProfile={() => setShowProfileModal(true)} 
+              onLogout={logout} 
+            />
           </div>
 
-          {/* STATS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            <StatCard title="Total Contracts" value={stats.totalContracts} icon={FileText} />
-            <StatCard title="Pending" value={stats.pendingRequests} icon={Timer} />
-            <StatCard title="Active Deals" value={stats.acceptedDeals} icon={CheckCircle2} />
-            <StatCard title="Negotiations" value={stats.activeNegotiations} icon={MessageSquare} />
-          </div>
-
-          {/* QUICK ACTIONS */}
-          <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
-            <h2 className="text-[18px] font-bold text-[#064e3b] mb-5 flex items-center gap-2 font-serif">
-              <div className="p-1.5 bg-yellow-100 rounded-lg text-yellow-600">
-                <Sparkles size={18} />
-              </div>
-              Quick Actions
-            </h2>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-              <button
-                onClick={() => navigate("/farmer/harvest-crop")}
-                className="group p-5 rounded-xl border border-emerald-100 bg-[#fcfdfc] hover:bg-emerald-50 hover:border-emerald-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
-              >
-                <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">🌾</div>
-                <p className="font-bold text-emerald-900">Create Harvest</p>
-              </button>
-
-              <button
-                onClick={() => navigate("/farmer/contracts")}
-                className="group p-5 rounded-xl border border-blue-100 bg-[#fcfdff] hover:bg-blue-50 hover:border-blue-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
-              >
-                <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">📄</div>
-                <p className="font-bold text-blue-900">All Contracts</p>
-              </button>
-
-              <button
-                onClick={() => navigate("/farmer/harvest-contracts")}
-                className="group p-5 rounded-xl border border-amber-100 bg-[#fffcf8] hover:bg-amber-50 hover:border-amber-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
-              >
-                <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">📍</div>
-                <p className="font-bold text-amber-900">Harvest Contracts</p>
-              </button>
-
-              <button
-                onClick={() => navigate("/farmer/negotiations")}
-                className="group p-5 rounded-xl border border-purple-100 bg-[#fdfcff] hover:bg-purple-50 hover:border-purple-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
-              >
-                <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">💬</div>
-                <p className="font-bold text-purple-900">Negotiations</p>
-              </button>
-            </div>
-          </div>
-
-          {/* MAIN GRID */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            
-            {/* ACTIVE CONTRACTS */}
-            <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
-              <h2 className="text-[20px] font-bold text-[#064e3b] mb-6 font-serif">Active Contracts</h2>
-
-              {contracts.length === 0 ? (
-                <div className="p-8 text-center border-2 border-dashed border-slate-100 rounded-xl">
-                  <p className="text-slate-400 font-medium">No contracts yet.</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {contracts.map((c, i) => {
-                    const cropName = c.cropName || c.harvestDetails?.cropName;
-
-                    return (
-                      <div
-                        key={c.contractId || i}
-                        className="p-5 rounded-xl border border-slate-100 bg-[#fbfcfb] hover:border-emerald-400 hover:shadow-[0_4px_15px_rgb(0,0,0,0.0)] transition-all"
-                      >
-                        {/* TOP */}
-                        <div className="flex justify-between items-start mb-1">
-                          <h4 className="text-[16px] font-bold text-slate-800">{cropName}</h4>
-                          <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-md tracking-wider">
-                            {c.type}
-                          </span>
-                        </div>
-
-                        {/* STATUS */}
-                        <p className="text-[13px] text-slate-500 mb-3">
-                          Status: <span className="font-semibold text-slate-700">{c.status}</span>
-                        </p>
-
-                        {/* DETAILS */}
-                        <div className="grid grid-cols-2 gap-3 p-3 bg-white rounded-lg border border-slate-50 text-[13px] text-slate-600 mb-3 shadow-sm">
-                          {c.type === "CULTIVATION" ? (
-                            <>
-                              <p className="font-medium">🌾 Area: <span className="text-slate-800">{c.area || "-"}</span></p>
-                              <p className="font-medium">📦 Yield: <span className="text-slate-800">{c.expectedYield || "-"}</span></p>
-                            </>
-                          ) : c.type === "HARVEST" ? (
-                            <>
-                              <p className="font-medium">📦 Qty: <span className="text-slate-800">{c.harvestDetails?.quantity || "-"}</span></p>
-                              <p className="font-medium">💰 Price: <span className="text-slate-800">₹{c.pricePerUnit || "-"}</span></p>
-                            </>
-                          ) : null}
-                        </div>
-
-                        {/* PROGRESS */}
-                        {c.tracking && (
-                          <div className="mb-4">
-                            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-[#10b981] rounded-full transition-all duration-500"
-                                style={{ width: `${c.tracking.progressPercent || 0}%` }}
-                              />
-                            </div>
-                            <div className="flex justify-between text-[12px] mt-1.5 text-slate-500 font-medium">
-                              <span>{c.tracking.currentStage || "Not started"}</span>
-                              <span className="text-emerald-600 font-bold">{c.tracking.progressPercent || 0}%</span>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* BUTTON */}
-                        <button
-                          onClick={() =>
-                            navigate(
-                              c.type === "CULTIVATION"
-                                ? `/cultivation/contract-tracking/${c.contractId}`
-                                : `/farmer/harvest-contract-tracking/${c.contractId}`,
-                            )
-                          }
-                          className="w-full mt-1 py-2.5 bg-white border border-slate-200 text-[13px] text-slate-700 font-bold rounded-lg hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors flex items-center justify-center gap-1.5"
-                        >
-                          View Details <ArrowRight size={14} />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+          <div className="px-4 md:px-6 space-y-4 overflow-hidden flex flex-col flex-1">
+            {/* HEADER */}
+            <div className="flex-shrink-0">
+              <h1 className="text-2xl mt-4 font-bold text-[#064e3b] font-serif tracking-tight leading-none">
+                Welcome back, {profileData?.user?.name || "Farmer"}
+              </h1>
+              <p className="text-[14px] text-slate-500 mt-2 font-medium">
+                Here is an overview of your contracts and farm operations today. 🌱
+              </p>
             </div>
 
-            {/* RIGHT COLUMN: GOVT SCHEMES & INSIGHTS */}
-            <div className="flex flex-col gap-8">
+            {/* STATS ROW */}
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-10 mr-8 ml-8 flex-shrink-0">
+              <StatCard title="Total Contracts" value={stats.totalContracts} icon={FileText} />
+              <StatCard title="Pending" value={stats.pendingRequests} icon={Timer} />
+              <StatCard title="Active Deals" value={stats.acceptedDeals} icon={CheckCircle2} />
+              <StatCard title="Negotiations" value={stats.activeNegotiations} icon={MessageSquare} />
+            </div>
+
+            {/* MAIN 3-COLUMN GRID - TIGHTENED HEIGHT */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-shrink-0 min-h-0 pb-2">
               
-              {/* GOVT SCHEMES & RELIEF (Replaced Action Required) */}
-              <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
-                <h2 className="text-[20px] font-bold text-[#064e3b] mb-5 font-serif flex items-center gap-2">
-                  <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
-                    <Landmark size={18} />
-                  </div>
-                  Govt. Schemes & Relief
+              <div className="bg-white py-4 px-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                <h2 className="text-xl font-bold text-[#064e3b] mb-3 font-serif flex items-center gap-2">
+                  <div className="p-1 bg-blue-50 text-blue-600 rounded"><Landmark size={14} /></div>
+                  Govt. Schemes
                 </h2>
-
-                <div className="space-y-3">
-                  {/* Scheme 1 */}
-                  <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-blue-50 hover:border-blue-200 transition-colors cursor-pointer">
-                    <div className="flex justify-between items-start mb-1.5">
-                      <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-blue-800 transition-colors">PM Fasal Bima Yojana (PMFBY)</h4>
-                      <ExternalLink size={14} className="text-slate-400 group-hover:text-blue-600" />
-                    </div>
-                    <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
-                      Comprehensive crop insurance against unpreventable natural risks like droughts, floods, and pests.
-                    </p>
-                  </div>
-
-                  {/* Scheme 2 */}
-                  <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-emerald-50 hover:border-emerald-200 transition-colors cursor-pointer">
-                    <div className="flex justify-between items-start mb-1.5">
-                      <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-emerald-800 transition-colors">PM-KISAN Samman Nidhi</h4>
-                      <ExternalLink size={14} className="text-slate-400 group-hover:text-emerald-600" />
-                    </div>
-                    <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
-                      Direct income support of ₹6,000 per year for all landholding farmer families.
-                    </p>
-                  </div>
-
-                  {/* Scheme 3 */}
-                  <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-amber-50 hover:border-amber-200 transition-colors cursor-pointer">
-                    <div className="flex justify-between items-start mb-1.5">
-                      <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-amber-800 transition-colors">Disaster Relief Fund (NDRF)</h4>
-                      <ExternalLink size={14} className="text-slate-400 group-hover:text-amber-600" />
-                    </div>
-                    <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
-                      Immediate financial assistance during severe natural calamities like cyclones or extreme rainfall.
-                    </p>
-                  </div>
+                <div className="space-y-2 overflow-y-auto pr-1 flex-1 custom-scrollbar">
+                  <SchemeItem title="PM Fasal Bima" desc="Crop insurance against risks." />
+                  <SchemeItem title="PM-KISAN" desc="Income support of ₹6,000/yr." />
+                  <SchemeItem title="Disaster Relief" desc="Assistance for calamities." />
                 </div>
-
-                <button className="w-full mt-4 py-2.5 text-[13px] font-bold text-[#064e3b] hover:bg-emerald-50 rounded-lg transition-colors border border-slate-100 hover:border-emerald-200 flex items-center justify-center gap-1.5">
-                  Browse All Schemes <ArrowRight size={14} />
+                <button className="w-full mt-2 py-1.5 text-[10px] font-bold text-[#064e3b] hover:bg-emerald-50 rounded-lg transition-colors border border-slate-100 flex items-center justify-center gap-1.5">
+                  Browse All <ArrowRight size={10} />
                 </button>
               </div>
 
-              {/* INSIGHTS */}
-              <div className="bg-gradient-to-br from-[#064e3b] to-[#047857] p-7 rounded-2xl shadow-lg text-white relative overflow-hidden">
-                {/* Decorative circles */}
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full"></div>
-                <div className="absolute top-10 -right-5 w-16 h-16 bg-white opacity-10 rounded-full"></div>
-                
-                <h2 className="font-bold text-[20px] mb-4 font-serif flex items-center gap-2">
-                  <div className="bg-white/20 p-1.5 rounded-lg">📈</div> Insights
+              <div className="bg-white py-4 px-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                <h2 className="text-xl font-bold text-[#064e3b] mb-3 flex items-center gap-2 font-serif">
+                  <div className="p-1 bg-yellow-100 rounded text-yellow-600"><Sparkles size={14} /></div>
+                  Quick Actions
                 </h2>
-                <ul className="text-[14px] text-emerald-50 space-y-3 font-medium">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
-                    You have {stats.acceptedDeals} active contracts operating smoothly.
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-300"></span>
-                    {stats.pendingRequests} pending requests awaiting your response.
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
-                    Primary focus crop: {contracts[0]?.cropName || "N/A"}.
-                  </li>
+                <div className="grid grid-cols-2 gap-3">
+                  <ActionBtn onClick={() => navigate("/farmer/harvest-crop")} icon="🌾" label="Harvest" col="emerald" />
+                  <ActionBtn onClick={() => navigate("/farmer/contracts")} icon="📄" label="Contracts" col="blue" />
+                  <ActionBtn onClick={() => navigate("/farmer/harvest-contracts")} icon="📍" label="Track" col="amber" />
+                  <ActionBtn onClick={() => navigate("/farmer/negotiations")} icon="💬" label="Negotiate" col="purple" />
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-[#064e3b] to-[#047857] py-4 px-5 rounded-2xl shadow-lg text-white relative overflow-hidden flex flex-col justify-center border border-white/10">
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full"></div>
+                <h2 className="font-bold text-lg mb-3 font-serif flex items-center gap-2">
+                  <div className="bg-white/20 p-1.5 rounded-lg text-sm">📈</div> Insights
+                </h2>
+                <ul className="text-sm text-emerald-50 space-y-3 font-medium relative z-10">
+                  <InsightItem text={`${stats.acceptedDeals} active contracts operating.`} />
+                  <InsightItem text={`${stats.pendingRequests} requests awaiting response.`} />
+                  <InsightItem text={`Primary crop: ${contracts[0]?.cropName || "N/A"}`} />
                 </ul>
               </div>
-
             </div>
           </div>
         </div>
 
-        {/* MARKET TICKER - Sticky Bottom */}
-        <div className="sticky bottom-0 mt-auto h-14 bg-[#064e3b] border-t border-[#047857] flex items-center shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-40 overflow-hidden">
-          
-          {/* Label Section */}
-          <div className="px-6 h-full flex items-center bg-[#022c22] border-r border-[#047857] z-20 relative shadow-[4px_0_15px_rgba(0,0,0,0.2)]">
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <div className="h-2 w-2 rounded-full bg-[#10b981] animate-ping absolute inset-0 opacity-75" />
-                <div className="h-2 w-2 rounded-full bg-[#10b981] relative" />
-              </div>
-              <span className="text-[13px] font-extrabold text-white tracking-widest uppercase">
-                Market
-              </span>
-            </div>
-            <span className="ml-3 text-[10px] text-emerald-200 border border-emerald-800 px-1.5 py-0.5 rounded bg-black/20 font-bold">
-              {marketSourceLabel}
-            </span>
+        {/* MARKET TICKER - SLOWED DOWN */}
+        <div className="h-10 bg-[#064e3b] border-t border-[#047857] flex items-center flex-shrink-0 z-40 overflow-hidden">
+          <div className="px-3 h-full flex items-center bg-[#022c22] border-r border-[#047857] z-20">
+            <span className="text-[10px] font-black text-white tracking-widest uppercase">Market</span>
           </div>
-
-          {/* Scrolling Ticker Section */}
-          <div className="flex-1 relative h-full flex items-center">
-            {/* CSS defined animation class */}
-            <div className="animate-marquee flex items-center gap-12 whitespace-nowrap pl-6">
-              {(Array.isArray(tickerData) ? tickerData : []).map(
-                (item, index) => {
-                  const positive =
-                    String(item.change ?? item.changePercent ?? "").startsWith(
-                      "+",
-                    ) || item.changePercent > 0;
-
-                  const Icon = positive ? TrendingUp : TrendingDown;
-
-                  return (
-                    <div
-                      key={`${item.name}-${index}`}
-                      className="flex items-center gap-3"
-                    >
-                      <span className="text-[14px] font-bold text-white">
-                        {item.crop || item.name}
-                      </span>
-
-                      <span className="text-[14px] font-mono font-medium text-emerald-100">
-                        {item.price}
-                      </span>
-
-                      <span
-                        className={`flex items-center gap-1 text-[11px] font-extrabold px-1.5 py-0.5 rounded ${
-                          positive
-                            ? "text-[#10b981] bg-[#10b981]/20"
-                            : "text-red-400 bg-red-400/20"
-                        }`}
-                      >
-                        <Icon className="h-3 w-3" strokeWidth={3} />
-                        {item.change ??
-                          (item.changePercent !== undefined
-                            ? `${item.changePercent > 0 ? "+" : ""}${item.changePercent}%`
-                            : "")}
-                      </span>
-                    </div>
-                  );
-                },
-              )}
+          <div className="flex-1 relative h-full flex items-center overflow-hidden">
+            <div className="animate-marquee flex items-center gap-8 whitespace-nowrap pl-4">
+              {tickerData.map((item, index) => (
+                <div key={index} className="flex items-center gap-2 text-[11px]">
+                  <span className="font-bold text-white">{item.crop || item.name}</span>
+                  <span className="font-mono text-emerald-100">{item.price}</span>
+                  <span className={`px-1 rounded font-bold ${item.changePercent > 0 ? "text-emerald-400 bg-emerald-400/10" : "text-red-400 bg-red-400/10"}`}>
+                    {item.changePercent}%
+                  </span>
+                </div>
+              ))}
             </div>
-
-            {/* Gradient Fade Edges for smooth scroll appearance */}
-            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#064e3b] to-transparent pointer-events-none z-10" />
-            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#064e3b] to-transparent pointer-events-none z-10" />
           </div>
         </div>
-
       </main>
 
-      {/* Global styles for the continuous marquee animation */}
+      <ProfileModal show={showProfileModal} onClose={() => setShowProfileModal(false)} profileData={profileData} />
+
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 25s linear infinite;
-        }
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { animation: marquee 180s linear infinite; }
+        .animate-marquee:hover { animation-play-state: paused; }
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
       `}} />
     </div>
   );
 }
+
+/* ---------- HELPERS ---------- */
+function ActionBtn({ onClick, icon, label, col }) {
+  const themes = {
+    emerald: "border-emerald-100 bg-emerald-50/30 text-emerald-900",
+    blue: "border-blue-100 bg-blue-50/30 text-blue-900",
+    amber: "border-amber-100 bg-amber-50/30 text-amber-900",
+    purple: "border-purple-100 bg-purple-50/30 text-purple-900"
+  };
+  return (
+    <button onClick={onClick} className={`flex flex-col items-center justify-center border ${themes[col]} rounded-xl hover:shadow-md transition-all duration-200 group p-4`}>
+      <span className="text-3xl mb-3 group-hover:scale-110 transition-transform">{icon}</span>
+      <span className="text-[13px] font-bold uppercase tracking-tight">{label}</span>
+    </button>
+  );
+}
+
+const SchemeItem = ({ title, desc }) => (
+  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:bg-white transition-all cursor-pointer">
+    <h3 className="text-[13px] pb-1 font-bold text-slate-800">{title}</h3>
+    <p className="text-[12px] text-slate-500 leading-tight">{desc}</p>
+  </div>
+);
+
+const InsightItem = ({ text }) => (
+  <li className="flex items-start gap-3">
+    <span className="w-2 h-2 rounded-full bg-emerald-300 mt-1.5 shrink-0"></span>
+    {text}
+  </li>
+);
