@@ -733,6 +733,470 @@
 //     </div>
 //   );
 // }
+
+
+// import React, { useEffect, useState, useMemo } from "react";
+// import api from "../../api/axios";
+// import {
+//   FileText,
+//   MessageSquare,
+//   CheckCircle2,
+//   Timer,
+//   TrendingUp,
+//   TrendingDown,
+//   ArrowRight,
+//   Sparkles,
+// } from "lucide-react";
+
+// import Sidebar from "../../components/Sidebar.jsx";
+// import Topbar from "../../components/topNav.jsx";
+// import { useNavigate } from "react-router-dom";
+
+// /* ---------- STAT CARD ---------- */
+// function StatCard({ title, value, icon: Icon }) {
+//   return (
+//     <div className="bg-white rounded-2xl p-5 border shadow-sm hover:shadow-md transition">
+//       <div className="flex justify-between items-center">
+//         <div>
+//           <p className="text-sm text-slate-500">{title}</p>
+//           <h2 className="text-2xl font-bold text-slate-800">{value}</h2>
+//         </div>
+//         <div className="p-3 bg-green-50 rounded-xl">
+//           <Icon className="text-green-600" />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default function FarmerDashboard() {
+//   const navigate = useNavigate();
+//   const [profileData, setProfileData] = useState(null);
+//   const [contracts, setContracts] = useState([]);
+
+//   const [stats, setStats] = useState({
+//     totalContracts: 0,
+//     pendingRequests: 0,
+//     acceptedDeals: 0,
+//     activeNegotiations: 0,
+//   });
+//   const [marketTrends, setMarketTrends] = useState([]);
+//   const [marketSourceLabel, setMarketSourceLabel] = useState("Live");
+
+//   const tickerData = useMemo(() => {
+//     if (!Array.isArray(marketTrends)) return [];
+//     return [...marketTrends, ...marketTrends];
+//   }, [marketTrends]);
+
+//   /* ---------- LOAD PROFILE ---------- */
+//   useEffect(() => {
+//     async function loadProfile() {
+//       try {
+//         const res = await api.get("/profile/me");
+//         const payload = res.data;
+
+//         const dashboard = payload.dashboard || {};
+
+//         const cultivation = dashboard.cultivationContracts || [];
+//         const harvest = dashboard.harvestContracts || [];
+
+//         const allContracts = [
+//           ...cultivation.map((c) => ({ ...c, type: "CULTIVATION" })),
+//           ...harvest.map((c) => ({ ...c, type: "HARVEST" })),
+//         ];
+
+//         setContracts(allContracts);
+//         setProfileData(payload);
+
+//         setStats({
+//           totalContracts: dashboard.totalContracts || allContracts.length,
+//           pendingRequests: allContracts.filter((c) => c.status === "PENDING")
+//             .length,
+//           acceptedDeals: allContracts.filter((c) =>
+//             ["ACTIVE", "ACCEPTED"].includes(c.status),
+//           ).length,
+//           activeNegotiations: allContracts.filter(
+//             (c) => c.status === "NEGOTIATING",
+//           ).length,
+//         });
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     }
+
+//     loadProfile();
+//   }, []);
+
+//   /* ---------- MARKET ---------- */
+//   useEffect(() => {
+//     async function loadMarket() {
+//       try {
+//         const res = await api.get("/market");
+
+//         console.log("MARKET:", res.data);
+
+//         const data = res.data?.prices || res.data?.data || res.data || [];
+
+//         if (Array.isArray(data) && data.length) {
+//           setMarketTrends(data);
+//           setMarketSourceLabel("Live");
+//         } else {
+//           throw new Error("No data");
+//         }
+//       } catch (err) {
+//         console.log("Using fallback market data");
+
+//         const fallback = [
+//           { name: "Wheat", price: "₹2200", changePercent: 2.1 },
+//           { name: "Rice", price: "₹3500", changePercent: -1.2 },
+//           { name: "Cotton", price: "₹6800", changePercent: 3.5 },
+//         ];
+
+//         setMarketTrends(fallback);
+//         setMarketSourceLabel("Cached");
+//       }
+//     }
+
+//     loadMarket();
+//   }, []);
+
+//   /* ---------- NEXT ACTION ---------- */
+//   function getNextAction(c) {
+//     if (c.payments?.some((p) => p.status === "DUE")) {
+//       return { label: "Complete Payment", priority: "high" };
+//     }
+
+//     if (c.cultivationStages?.some((s) => s.status === "PENDING")) {
+//       return { label: "Update Stage", priority: "medium" };
+//     }
+
+//     if (c.status === "PENDING") {
+//       return { label: "Respond to Request", priority: "high" };
+//     }
+
+//     return { label: "On Track", priority: "low" };
+//   }
+
+//   return (
+//     <div className="flex h-screen bg-slate-50">
+//       <Sidebar />
+
+//       <main className="flex-1 overflow-y-auto p-6 space-y-6">
+//         <Topbar profileData={profileData} />
+
+//         {/* HEADER */}
+//         <div>
+//           <h1 className="text-3xl font-bold text-slate-800">
+//             Welcome, {profileData?.user?.name}
+//           </h1>
+//           <p className="text-slate-500 mt-1">
+//             Manage your contracts and farm operations efficiently 🌱
+//           </p>
+//         </div>
+
+//         {/* STATS */}
+//         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+//           <StatCard
+//             title="Total Contracts"
+//             value={stats.totalContracts}
+//             icon={FileText}
+//           />
+//           <StatCard
+//             title="Pending"
+//             value={stats.pendingRequests}
+//             icon={Timer}
+//           />
+//           <StatCard
+//             title="Active Deals"
+//             value={stats.acceptedDeals}
+//             icon={CheckCircle2}
+//           />
+//           <StatCard
+//             title="Negotiations"
+//             value={stats.activeNegotiations}
+//             icon={MessageSquare}
+//           />
+//         </div>
+
+//         {/* QUICK ACTIONS */}
+//         <div className="bg-white p-6 rounded-2xl border shadow-sm">
+//           <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
+//             <Sparkles size={18} /> Quick Actions
+//           </h2>
+
+//           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+//             <button
+//               onClick={() => navigate("/farmer/harvest-crop")}
+//               className="p-4 rounded-xl bg-green-50 hover:bg-green-100 transition text-left"
+//             >
+//               🌾
+//               <p className="font-semibold mt-2">Create Harvest</p>
+//             </button>
+
+//             <button
+//               onClick={() => navigate("/farmer/contracts")} // ✅ FIXED
+//               className="p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition text-left"
+//             >
+//               📄
+//               <p className="font-semibold mt-2">All Contracts</p>
+//             </button>
+
+//             <button
+//               onClick={() => navigate("/farmer/harvest-contracts")} // optional
+//               className="p-4 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition text-left"
+//             >
+//               📍
+//               <p className="font-semibold mt-2">Harvest Contracts</p>
+//             </button>
+
+//             <button
+//               onClick={() => navigate("/farmer/negotiations")} // ✅ FIXED
+//               className="p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition text-left"
+//             >
+//               💬
+//               <p className="font-semibold mt-2">Negotiations</p>
+//             </button>
+//           </div>
+//         </div>
+
+//         {/* MAIN GRID */}
+//         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+//           {/* ACTIVE CONTRACTS */}
+//           <div className="bg-white p-5 rounded-2xl border shadow-sm">
+//             <h2 className="font-bold text-lg mb-4">Active Contracts</h2>
+
+//             {contracts.length === 0 ? (
+//               <p className="text-slate-400">No contracts yet</p>
+//             ) : (
+//               contracts.map((c, i) => {
+//                 const cropName = c.cropName || c.harvestDetails?.cropName;
+
+//                 return (
+//                   <div
+//                     key={c.contractId || i}
+//                     className="p-4 mb-3 rounded-xl border hover:shadow-md transition"
+//                   >
+//                     {/* TOP */}
+//                     <div className="flex justify-between items-center">
+//                       <h4 className="font-bold text-slate-800">{cropName}</h4>
+//                       <span className="text-xs bg-slate-100 px-2 py-1 rounded">
+//                         {c.type}
+//                       </span>
+//                     </div>
+
+//                     {/* STATUS */}
+//                     <p className="text-sm text-slate-500 mt-1">
+//                       Status: <span className="font-semibold">{c.status}</span>
+//                     </p>
+
+//                     {/* DETAILS */}
+//                     <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
+//                       {c.type === "CULTIVATION" ? (
+//                         <>
+//                           <p>🌾 Area: {c.area || "-"}</p>
+//                           <p>📦 Yield: {c.expectedYield || "-"}</p>
+//                         </>
+//                       ) : c.type === "HARVEST" ? (
+//                         <>
+//                           <p>📦 Qty: {c.harvestDetails?.quantity || "-"}</p>
+//                           <p>💰 Price: ₹{c.pricePerUnit || "-"}</p>
+//                         </>
+//                       ) : null}
+//                     </div>
+
+//                     {/* PROGRESS */}
+//                     {c.tracking && (
+//                       <>
+//                         <div className="mt-3">
+//                           <div className="h-2 bg-gray-200 rounded">
+//                             <div
+//                               className="h-2 bg-green-500 rounded"
+//                               style={{
+//                                 width: `${c.tracking.progressPercent || 0}%`,
+//                               }}
+//                             />
+//                           </div>
+//                         </div>
+
+//                         <div className="flex justify-between text-xs mt-1 text-gray-500">
+//                           <span>
+//                             {c.tracking.currentStage || "Not started"}
+//                           </span>
+//                           <span>{c.tracking.progressPercent || 0}%</span>
+//                         </div>
+//                       </>
+//                     )}
+
+//                     {/* BUTTON */}
+//                     <button
+//                       onClick={() =>
+//                         navigate(
+//                           c.type === "CULTIVATION"
+//                             ? `/cultivation/contract-tracking/${c.contractId}`
+//                             : `/farmer/harvest-contract-tracking/${c.contractId}`,
+//                         )
+//                       }
+//                       className="mt-3 text-sm text-green-600 font-semibold flex items-center gap-1"
+//                     >
+//                       View Details <ArrowRight size={14} />
+//                     </button>
+//                   </div>
+//                 );
+//               })
+//             )}
+//           </div>
+
+//           {/* NEXT ACTIONS */}
+//           <div className="bg-white p-5 rounded-2xl border shadow-sm">
+//             <h2 className="font-bold text-lg mb-4">Next Actions</h2>
+
+//             {contracts.length === 0 ? (
+//               <p className="text-slate-400">No actions required</p>
+//             ) : (
+//               contracts.map((c, i) => {
+//                 const cropName = c.cropName || c.harvestDetails?.cropName;
+//                 const action = getNextAction(c);
+
+//                 const priorityColor =
+//                   action.priority === "high"
+//                     ? "text-red-600 bg-red-50"
+//                     : action.priority === "medium"
+//                       ? "text-amber-600 bg-amber-50"
+//                       : "text-emerald-600 bg-emerald-50";
+
+//                 return (
+//                   <div
+//                     key={c.contractId || i}
+//                     className="flex items-center justify-between p-3 rounded-xl border mb-2 hover:shadow-sm transition"
+//                   >
+//                     {/* LEFT */}
+//                     <div>
+//                       <p className="font-semibold text-slate-800 text-sm">
+//                         {cropName}
+//                       </p>
+
+//                       <p className="text-xs text-slate-500">
+//                         {c.type} • {c.status}
+//                       </p>
+//                     </div>
+
+//                     {/* RIGHT */}
+//                     <div className="flex items-center gap-2">
+//                       {/* PRIORITY DOT */}
+//                       <span
+//                         className={`px-2 py-1 rounded text-xs font-bold ${priorityColor}`}
+//                       >
+//                         {action.priority.toUpperCase()}
+//                       </span>
+
+//                       {/* ACTION BUTTON */}
+//                       <button
+//                         onClick={() =>
+//                           navigate(
+//                             c.type === "CULTIVATION"
+//                               ? `/cultivation/contract-tracking/${c.contractId}`
+//                               : `/farmer/harvest-contract-tracking/${c.contractId}`,
+//                           )
+//                         }
+//                         className="text-xs font-semibold text-green-600 hover:underline"
+//                       >
+//                         {action.label}
+//                       </button>
+//                     </div>
+//                   </div>
+//                 );
+//               })
+//             )}
+//           </div>
+//         </div>
+
+//         {/* INSIGHTS */}
+//         <div className="bg-white p-5 rounded-2xl border shadow-sm">
+//           <h2 className="font-bold text-lg mb-3">Insights</h2>
+
+//           <ul className="text-sm text-slate-600 space-y-2">
+//             <li>📈 You have {stats.acceptedDeals} active contracts</li>
+//             <li>⚠️ {stats.pendingRequests} pending requests</li>
+//             <li>🌾 Primary crop: {contracts[0]?.cropName || "N/A"}</li>
+//           </ul>
+//         </div>
+
+//         {/* MARKET */}
+//         {/* Financial Market Ticker - Fixed Bottom */}
+//         <div className="h-14 bg-slate-900 border-t border-slate-800 flex items-center shadow-[0_-4px_20px_rgba(0,0,0,0.2)] z-30">
+//           <div className="px-6 h-full flex items-center bg-slate-800 border-r border-slate-700 z-10">
+//             <div className="flex items-center gap-2">
+//               <div className="relative">
+//                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-ping absolute inset-0 opacity-75" />
+//                 <div className="h-2 w-2 rounded-full bg-emerald-500 relative" />
+//               </div>
+//               <span className="text-xs font-bold text-white tracking-widest uppercase">
+//                 Market
+//               </span>
+//             </div>
+
+//             <span className="ml-2 text-[10px] text-slate-400 border border-slate-600 px-1.5 rounded bg-slate-900/50">
+//               {marketSourceLabel}
+//             </span>
+//           </div>
+
+//           <div className="flex-1 overflow-hidden relative">
+//             <div className="ticker-track flex items-center gap-12 whitespace-nowrap px-4">
+//               {(Array.isArray(tickerData) ? tickerData : []).map(
+//                 (item, index) => {
+//                   const positive =
+//                     String(item.change ?? item.changePercent ?? "").startsWith(
+//                       "+",
+//                     ) || item.changePercent > 0;
+
+//                   const Icon = positive ? TrendingUp : TrendingDown;
+
+//                   return (
+//                     <div
+//                       key={`${item.name}-${index}`}
+//                       className="flex items-center gap-3"
+//                     >
+//                       <span className="text-sm font-bold text-slate-200">
+//                         {item.crop || item.name}
+//                       </span>
+
+//                       <span className="text-sm font-mono text-slate-400">
+//                         {item.price}
+//                       </span>
+
+//                       <span
+//                         className={`flex items-center gap-1 text-xs font-bold px-1.5 py-0.5 rounded ${
+//                           positive
+//                             ? "text-emerald-400 bg-emerald-400/10"
+//                             : "text-red-400 bg-red-400/10"
+//                         }`}
+//                       >
+//                         <Icon className="h-3 w-3" />
+//                         {item.change ??
+//                           (item.changePercent !== undefined
+//                             ? `${item.changePercent > 0 ? "+" : ""}${item.changePercent}%`
+//                             : "")}
+//                       </span>
+//                     </div>
+//                   );
+//                 },
+//               )}
+//             </div>
+
+//             {/* Gradient edges */}
+//             <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-slate-900 to-transparent pointer-events-none" />
+//             <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-slate-900 to-transparent pointer-events-none" />
+//           </div>
+//         </div>
+//       </main>
+//     </div>
+//   );
+// }
+
+
+
+
+
 import React, { useEffect, useState, useMemo } from "react";
 import api from "../../api/axios";
 import {
@@ -744,23 +1208,28 @@ import {
   TrendingDown,
   ArrowRight,
   Sparkles,
+  Landmark,
+  ExternalLink
 } from "lucide-react";
 
 import Sidebar from "../../components/Sidebar.jsx";
 import Topbar from "../../components/topNav.jsx";
 import { useNavigate } from "react-router-dom";
 
-/* ---------- STAT CARD ---------- */
+/* ---------- STAT CARD (UPGRADED UI) ---------- */
 function StatCard({ title, value, icon: Icon }) {
   return (
-    <div className="bg-white rounded-2xl p-5 border shadow-sm hover:shadow-md transition">
-      <div className="flex justify-between items-center">
+    <div className="bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+      {/* Decorative background blob */}
+      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-emerald-50 rounded-full opacity-50 blur-2xl pointer-events-none transition-transform group-hover:scale-110"></div>
+      
+      <div className="flex justify-between items-center relative z-10">
         <div>
-          <p className="text-sm text-slate-500">{title}</p>
-          <h2 className="text-2xl font-bold text-slate-800">{value}</h2>
+          <p className="text-[13px] font-semibold text-slate-500 uppercase tracking-wider mb-1">{title}</p>
+          <h2 className="text-3xl font-extrabold text-[#064e3b]">{value}</h2>
         </div>
-        <div className="p-3 bg-green-50 rounded-xl">
-          <Icon className="text-green-600" />
+        <div className="p-3.5 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 shadow-sm">
+          <Icon size={24} strokeWidth={2.5} />
         </div>
       </div>
     </div>
@@ -858,7 +1327,7 @@ export default function FarmerDashboard() {
     loadMarket();
   }, []);
 
-  /* ---------- NEXT ACTION ---------- */
+  /* ---------- NEXT ACTION LOGIC ---------- */
   function getNextAction(c) {
     if (c.payments?.some((p) => p.status === "DUE")) {
       return { label: "Complete Payment", priority: "high" };
@@ -876,270 +1345,267 @@ export default function FarmerDashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      <Sidebar />
+    <div className="flex h-screen bg-[#f4f6f8] font-sans text-slate-800 overflow-hidden">
+      <div className="h-full flex-shrink-0 z-30 shadow-2xl bg-white">
+        <Sidebar />
+      </div>
 
-      <main className="flex-1 overflow-y-auto p-6 space-y-6">
-        <Topbar profileData={profileData} />
+      <main className="flex-1 flex flex-col h-full overflow-y-auto relative scroll-smooth">
+        
+        <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto w-full flex-1">
+          <Topbar profileData={profileData} />
 
-        {/* HEADER */}
-        <div>
-          <h1 className="text-3xl font-bold text-slate-800">
-            Welcome, {profileData?.user?.name}
-          </h1>
-          <p className="text-slate-500 mt-1">
-            Manage your contracts and farm operations efficiently 🌱
-          </p>
-        </div>
-
-        {/* STATS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-          <StatCard
-            title="Total Contracts"
-            value={stats.totalContracts}
-            icon={FileText}
-          />
-          <StatCard
-            title="Pending"
-            value={stats.pendingRequests}
-            icon={Timer}
-          />
-          <StatCard
-            title="Active Deals"
-            value={stats.acceptedDeals}
-            icon={CheckCircle2}
-          />
-          <StatCard
-            title="Negotiations"
-            value={stats.activeNegotiations}
-            icon={MessageSquare}
-          />
-        </div>
-
-        {/* QUICK ACTIONS */}
-        <div className="bg-white p-6 rounded-2xl border shadow-sm">
-          <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
-            <Sparkles size={18} /> Quick Actions
-          </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button
-              onClick={() => navigate("/farmer/harvest-crop")}
-              className="p-4 rounded-xl bg-green-50 hover:bg-green-100 transition text-left"
-            >
-              🌾
-              <p className="font-semibold mt-2">Create Harvest</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/farmer/contracts")} // ✅ FIXED
-              className="p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition text-left"
-            >
-              📄
-              <p className="font-semibold mt-2">All Contracts</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/farmer/harvest-contracts")} // optional
-              className="p-4 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition text-left"
-            >
-              📍
-              <p className="font-semibold mt-2">Harvest Contracts</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/farmer/negotiations")} // ✅ FIXED
-              className="p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition text-left"
-            >
-              💬
-              <p className="font-semibold mt-2">Negotiations</p>
-            </button>
+          {/* HEADER */}
+          <div className="mt-2">
+            <h1 className="text-3xl md:text-[38px] font-bold text-[#064e3b] font-serif tracking-tight">
+              Welcome back, {profileData?.user?.name || "Farmer"}
+            </h1>
+            <p className="text-[15px] text-slate-500 mt-2 font-medium">
+              Here is an overview of your contracts and farm operations today. 🌱
+            </p>
           </div>
-        </div>
 
-        {/* MAIN GRID */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {/* ACTIVE CONTRACTS */}
-          <div className="bg-white p-5 rounded-2xl border shadow-sm">
-            <h2 className="font-bold text-lg mb-4">Active Contracts</h2>
+          {/* STATS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+            <StatCard title="Total Contracts" value={stats.totalContracts} icon={FileText} />
+            <StatCard title="Pending" value={stats.pendingRequests} icon={Timer} />
+            <StatCard title="Active Deals" value={stats.acceptedDeals} icon={CheckCircle2} />
+            <StatCard title="Negotiations" value={stats.activeNegotiations} icon={MessageSquare} />
+          </div>
 
-            {contracts.length === 0 ? (
-              <p className="text-slate-400">No contracts yet</p>
-            ) : (
-              contracts.map((c, i) => {
-                const cropName = c.cropName || c.harvestDetails?.cropName;
+          {/* QUICK ACTIONS */}
+          <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+            <h2 className="text-[18px] font-bold text-[#064e3b] mb-5 flex items-center gap-2 font-serif">
+              <div className="p-1.5 bg-yellow-100 rounded-lg text-yellow-600">
+                <Sparkles size={18} />
+              </div>
+              Quick Actions
+            </h2>
 
-                return (
-                  <div
-                    key={c.contractId || i}
-                    className="p-4 mb-3 rounded-xl border hover:shadow-md transition"
-                  >
-                    {/* TOP */}
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-bold text-slate-800">{cropName}</h4>
-                      <span className="text-xs bg-slate-100 px-2 py-1 rounded">
-                        {c.type}
-                      </span>
-                    </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+              <button
+                onClick={() => navigate("/farmer/harvest-crop")}
+                className="group p-5 rounded-xl border border-emerald-100 bg-[#fcfdfc] hover:bg-emerald-50 hover:border-emerald-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
+              >
+                <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">🌾</div>
+                <p className="font-bold text-emerald-900">Create Harvest</p>
+              </button>
 
-                    {/* STATUS */}
-                    <p className="text-sm text-slate-500 mt-1">
-                      Status: <span className="font-semibold">{c.status}</span>
-                    </p>
+              <button
+                onClick={() => navigate("/farmer/contracts")}
+                className="group p-5 rounded-xl border border-blue-100 bg-[#fcfdff] hover:bg-blue-50 hover:border-blue-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
+              >
+                <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">📄</div>
+                <p className="font-bold text-blue-900">All Contracts</p>
+              </button>
 
-                    {/* DETAILS */}
-                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
-                      {c.type === "CULTIVATION" ? (
-                        <>
-                          <p>🌾 Area: {c.area || "-"}</p>
-                          <p>📦 Yield: {c.expectedYield || "-"}</p>
-                        </>
-                      ) : c.type === "HARVEST" ? (
-                        <>
-                          <p>📦 Qty: {c.harvestDetails?.quantity || "-"}</p>
-                          <p>💰 Price: ₹{c.pricePerUnit || "-"}</p>
-                        </>
-                      ) : null}
-                    </div>
+              <button
+                onClick={() => navigate("/farmer/harvest-contracts")}
+                className="group p-5 rounded-xl border border-amber-100 bg-[#fffcf8] hover:bg-amber-50 hover:border-amber-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
+              >
+                <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">📍</div>
+                <p className="font-bold text-amber-900">Harvest Contracts</p>
+              </button>
 
-                    {/* PROGRESS */}
-                    {c.tracking && (
-                      <>
-                        <div className="mt-3">
-                          <div className="h-2 bg-gray-200 rounded">
-                            <div
-                              className="h-2 bg-green-500 rounded"
-                              style={{
-                                width: `${c.tracking.progressPercent || 0}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
+              <button
+                onClick={() => navigate("/farmer/negotiations")}
+                className="group p-5 rounded-xl border border-purple-100 bg-[#fdfcff] hover:bg-purple-50 hover:border-purple-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-left"
+              >
+                <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">💬</div>
+                <p className="font-bold text-purple-900">Negotiations</p>
+              </button>
+            </div>
+          </div>
 
-                        <div className="flex justify-between text-xs mt-1 text-gray-500">
-                          <span>
-                            {c.tracking.currentStage || "Not started"}
+          {/* MAIN GRID */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            
+            {/* ACTIVE CONTRACTS */}
+            <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+              <h2 className="text-[20px] font-bold text-[#064e3b] mb-6 font-serif">Active Contracts</h2>
+
+              {contracts.length === 0 ? (
+                <div className="p-8 text-center border-2 border-dashed border-slate-100 rounded-xl">
+                  <p className="text-slate-400 font-medium">No contracts yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {contracts.map((c, i) => {
+                    const cropName = c.cropName || c.harvestDetails?.cropName;
+
+                    return (
+                      <div
+                        key={c.contractId || i}
+                        className="p-5 rounded-xl border border-slate-100 bg-[#fbfcfb] hover:border-emerald-400 hover:shadow-[0_4px_15px_rgb(0,0,0,0.0)] transition-all"
+                      >
+                        {/* TOP */}
+                        <div className="flex justify-between items-start mb-1">
+                          <h4 className="text-[16px] font-bold text-slate-800">{cropName}</h4>
+                          <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-md tracking-wider">
+                            {c.type}
                           </span>
-                          <span>{c.tracking.progressPercent || 0}%</span>
                         </div>
-                      </>
-                    )}
 
-                    {/* BUTTON */}
-                    <button
-                      onClick={() =>
-                        navigate(
-                          c.type === "CULTIVATION"
-                            ? `/cultivation/contract-tracking/${c.contractId}`
-                            : `/farmer/harvest-contract-tracking/${c.contractId}`,
-                        )
-                      }
-                      className="mt-3 text-sm text-green-600 font-semibold flex items-center gap-1"
-                    >
-                      View Details <ArrowRight size={14} />
-                    </button>
+                        {/* STATUS */}
+                        <p className="text-[13px] text-slate-500 mb-3">
+                          Status: <span className="font-semibold text-slate-700">{c.status}</span>
+                        </p>
+
+                        {/* DETAILS */}
+                        <div className="grid grid-cols-2 gap-3 p-3 bg-white rounded-lg border border-slate-50 text-[13px] text-slate-600 mb-3 shadow-sm">
+                          {c.type === "CULTIVATION" ? (
+                            <>
+                              <p className="font-medium">🌾 Area: <span className="text-slate-800">{c.area || "-"}</span></p>
+                              <p className="font-medium">📦 Yield: <span className="text-slate-800">{c.expectedYield || "-"}</span></p>
+                            </>
+                          ) : c.type === "HARVEST" ? (
+                            <>
+                              <p className="font-medium">📦 Qty: <span className="text-slate-800">{c.harvestDetails?.quantity || "-"}</span></p>
+                              <p className="font-medium">💰 Price: <span className="text-slate-800">₹{c.pricePerUnit || "-"}</span></p>
+                            </>
+                          ) : null}
+                        </div>
+
+                        {/* PROGRESS */}
+                        {c.tracking && (
+                          <div className="mb-4">
+                            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-[#10b981] rounded-full transition-all duration-500"
+                                style={{ width: `${c.tracking.progressPercent || 0}%` }}
+                              />
+                            </div>
+                            <div className="flex justify-between text-[12px] mt-1.5 text-slate-500 font-medium">
+                              <span>{c.tracking.currentStage || "Not started"}</span>
+                              <span className="text-emerald-600 font-bold">{c.tracking.progressPercent || 0}%</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* BUTTON */}
+                        <button
+                          onClick={() =>
+                            navigate(
+                              c.type === "CULTIVATION"
+                                ? `/cultivation/contract-tracking/${c.contractId}`
+                                : `/farmer/harvest-contract-tracking/${c.contractId}`,
+                            )
+                          }
+                          className="w-full mt-1 py-2.5 bg-white border border-slate-200 text-[13px] text-slate-700 font-bold rounded-lg hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          View Details <ArrowRight size={14} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT COLUMN: GOVT SCHEMES & INSIGHTS */}
+            <div className="flex flex-col gap-8">
+              
+              {/* GOVT SCHEMES & RELIEF (Replaced Action Required) */}
+              <div className="bg-white p-7 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                <h2 className="text-[20px] font-bold text-[#064e3b] mb-5 font-serif flex items-center gap-2">
+                  <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+                    <Landmark size={18} />
                   </div>
-                );
-              })
-            )}
-          </div>
+                  Govt. Schemes & Relief
+                </h2>
 
-          {/* NEXT ACTIONS */}
-          <div className="bg-white p-5 rounded-2xl border shadow-sm">
-            <h2 className="font-bold text-lg mb-4">Next Actions</h2>
-
-            {contracts.length === 0 ? (
-              <p className="text-slate-400">No actions required</p>
-            ) : (
-              contracts.map((c, i) => {
-                const cropName = c.cropName || c.harvestDetails?.cropName;
-                const action = getNextAction(c);
-
-                const priorityColor =
-                  action.priority === "high"
-                    ? "text-red-600 bg-red-50"
-                    : action.priority === "medium"
-                      ? "text-amber-600 bg-amber-50"
-                      : "text-emerald-600 bg-emerald-50";
-
-                return (
-                  <div
-                    key={c.contractId || i}
-                    className="flex items-center justify-between p-3 rounded-xl border mb-2 hover:shadow-sm transition"
-                  >
-                    {/* LEFT */}
-                    <div>
-                      <p className="font-semibold text-slate-800 text-sm">
-                        {cropName}
-                      </p>
-
-                      <p className="text-xs text-slate-500">
-                        {c.type} • {c.status}
-                      </p>
+                <div className="space-y-3">
+                  {/* Scheme 1 */}
+                  <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-blue-50 hover:border-blue-200 transition-colors cursor-pointer">
+                    <div className="flex justify-between items-start mb-1.5">
+                      <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-blue-800 transition-colors">PM Fasal Bima Yojana (PMFBY)</h4>
+                      <ExternalLink size={14} className="text-slate-400 group-hover:text-blue-600" />
                     </div>
-
-                    {/* RIGHT */}
-                    <div className="flex items-center gap-2">
-                      {/* PRIORITY DOT */}
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-bold ${priorityColor}`}
-                      >
-                        {action.priority.toUpperCase()}
-                      </span>
-
-                      {/* ACTION BUTTON */}
-                      <button
-                        onClick={() =>
-                          navigate(
-                            c.type === "CULTIVATION"
-                              ? `/cultivation/contract-tracking/${c.contractId}`
-                              : `/farmer/harvest-contract-tracking/${c.contractId}`,
-                          )
-                        }
-                        className="text-xs font-semibold text-green-600 hover:underline"
-                      >
-                        {action.label}
-                      </button>
-                    </div>
+                    <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
+                      Comprehensive crop insurance against unpreventable natural risks like droughts, floods, and pests.
+                    </p>
                   </div>
-                );
-              })
-            )}
+
+                  {/* Scheme 2 */}
+                  <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-emerald-50 hover:border-emerald-200 transition-colors cursor-pointer">
+                    <div className="flex justify-between items-start mb-1.5">
+                      <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-emerald-800 transition-colors">PM-KISAN Samman Nidhi</h4>
+                      <ExternalLink size={14} className="text-slate-400 group-hover:text-emerald-600" />
+                    </div>
+                    <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
+                      Direct income support of ₹6,000 per year for all landholding farmer families.
+                    </p>
+                  </div>
+
+                  {/* Scheme 3 */}
+                  <div className="group p-4 rounded-xl border border-slate-100 bg-[#f8fafc] hover:bg-amber-50 hover:border-amber-200 transition-colors cursor-pointer">
+                    <div className="flex justify-between items-start mb-1.5">
+                      <h4 className="text-[14px] font-bold text-slate-800 group-hover:text-amber-800 transition-colors">Disaster Relief Fund (NDRF)</h4>
+                      <ExternalLink size={14} className="text-slate-400 group-hover:text-amber-600" />
+                    </div>
+                    <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
+                      Immediate financial assistance during severe natural calamities like cyclones or extreme rainfall.
+                    </p>
+                  </div>
+                </div>
+
+                <button className="w-full mt-4 py-2.5 text-[13px] font-bold text-[#064e3b] hover:bg-emerald-50 rounded-lg transition-colors border border-slate-100 hover:border-emerald-200 flex items-center justify-center gap-1.5">
+                  Browse All Schemes <ArrowRight size={14} />
+                </button>
+              </div>
+
+              {/* INSIGHTS */}
+              <div className="bg-gradient-to-br from-[#064e3b] to-[#047857] p-7 rounded-2xl shadow-lg text-white relative overflow-hidden">
+                {/* Decorative circles */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full"></div>
+                <div className="absolute top-10 -right-5 w-16 h-16 bg-white opacity-10 rounded-full"></div>
+                
+                <h2 className="font-bold text-[20px] mb-4 font-serif flex items-center gap-2">
+                  <div className="bg-white/20 p-1.5 rounded-lg">📈</div> Insights
+                </h2>
+                <ul className="text-[14px] text-emerald-50 space-y-3 font-medium">
+                  <li className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+                    You have {stats.acceptedDeals} active contracts operating smoothly.
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-300"></span>
+                    {stats.pendingRequests} pending requests awaiting your response.
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+                    Primary focus crop: {contracts[0]?.cropName || "N/A"}.
+                  </li>
+                </ul>
+              </div>
+
+            </div>
           </div>
         </div>
 
-        {/* INSIGHTS */}
-        <div className="bg-white p-5 rounded-2xl border shadow-sm">
-          <h2 className="font-bold text-lg mb-3">Insights</h2>
-
-          <ul className="text-sm text-slate-600 space-y-2">
-            <li>📈 You have {stats.acceptedDeals} active contracts</li>
-            <li>⚠️ {stats.pendingRequests} pending requests</li>
-            <li>🌾 Primary crop: {contracts[0]?.cropName || "N/A"}</li>
-          </ul>
-        </div>
-
-        {/* MARKET */}
-        {/* Financial Market Ticker - Fixed Bottom */}
-        <div className="h-14 bg-slate-900 border-t border-slate-800 flex items-center shadow-[0_-4px_20px_rgba(0,0,0,0.2)] z-30">
-          <div className="px-6 h-full flex items-center bg-slate-800 border-r border-slate-700 z-10">
+        {/* MARKET TICKER - Sticky Bottom */}
+        <div className="sticky bottom-0 mt-auto h-14 bg-[#064e3b] border-t border-[#047857] flex items-center shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-40 overflow-hidden">
+          
+          {/* Label Section */}
+          <div className="px-6 h-full flex items-center bg-[#022c22] border-r border-[#047857] z-20 relative shadow-[4px_0_15px_rgba(0,0,0,0.2)]">
             <div className="flex items-center gap-2">
               <div className="relative">
-                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-ping absolute inset-0 opacity-75" />
-                <div className="h-2 w-2 rounded-full bg-emerald-500 relative" />
+                <div className="h-2 w-2 rounded-full bg-[#10b981] animate-ping absolute inset-0 opacity-75" />
+                <div className="h-2 w-2 rounded-full bg-[#10b981] relative" />
               </div>
-              <span className="text-xs font-bold text-white tracking-widest uppercase">
+              <span className="text-[13px] font-extrabold text-white tracking-widest uppercase">
                 Market
               </span>
             </div>
-
-            <span className="ml-2 text-[10px] text-slate-400 border border-slate-600 px-1.5 rounded bg-slate-900/50">
+            <span className="ml-3 text-[10px] text-emerald-200 border border-emerald-800 px-1.5 py-0.5 rounded bg-black/20 font-bold">
               {marketSourceLabel}
             </span>
           </div>
 
-          <div className="flex-1 overflow-hidden relative">
-            <div className="ticker-track flex items-center gap-12 whitespace-nowrap px-4">
+          {/* Scrolling Ticker Section */}
+          <div className="flex-1 relative h-full flex items-center">
+            {/* CSS defined animation class */}
+            <div className="animate-marquee flex items-center gap-12 whitespace-nowrap pl-6">
               {(Array.isArray(tickerData) ? tickerData : []).map(
                 (item, index) => {
                   const positive =
@@ -1154,22 +1620,22 @@ export default function FarmerDashboard() {
                       key={`${item.name}-${index}`}
                       className="flex items-center gap-3"
                     >
-                      <span className="text-sm font-bold text-slate-200">
+                      <span className="text-[14px] font-bold text-white">
                         {item.crop || item.name}
                       </span>
 
-                      <span className="text-sm font-mono text-slate-400">
+                      <span className="text-[14px] font-mono font-medium text-emerald-100">
                         {item.price}
                       </span>
 
                       <span
-                        className={`flex items-center gap-1 text-xs font-bold px-1.5 py-0.5 rounded ${
+                        className={`flex items-center gap-1 text-[11px] font-extrabold px-1.5 py-0.5 rounded ${
                           positive
-                            ? "text-emerald-400 bg-emerald-400/10"
-                            : "text-red-400 bg-red-400/10"
+                            ? "text-[#10b981] bg-[#10b981]/20"
+                            : "text-red-400 bg-red-400/20"
                         }`}
                       >
-                        <Icon className="h-3 w-3" />
+                        <Icon className="h-3 w-3" strokeWidth={3} />
                         {item.change ??
                           (item.changePercent !== undefined
                             ? `${item.changePercent > 0 ? "+" : ""}${item.changePercent}%`
@@ -1181,12 +1647,27 @@ export default function FarmerDashboard() {
               )}
             </div>
 
-            {/* Gradient edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-slate-900 to-transparent pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-slate-900 to-transparent pointer-events-none" />
+            {/* Gradient Fade Edges for smooth scroll appearance */}
+            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#064e3b] to-transparent pointer-events-none z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#064e3b] to-transparent pointer-events-none z-10" />
           </div>
         </div>
+
       </main>
+
+      {/* Global styles for the continuous marquee animation */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 25s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}} />
     </div>
   );
 }
