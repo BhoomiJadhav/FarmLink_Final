@@ -221,6 +221,9 @@ export default function Sidebar({ onLogout }) {
 
           {openMenus.harvestContracts && (
             <div className="ml-6 space-y-1">
+              <NavLink to="/farmer/harvest-listings" className={linkClasses}>
+                My Harvest Listings
+              </NavLink>
               <NavLink to="/farmer/harvest-contracts" className={linkClasses}>
                 Active Contracts
               </NavLink>

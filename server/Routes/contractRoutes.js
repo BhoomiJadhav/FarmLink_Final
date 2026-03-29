@@ -36,22 +36,24 @@ const {
 } = require("../Controllers/uploadsStageProof");
 
 // Seed & Payment Imports
-const { 
-  dispatchSeedsByBuyer, 
-  confirmSeedReceiptByFarmer, 
-  uploadSeedByFarmer 
-} = require("../Controllers/seedDispatch"); 
+const {
+  dispatchSeedsByBuyer,
+  confirmSeedReceiptByFarmer,
+  uploadSeedByFarmer,
+} = require("../Controllers/seedDispatch");
 
-const { 
-  uploadPaymentProof, 
-  verifyPaymentByFarmer 
+const {
+  uploadPaymentProof,
+  verifyPaymentByFarmer,
 } = require("../Controllers/paymentController");
 
 // AI Quality Tracking Import
-const { saveAiQualityResult } = require("../Controllers/cultivationTrackingController");
+const {
+  saveAiQualityResult,
+} = require("../Controllers/cultivationTrackingController");
 
 const upload = require("../middleware/uploads");
-
+const policyUpload = require("../middleware/uploadPolicy");
 const router = express.Router();
 
 /* 1. General Queries */
@@ -66,25 +68,44 @@ router.put("/update/:contractId", auth, updateContract);
 /* 2. Negotiation & Signatures */
 router.put("/update-amount/:contractId", auth, updateFinalAmount);
 router.post("/sign/buyer/:contractId", auth, buyerSignContract);
-router.post("/sign/farmer/:contractId", auth, farmerSignContract);
-
+router.post(
+  "/sign/farmer/:contractId",
+  auth,
+  policyUpload.single("document"), // 🔥 IMPORTANT
+  farmerSignContract,
+);
 /* 3. Seed Dispatch (Farmer or Buyer) */
-router.post("/:id/seed/dispatch", auth, upload.array("images", 5), dispatchSeedsByBuyer);
-router.post("/:id/seed/confirm", auth, upload.array("images", 5), confirmSeedReceiptByFarmer);
-router.post("/:id/seed/farmer-upload", auth, upload.array("images", 5), uploadSeedByFarmer);
+router.post(
+  "/:id/seed/dispatch",
+  auth,
+  upload.array("images", 5),
+  dispatchSeedsByBuyer,
+);
+router.post(
+  "/:id/seed/confirm",
+  auth,
+  upload.array("images", 5),
+  confirmSeedReceiptByFarmer,
+);
+router.post(
+  "/:id/seed/farmer-upload",
+  auth,
+  upload.array("images", 5),
+  uploadSeedByFarmer,
+);
 
 /* 4. Payment Execution */
 router.post(
   "/:contractId/payments/:paymentId/upload-proof",
   auth,
-  upload.array("images", 1), 
-  uploadPaymentProof
+  upload.array("images", 1),
+  uploadPaymentProof,
 );
 
 router.post(
   "/:contractId/payments/:paymentId/verify",
   auth,
-  verifyPaymentByFarmer
+  verifyPaymentByFarmer,
 );
 
 /* 5. Cultivation Stages & AI Quality */
@@ -93,7 +114,8 @@ router.post(
   auth,
   async (req, res, next) => {
     const contract = await Contract.findById(req.params.contractId);
-    if (!contract) return res.status(404).json({ message: "Contract not found" });
+    if (!contract)
+      return res.status(404).json({ message: "Contract not found" });
     const stage = contract.cultivationStages.id(req.params.stageId);
     if (!stage) return res.status(404).json({ message: "Stage not found" });
     req.stageName = stage.name;

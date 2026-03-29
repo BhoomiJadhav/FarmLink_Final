@@ -14,7 +14,7 @@ export default function AcceptanceReviewModal({
     policyNumber: "",
     validTill: "",
   });
-
+  const [file, setFile] = useState(null);
   const [consent, setConsent] = useState({
     read: false,
     agree: false,
@@ -25,19 +25,53 @@ export default function AcceptanceReviewModal({
 
   const allConsentsChecked = consent.read && consent.agree && consent.dispute;
 
+  // async function submitAcceptance() {
+  //   if (!allConsentsChecked || !signature) return;
+
+  //   try {
+  //     setLoading(true);
+
+  //     await api.post(`/contracts/sign/farmer/${contract._id}`, {
+  //       insuranceProvider: insurance.provider,
+  //       policyNumber: insurance.policyNumber,
+  //       policyValidTill: insurance.validTill,
+  //       signatureType: "TYPED",
+  //       signatureValue: signature,
+  //       consent: true,
+  //     });
+
+  //     onSuccess();
+  //     onClose();
+  //   } catch (err) {
+  //     alert("Failed to sign contract. Please try again.");
+  //     console.error(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
   async function submitAcceptance() {
     if (!allConsentsChecked || !signature) return;
 
     try {
       setLoading(true);
 
-      await api.post(`/contracts/sign/farmer/${contract._id}`, {
-        insuranceProvider: insurance.provider,
-        policyNumber: insurance.policyNumber,
-        policyValidTill: insurance.validTill,
-        signatureType: "TYPED",
-        signatureValue: signature,
-        consent: true,
+      const formData = new FormData();
+
+      formData.append("insuranceProvider", insurance.provider);
+      formData.append("policyNumber", insurance.policyNumber);
+      formData.append("policyValidTill", insurance.validTill);
+      formData.append("signatureType", "TYPED");
+      formData.append("signatureValue", signature);
+      formData.append("consent", true);
+
+      if (file) {
+        formData.append("document", file);
+      }
+
+      await api.post(`/contracts/sign/farmer/${contract._id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       onSuccess();
@@ -128,6 +162,7 @@ export default function AcceptanceReviewModal({
                 setInsurance({ ...insurance, validTill: e.target.value })
               }
             />
+            <input type="file" onChange={(e) => setFile(e.target.files[0])} />
           </div>
         )}
 

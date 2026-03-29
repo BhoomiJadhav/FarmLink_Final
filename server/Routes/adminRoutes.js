@@ -8,8 +8,10 @@ const {
   blockUser,
   unblockUser,
   freezeContract,
+  getAllDisputes,
   resolveDispute,
   getDashboardStats,
+  getAllPolicies,
 } = require("../Controllers/adminController");
 
 // 🔥 Dashboard test
@@ -19,10 +21,10 @@ router.get("/dashboard", protect, authorize("admin"), (req, res) => {
 router.get("/dashboard-stats", protect, authorize("admin"), getDashboardStats);
 // 👥 Get all users
 router.get("/users", protect, authorize("admin"), getAllUsers);
-
+router.get("/policies", protect, authorize("admin"), getAllPolicies);
 // 🧾 Verify farmer policy
 router.patch(
-  "/farmers/:id/verify-policy",
+  "/verify-policy/:id",
   protect,
   authorize("admin"),
   verifyFarmerPolicy,
@@ -38,7 +40,7 @@ router.patch(
   authorize("admin"),
   freezeContract,
 );
-
+router.get("/disputes", protect, authorize("admin"), getAllDisputes);
 // ⚖️ Resolve dispute
 router.patch(
   "/disputes/:id/resolve",

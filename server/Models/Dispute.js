@@ -4,7 +4,7 @@ const disputeSchema = new mongoose.Schema(
   {
     contractId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CultivationContract",
+      ref: "Contract",
       required: true,
     },
 

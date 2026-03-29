@@ -166,12 +166,26 @@ const CultivationContractSchema = new mongoose.Schema(
       policyNumber: String,
       policyValidTill: Date,
 
+      documentUrl: String, // 🔥 ADD THIS (VERY IMPORTANT)
+
       riskManagement: {
         flood: String,
         drought: String,
       },
     },
-
+    policyVerification: {
+      status: {
+        type: String,
+        enum: ["PENDING", "VERIFIED", "REJECTED"],
+        default: "PENDING",
+      },
+      verifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      verifiedAt: Date,
+      remarks: String,
+    },
     /* ======================================================
         RESPONSIBILITIES (LEGAL)
      ====================================================== */

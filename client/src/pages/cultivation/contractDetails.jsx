@@ -1,5 +1,3 @@
-
-
 // import { useParams } from "react-router-dom";
 // import { useEffect, useState } from "react";
 // import axios from "../../api/axios";
@@ -445,9 +443,9 @@
 
 //           {/* AI QUALITY GATEKEEPER: Shows only if production is done but AI isn't */}
 //           {allStagesCompleted && aiNotDone && role === "FARMER" && (
-//             <AiVerificationCard 
-//               contractId={contract._id} 
-//               onVerified={refetchContract} 
+//             <AiVerificationCard
+//               contractId={contract._id}
+//               onVerified={refetchContract}
 //             />
 //           )}
 
@@ -515,7 +513,6 @@
 
 // export default ContractTracking;
 
-
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "../../api/axios";
@@ -556,6 +553,8 @@ const ContractTracking = () => {
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState("");
+  const isFrozen =
+    contract?.contractStatus === "FROZEN" || contract?.adminOverride?.isFrozen;
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -680,10 +679,12 @@ const ContractTracking = () => {
   };
 
   // --- GATEKEEPER LOGIC ---
-  const allStagesCompleted = contract.cultivationStages?.length > 0 && contract.cultivationStages.every(s => s.status === "COMPLETED");
+  const allStagesCompleted =
+    contract.cultivationStages?.length > 0 &&
+    contract.cultivationStages.every((s) => s.status === "COMPLETED");
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="relative max-w-7xl mx-auto p-6 space-y-6">
       <ContractHeader contract={contract} />
 
       <ContractKpiRow kpis={tracking.kpis} />
@@ -701,7 +702,7 @@ const ContractTracking = () => {
             role={role}
             seedSupply={contract.seedSupply}
             // ✅ FIX 1: Passing the AI details so Timeline Stage 7 marks as "Completed"
-            aiQualityDetails={contract.aiQualityDetails} 
+            aiQualityDetails={contract.aiQualityDetails}
             onUpload={(stage) => setUploadStage(stage)}
             onVerify={(stage, approved) => verifyStage(stage._id, approved)}
             onView={(stage) => setViewStage(stage)}
@@ -711,10 +712,10 @@ const ContractTracking = () => {
           {/* ✅ FIX 2: Removed "aiNotDone" so the image and verified result STAY visible on the screen */}
           {allStagesCompleted && role === "FARMER" && (
             <div className="animate-in fade-in duration-500">
-              <AiVerificationCard 
-                contractId={contract._id} 
+              <AiVerificationCard
+                contractId={contract._id}
                 initialResult={contract.aiQualityDetails}
-                onVerified={refetchContract} 
+                onVerified={refetchContract}
               />
             </div>
           )}
@@ -778,6 +779,25 @@ const ContractTracking = () => {
         contractId={contract._id}
         onDisputeCreated={(newDispute) => setDispute(newDispute)}
       />
+      {isFrozen && (
+        <div className="fixed inset-0 bg-white/90 backdrop-blur-sm z-[9999] flex items-center justify-center animate-fade">
+          <div className="text-center p-8 max-w-md bg-white rounded-2xl shadow-xl border">
+            <h2 className="text-2xl font-bold text-red-600 flex items-center justify-center gap-2">
+              🚫 Contract Frozen
+            </h2>
+
+            <p className="text-gray-600 mt-3 text-sm">
+              This contract has been frozen by admin due to a dispute.
+            </p>
+
+            {contract?.adminOverride?.reason && (
+              <p className="mt-3 text-xs text-gray-500 italic">
+                Reason: {contract.adminOverride.reason}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

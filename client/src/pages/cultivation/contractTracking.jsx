@@ -1,5 +1,3 @@
-
-
 // import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 // import axios from "../../api/axios";
@@ -152,8 +150,8 @@
 //               {contract.aiQualityDetails && (
 //                 <div className="absolute top-0 right-0">
 //                   <span className={`text-[10px] font-bold px-2 py-1 rounded-bl-lg uppercase text-white ${
-//                     contract.aiQualityDetails.grade === 'Pending' 
-//                       ? 'bg-amber-500' 
+//                     contract.aiQualityDetails.grade === 'Pending'
+//                       ? 'bg-amber-500'
 //                       : 'bg-green-600'
 //                   }`}>
 //                     {contract.aiQualityDetails.grade === 'Pending' ? 'AI Pending' : `AI: ${contract.aiQualityDetails.grade}`}
@@ -204,18 +202,17 @@
 
 // export default ActiveContracts;
 
-
 // import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
-// import { 
-//   CheckCircle, 
-//   Clock, 
-//   ArrowRight, 
-//   Activity, 
-//   ShieldCheck, 
-//   Leaf, 
-//   Zap 
-// } from "lucide-react"; 
+// import {
+//   CheckCircle,
+//   Clock,
+//   ArrowRight,
+//   Activity,
+//   ShieldCheck,
+//   Leaf,
+//   Zap
+// } from "lucide-react";
 // import axios from "../../api/axios";
 
 // const ActiveContracts = () => {
@@ -271,7 +268,7 @@
 //             Monitor your ongoing agreements and AI quality verification status.
 //           </p>
 //         </div>
-        
+
 //         <div className="flex gap-4">
 //           <div className="flex items-center gap-3 text-xs font-black text-emerald-700 bg-white px-5 py-3 rounded-2xl border border-emerald-100 shadow-sm">
 //             <Activity size={16} className="animate-pulse text-emerald-500" />
@@ -305,7 +302,7 @@
 //         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 //           {contracts.map((contract) => {
 //             const isAiVerified = contract.aiQualityDetails?.grade && contract.aiQualityDetails.grade !== 'Pending';
-            
+
 //             return (
 //               <div
 //                 key={contract._id}
@@ -366,8 +363,8 @@
 //                       </span>
 //                     </div>
 //                     <div className="h-1.5 w-full bg-emerald-100 rounded-full overflow-hidden mb-3">
-//                       <div 
-//                         className="bg-emerald-500 h-full rounded-full" 
+//                       <div
+//                         className="bg-emerald-500 h-full rounded-full"
 //                         style={{ width: `${contract.aiQualityDetails?.confidence}%` }}
 //                       ></div>
 //                     </div>
@@ -397,12 +394,11 @@
 
 // export default ActiveContracts;
 
-
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  ArrowRight, 
-  Leaf, 
+import {
+  ArrowRight,
+  Leaf,
   Zap,
   User,
   ShoppingBag,
@@ -410,11 +406,11 @@ import {
   Activity,
   Search,
   Truck,
-  CheckCircle2
-} from "lucide-react"; 
+  CheckCircle2,
+} from "lucide-react";
 import axios from "../../api/axios";
 import Sidebar from "../../components/Sidebar";
-import Topbar from "../../components/topNav.jsx"; 
+import Topbar from "../../components/topNav.jsx";
 import ProfileModal from "../../components/profileModal.jsx";
 
 const ActiveContracts = () => {
@@ -422,11 +418,11 @@ const ActiveContracts = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  
+
   // Navbar & Modal States
   const [profileData, setProfileData] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -461,26 +457,66 @@ const ActiveContracts = () => {
 
   const getStatusConfig = (status) => {
     const s = status?.toUpperCase() || "";
-    if (s.includes("ACTIVE")) return { bg: "bg-[#064e3b]", text: "text-white", icon: <Activity size={10}/> };
-    if (s.includes("DELIVERY") || s.includes("TRANSIT")) return { bg: "bg-[#0369a1]", text: "text-white", icon: <Truck size={10}/> };
-    if (s.includes("COMPLETED")) return { bg: "bg-[#15803d]", text: "text-white", icon: <CheckCircle2 size={10}/> };
-    if (s.includes("SENT") || s.includes("PENDING")) return { bg: "bg-[#b45309]", text: "text-white", icon: <Zap size={10}/> };
-    return { bg: "bg-slate-600", text: "text-white", icon: <Activity size={10}/> };
+    if (s.includes("ACTIVE"))
+      return {
+        bg: "bg-[#064e3b]",
+        text: "text-white",
+        icon: <Activity size={10} />,
+      };
+    if (s.includes("DELIVERY") || s.includes("TRANSIT"))
+      return {
+        bg: "bg-[#0369a1]",
+        text: "text-white",
+        icon: <Truck size={10} />,
+      };
+    if (s.includes("COMPLETED"))
+      return {
+        bg: "bg-[#15803d]",
+        text: "text-white",
+        icon: <CheckCircle2 size={10} />,
+      };
+    if (s.includes("SENT") || s.includes("PENDING"))
+      return {
+        bg: "bg-[#b45309]",
+        text: "text-white",
+        icon: <Zap size={10} />,
+      };
+    return {
+      bg: "bg-slate-600",
+      text: "text-white",
+      icon: <Activity size={10} />,
+    };
   };
 
   const filteredContracts = useMemo(() => {
     return contracts.filter((c) => {
-      const cropName = (c.cropDetails?.cropName || c.crop?.name || "").toLowerCase();
-      const variety = (c.cropDetails?.variety || c.crop?.variety || "").toLowerCase();
+      const cropName = (
+        c.cropDetails?.cropName ||
+        c.crop?.name ||
+        ""
+      ).toLowerCase();
+      const variety = (
+        c.cropDetails?.variety ||
+        c.crop?.variety ||
+        ""
+      ).toLowerCase();
       const buyerName = (c.buyer?.name || "").toLowerCase();
       const search = searchTerm.toLowerCase();
-      const matchesSearch = cropName.includes(search) || variety.includes(search) || buyerName.includes(search);
+      const matchesSearch =
+        cropName.includes(search) ||
+        variety.includes(search) ||
+        buyerName.includes(search);
       const matchesStatus = statusFilter === "ALL" || c.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
   }, [contracts, searchTerm, statusFilter]);
 
-  if (loading) return <div className="flex h-screen items-center justify-center bg-[#f4f6f8]"><div className="w-12 h-12 border-4 border-[#064e3b] border-t-transparent rounded-full animate-spin"></div></div>;
+  if (loading)
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f4f6f8]">
+        <div className="w-12 h-12 border-4 border-[#064e3b] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
 
   return (
     <div className="flex h-screen bg-[#f4f6f8] font-sans text-slate-800 overflow-hidden">
@@ -489,12 +525,11 @@ const ActiveContracts = () => {
       </div>
 
       <main className="flex-1 h-full overflow-y-auto relative scroll-smooth bg-[#f4f6f8] flex flex-col">
-        
         {/* TOPBAR - Flush to top, Functional */}
         <div className="flex-shrink-0 z-50">
-          <Topbar 
-            profileData={profileData} 
-            onOpenProfile={() => setShowProfileModal(true)} 
+          <Topbar
+            profileData={profileData}
+            onOpenProfile={() => setShowProfileModal(true)}
             onLogout={logout}
           />
         </div>
@@ -503,9 +538,12 @@ const ActiveContracts = () => {
         <div className="max-w-[1600px] w-full mx-auto px-4 lg:px-6 mt-2 relative z-30">
           <div className="bg-white p-2 rounded-[1.2rem] shadow-sm border border-slate-100 flex flex-col md:flex-row gap-3 items-center">
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input 
-                type="text" 
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                size={14}
+              />
+              <input
+                type="text"
                 placeholder="Search contracts..."
                 className="w-full pl-9 pr-4 py-1.5 bg-[#f8fafc] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#064e3b]/5 focus:border-[#064e3b] transition-all text-xs"
                 value={searchTerm}
@@ -514,7 +552,7 @@ const ActiveContracts = () => {
             </div>
 
             <div className="flex items-center gap-2 w-full md:w-auto">
-              <select 
+              <select
                 className="w-full md:w-[140px] bg-[#f8fafc] border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] font-bold text-slate-700 focus:outline-none cursor-pointer"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -536,20 +574,24 @@ const ActiveContracts = () => {
               const config = getStatusConfig(contract.status);
 
               return (
-                <div key={contract._id} className="group relative bg-white border border-slate-100 rounded-2xl py-7 px-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-                  
+                <div
+                  key={contract._id}
+                  className="group relative bg-white border border-slate-100 rounded-2xl py-7 px-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col"
+                >
                   <div className="absolute top-0 right-0">
-                    <span className={`flex items-center gap-1 text-[10px] font-black px-3 py-1.5 rounded-tr-2xl rounded-bl-lg uppercase ${config.bg} ${config.text} tracking-wider`}>
+                    <span
+                      className={`flex items-center gap-1 text-[10px] font-black px-3 py-1.5 rounded-tr-2xl rounded-bl-lg uppercase ${config.bg} ${config.text} tracking-wider`}
+                    >
                       {config.icon}
-                      {contract.status?.replace(/_/g, ' ')}
+                      {contract.status?.replace(/_/g, " ")}
                     </span>
                   </div>
 
                   <div className="mb-4 mt-1 flex items-center gap-1.5">
-                     <Hash size={10} className="text-[#92400e]"/>
-                     <span className="text-[9px] font-mono font-bold text-[#92400e] bg-[#fef3c7] px-1.5 py-0.5 rounded border border-[#fde68a]">
-                       {contract._id.slice(-8).toUpperCase()}
-                     </span>
+                    <Hash size={10} className="text-[#92400e]" />
+                    <span className="text-[9px] font-mono font-bold text-[#92400e] bg-[#fef3c7] px-1.5 py-0.5 rounded border border-[#fde68a]">
+                      {contract._id.slice(-8).toUpperCase()}
+                    </span>
                   </div>
 
                   <div className="mb-4">
@@ -557,35 +599,57 @@ const ActiveContracts = () => {
                       <Leaf className="text-emerald-500 shrink-0" size={12} />
                       <span className="truncate">
                         {contract.cropDetails?.cropName || "Crop"}
-                        {contract.cropDetails?.variety ? ` - ${contract.cropDetails.variety}` : ""}
+                        {contract.cropDetails?.variety
+                          ? ` - ${contract.cropDetails.variety}`
+                          : ""}
                       </span>
                     </h3>
                   </div>
 
                   <div className="flex flex-col gap-1.5 mb-5 flex-1">
-                    <PartyBox icon={<User size={14}/>} label="Farmer" name={contract.farmer?.name} color="bg-emerald-50 text-emerald-700"/>
-                    <PartyBox icon={<ShoppingBag size={14}/>} label="Buyer" name={contract.buyer?.name} color="bg-blue-50 text-blue-700"/>
+                    <PartyBox
+                      icon={<User size={14} />}
+                      label="Farmer"
+                      name={contract.farmer?.name}
+                      color="bg-emerald-50 text-emerald-700"
+                    />
+                    <PartyBox
+                      icon={<ShoppingBag size={14} />}
+                      label="Buyer"
+                      name={contract.buyer?.name}
+                      color="bg-blue-50 text-blue-700"
+                    />
                   </div>
 
                   <div className="mb-5 p-2.5 bg-emerald-50/50 border border-emerald-100 rounded-xl">
                     <div className="flex justify-between items-center mb-1.5 px-1">
                       <div className="flex items-center gap-1">
                         <Zap size={10} className="text-emerald-600" />
-                        <span className="text-[8px] font-black text-emerald-800 uppercase tracking-tighter">Grading</span>
+                        <span className="text-[8px] font-black text-emerald-800 uppercase tracking-tighter">
+                          Grading
+                        </span>
                       </div>
-                      <span className="text-[9px] font-black text-emerald-600">{confidence > 0 ? `${confidence.toFixed(0)}%` : '--'}</span>
+                      <span className="text-[9px] font-black text-emerald-600">
+                        {confidence > 0 ? `${confidence.toFixed(0)}%` : "--"}
+                      </span>
                     </div>
                     <div className="h-1 w-full bg-white rounded-full overflow-hidden">
-                      <div className="bg-[#10b981] h-full rounded-full transition-all duration-1000" style={{ width: `${confidence}%` }}></div>
+                      <div
+                        className="bg-[#10b981] h-full rounded-full transition-all duration-1000"
+                        style={{ width: `${confidence}%` }}
+                      ></div>
                     </div>
                   </div>
 
-                  <button 
-                    onClick={() => navigate(`/farmer/harvest-contract-tracking/${contract._id}`)}
+                  <button
+                    onClick={() => navigate(`/contracts/${contract._id}`)}
                     className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#047857] text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-[#064e3b] transition-all group"
-                  > 
-                    Track Details 
-                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" /> 
+                  >
+                    Track Details
+                    <ArrowRight
+                      size={12}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
                   </button>
                 </div>
               );
@@ -605,11 +669,19 @@ const ActiveContracts = () => {
 
 const PartyBox = ({ icon, label, name, color }) => (
   <div className="flex items-center gap-2 p-1.5 bg-[#f8fafc] rounded-lg border border-slate-50">
-    <div className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 ${color}`}>{icon}</div>
+    <div
+      className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 ${color}`}
+    >
+      {icon}
+    </div>
     <div className="min-w-0">
-      <p className="text-[10px] font-bold text-slate-400 uppercase leading-none mb-0.5">{label}</p>
+      <p className="text-[10px] font-bold text-slate-400 uppercase leading-none mb-0.5">
+        {label}
+      </p>
       {/* Name size 14px as requested */}
-      <p className="text-[14px] font-bold text-slate-700 leading-none truncate">{name || 'Verified'}</p>
+      <p className="text-[14px] font-bold text-slate-700 leading-none truncate">
+        {name || "Verified"}
+      </p>
     </div>
   </div>
 );

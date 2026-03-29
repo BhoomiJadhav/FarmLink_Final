@@ -22,6 +22,7 @@ const CONTRACT_STATUS = {
   COMPLETED: "COMPLETED",
   REJECTED: "REJECTED",
   CANCELLED: "CANCELLED",
+  FROZEN: "FROZEN",
 };
 
 module.exports = {

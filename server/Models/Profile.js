@@ -34,19 +34,6 @@ const profileSchema = new mongoose.Schema({
     enum: ["AVAILABLE", "NEGOTIATING", "CONTRACTED"],
     default: "AVAILABLE",
   },
-  policyVerification: {
-    status: {
-      type: String,
-      enum: ["PENDING", "APPROVED", "REJECTED"],
-      default: "PENDING",
-    },
-    verifiedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    verifiedAt: Date,
-    remarks: String,
-  },
 });
 
 module.exports = mongoose.model("Profile", profileSchema);

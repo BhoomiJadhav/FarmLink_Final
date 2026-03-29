@@ -170,7 +170,7 @@
 //   );
 // }
 // src/components/Topbar.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Bell,
   ChevronDown,
@@ -192,6 +192,12 @@ export default function Topbar({
   onLogout = null,
   onOpenProfile = null,
 }) {
+  const [prevCount, setPrevCount] = useState(0);
+  const [showToast, setShowToast] = useState(false);
+  const [latestNotif, setLatestNotif] = useState(null);
+
+  // 🔊 Audio object
+  // const notificationSound = new Audio("../assets/sounds/notification.mp3");
   const [search, setSearch] = useState("");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [openNotif, setOpenNotif] = useState(false);
@@ -202,8 +208,11 @@ export default function Topbar({
 
   // Frontend-only date for display utility
   const [currentDate, setCurrentDate] = useState(new Date());
-
+  const audioRef = useRef(null);
   // --- FIX: Auto-fetch user from LocalStorage if profileData is missing ---
+  useEffect(() => {
+    audioRef.current = new Audio("/sounds/notification.mp3");
+  }, []);
   useEffect(() => {
     if (!profileData) {
       try {
@@ -244,8 +253,23 @@ export default function Topbar({
 
   useEffect(() => {
     if (!notifications) return;
+
     const unread = notifications.filter((n) => !n.read).length;
     setUnreadCount(unread);
+
+    // 🔥 Detect new notification
+    if (notifications.length > prevCount) {
+      const newNotif = notifications[0];
+
+      setLatestNotif(newNotif);
+      setShowToast(true);
+
+      // 🔊 PLAY SOUND
+      audioRef.current?.play().catch(() => {});
+      setTimeout(() => setShowToast(false), 4000);
+    }
+
+    setPrevCount(notifications.length);
   }, [notifications]);
 
   useEffect(() => {
@@ -358,9 +382,8 @@ export default function Topbar({
           >
             <Bell size={20} strokeWidth={2} />
             {unreadCount > 0 && (
-              <span className="absolute top-2 right-2.5 flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border-2 border-white"></span>
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 py-[1px] rounded-full font-bold shadow">
+                {unreadCount > 9 ? "9+" : unreadCount}
               </span>
             )}
           </button>
@@ -487,6 +510,13 @@ export default function Topbar({
           )}
         </div>
       </div>
+      {showToast && latestNotif && (
+        <div className="fixed top-6 right-6 z-50 bg-white shadow-xl rounded-xl p-4 w-80 border border-gray-200 animate-slide-in">
+          <p className="font-semibold text-sm">🔔 {latestNotif.title}</p>
+
+          <p className="text-xs text-gray-600 mt-1">{latestNotif.message}</p>
+        </div>
+      )}
     </header>
   );
 }

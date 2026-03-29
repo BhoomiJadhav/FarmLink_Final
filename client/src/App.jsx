@@ -36,6 +36,8 @@ import AppLayout from "./layouts/appLayout";
 import FarmerHarvestListings from "./pages/Dashboard/FarmerHarvestListings.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import UsersPage from "./pages/admin/UsersPage.jsx";
+import DisputesPage from "./pages/admin/DisputesPage.jsx";
+import PolicyVerificationPage from "./pages/admin/PolicyVerification.jsx";
 import "./styles/pdf-safe.css";
 
 const App = () => {
@@ -69,6 +71,11 @@ const App = () => {
             />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UsersPage />} />
+            <Route path="/admin/disputes" element={<DisputesPage />} />
+            <Route
+              path="/admin/policies"
+              element={<PolicyVerificationPage />}
+            />
             <Route path="/farmer/harvest-crop" element={<HarvestedCrop />} />
             {/* Farmer Dashboard */}
             <Route
