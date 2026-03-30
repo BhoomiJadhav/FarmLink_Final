@@ -583,7 +583,10 @@ const ContractTracking = () => {
   let role = "VIEWER";
   const checkReviewStatus = async () => {
     try {
+      if (!contract?._id) return; // ✅ ADD THIS
+
       const res = await axios.get(`/reviews/${contract._id}/status`);
+
       setHasReviewed(res.data.hasReviewed);
 
       if (!res.data.hasReviewed) {
@@ -594,10 +597,13 @@ const ContractTracking = () => {
     }
   };
   useEffect(() => {
-    if (contract?.contractStatus === "COMPLETED") {
+    if (
+      contract?.contractStatus === "COMPLETED" ||
+      contract?.status === "COMPLETED"
+    ) {
       checkReviewStatus();
     }
-  }, [contract?.contractStatus]);
+  }, [contract?.contractStatus, contract?.status]);
   if (contract && user) {
     const userId = user._id;
 
@@ -816,13 +822,15 @@ const ContractTracking = () => {
         </div>
       )}
       {showFeedbackModal && !hasReviewed && (
-        <FeedbackModal
-          contractId={contract._id}
-          onSuccess={() => {
-            setShowFeedbackModal(false);
-            setHasReviewed(true);
-          }}
-        />
+        <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center">
+          <FeedbackModal
+            contractId={contract._id}
+            onSuccess={() => {
+              setShowFeedbackModal(false);
+              setHasReviewed(true);
+            }}
+          />
+        </div>
       )}
     </div>
   );
