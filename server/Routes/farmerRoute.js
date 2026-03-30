@@ -5,7 +5,13 @@ const Profile = require("../Models/Profile");
 const CultivationContract = require("../Models/CultivationContract");
 const HarvestContract = require("../Models/HarvestSaleContract");
 const { protect } = require("../middleware/auth");
-
+const {
+  resubmitPolicy,
+  createSupportTicket,
+} = require("../Controllers/adminController");
+const policyupload = require("../middleware/uploadPolicy");
+const faqUpload = require("../middleware/uploadFaq");
+const { getUpdates } = require("../Controllers/GovUpdateController");
 /* ======================================================
    FARMER CONTRACT INBOX (NON-DRAFT ONLY)
    GET /api/farmer/contracts
@@ -68,7 +74,7 @@ router.get("/farmers", protect, async (req, res) => {
       availabilityStatus: "AVAILABLE",
     })
       .select(
-        "personal.fullName farm.farmLocation farm.landSize farm.cropTypes farm.insurance"
+        "personal.fullName farm.farmLocation farm.landSize farm.cropTypes farm.insurance",
       )
       .populate("userId", "role");
 
@@ -80,6 +86,7 @@ router.get("/farmers", protect, async (req, res) => {
 /* ======================================================
    PUBLIC FARMER PROFILE (KEEP LAST)
    ====================================================== */
+router.get("/govt-updates", protect, getUpdates);
 router.get("/:id", async (req, res) => {
   try {
     const farmerProfile = await Profile.findOne({
@@ -93,5 +100,12 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.patch(
+  "/resubmit-policy/:id",
+  protect,
+  policyupload.single("file"), // if using multer
+  resubmitPolicy,
+);
+router.post("/support", protect, faqUpload.single("file"), createSupportTicket);
 
 module.exports = router;

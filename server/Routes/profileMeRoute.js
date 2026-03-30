@@ -38,13 +38,20 @@ router.get("/me", protect, async (req, res) => {
     const crops = cultivationContracts.map((c) => ({
       contractId: c._id,
       contractType: "CULTIVATION",
+
       cropName: c.cropDetails?.cropName || "—",
       area: c.cropDetails?.contractedArea || "—",
       expectedYield: c.cropDetails?.expectedYield || "—",
+
       status: c.status,
+
       pricePerUnit: c.payment?.agreedPricePerUnit
         ? `₹${c.payment.agreedPricePerUnit}`
         : "—",
+
+      // 🔥🔥 ADD THESE (CRITICAL)
+      insurance: c.insurance,
+      policyVerification: c.policyVerification,
     }));
 
     const harvestedCrops = harvestContracts.map((c) => ({

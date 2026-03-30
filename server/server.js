@@ -115,7 +115,7 @@ cron.schedule("0 * * * *", () => {
 });
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use("/api/admin", adminRoutes);
 // Route Registration
 app.use("/api/contracts", contractRoutes);
 app.use("/api/auth", authRoutes);
@@ -135,8 +135,6 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api", messageRoutes);
 app.use("/api", disputeRoutes);
-
-app.use("/api/admin", adminRoutes);
 
 // Register AI Route
 app.use("/api/ai", aiRoutes);

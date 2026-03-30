@@ -9,6 +9,8 @@ export default function AdminSidebar() {
     { name: "Users", path: "/admin/users" },
     { name: "Policy Verification", path: "/admin/policies" },
     { name: "Disputes", path: "/admin/disputes" },
+    { name: "Support Tickets", path: "/admin/support" },
+    { name: "Analytics", path: "/admin/analytics" },
   ];
 
   return (
