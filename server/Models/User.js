@@ -39,6 +39,25 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  karmaScore: { type: Number, default: 50 },
+
+  rating: {
+    average: { type: Number, default: 0 },
+    count: { type: Number, default: 0 },
+  },
+
+  stats: {
+    totalContracts: { type: Number, default: 0 },
+    completedContracts: { type: Number, default: 0 },
+    disputes: { type: Number, default: 0 },
+    onTimeDeliveries: { type: Number, default: 0 },
+  },
+
+  verificationStatus: {
+    type: String,
+    enum: ["unverified", "partial", "verified"],
+    default: "unverified",
+  },
 });
 
 // Hash password before saving

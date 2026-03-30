@@ -551,7 +551,8 @@ const ContractTracking = () => {
   const [dispute, setDispute] = useState(null);
   const [disputeModalOpen, setDisputeModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(true);
   const [error, setError] = useState("");
   const isFrozen =
     contract?.contractStatus === "FROZEN" || contract?.adminOverride?.isFrozen;
@@ -580,7 +581,23 @@ const ContractTracking = () => {
   }, [contractId]);
 
   let role = "VIEWER";
+  const checkReviewStatus = async () => {
+    try {
+      const res = await axios.get(`/reviews/${contract._id}/status`);
+      setHasReviewed(res.data.hasReviewed);
 
+      if (!res.data.hasReviewed) {
+        setShowFeedbackModal(true);
+      }
+    } catch (err) {
+      console.error("Review check failed", err);
+    }
+  };
+  useEffect(() => {
+    if (contract?.contractStatus === "COMPLETED") {
+      checkReviewStatus();
+    }
+  }, [contract?.contractStatus]);
   if (contract && user) {
     const userId = user._id;
 
@@ -797,6 +814,15 @@ const ContractTracking = () => {
             )}
           </div>
         </div>
+      )}
+      {showFeedbackModal && !hasReviewed && (
+        <FeedbackModal
+          contractId={contract._id}
+          onSuccess={() => {
+            setShowFeedbackModal(false);
+            setHasReviewed(true);
+          }}
+        />
       )}
     </div>
   );

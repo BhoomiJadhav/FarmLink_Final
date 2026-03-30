@@ -558,6 +558,8 @@ export default function HarvestContractDetail() {
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [driverContact, setDriverContact] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(true);
 
   /* ================= FETCH CURRENT USER ================= */
   useEffect(() => {
@@ -582,7 +584,11 @@ export default function HarvestContractDetail() {
 
   if (loading) return <div className="p-8">Loading contract…</div>;
   if (!contract) return <div className="p-8">Contract not found</div>;
-
+  useEffect(() => {
+    if (contract?.contractStatus === "COMPLETED") {
+      checkReviewStatus();
+    }
+  }, [contract?.contractStatus]);
   /* ================= SAFE EXTRACTION ================= */
   const {
     harvestDetails = {},
@@ -634,6 +640,21 @@ export default function HarvestContractDetail() {
     payment.status !== "VERIFIED";
 
   const lastLocationUpdated = delivery?.liveLocation?.updatedAt;
+  const checkReviewStatus = async () => {
+    try {
+      if (!contract?._id) return;
+
+      const res = await api.get(`/reviews/${contract._id}/status`);
+
+      setHasReviewed(res.data.hasReviewed);
+
+      if (!res.data.hasReviewed) {
+        setShowFeedbackModal(true);
+      }
+    } catch (err) {
+      console.error("Review check failed", err);
+    }
+  };
 
   function timeAgo(date) {
     if (!date) return "—";
@@ -803,7 +824,7 @@ export default function HarvestContractDetail() {
 
                     await api.post(
                       `/harvest-contracts/payment/${contract._id}`,
-                      fd
+                      fd,
                     );
                     setPaymentSubmitting(false);
 
@@ -841,7 +862,7 @@ export default function HarvestContractDetail() {
                   onClick={async () => {
                     try {
                       await api.post(
-                        `/harvest-contracts/payment/verify/${contract._id}`
+                        `/harvest-contracts/payment/verify/${contract._id}`,
                       );
                       alert("Payment verified successfully");
                     } catch {
@@ -914,7 +935,7 @@ export default function HarvestContractDetail() {
                   setSubmitting(true);
                   await api.post(
                     `/harvest-contracts/delivery/dispatch/${contract._id}`,
-                    { vehicleNumber, driverContact }
+                    { vehicleNumber, driverContact },
                   );
                   setSubmitting(false);
                   setShowDeliveryModal(false);
@@ -961,6 +982,15 @@ function DeliveryProgress({ status }) {
             </div>
           );
         })}
+        {showFeedbackModal && !hasReviewed && (
+          <FeedbackModal
+            contractId={contract._id}
+            onSuccess={() => {
+              setShowFeedbackModal(false);
+              setHasReviewed(true);
+            }}
+          />
+        )}
       </div>
     </div>
   );
