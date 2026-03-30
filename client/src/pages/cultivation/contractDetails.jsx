@@ -533,7 +533,7 @@ import DisputeModal from "../../components/DisputeModal";
 import DisputeInfoCard from "../../components/DisputeInfoCard";
 import SecureChatWidget from "../../components/SecureChatWidget";
 import CultivationDeliverySection from "../../components/cultivation/contractTracking/CultivationDeliverySection";
-
+import FeedbackModal from "../../components/FeedbackModal";
 // --- NEW AI COMPONENT IMPORT ---
 import AiVerificationCard from "../../components/contracts/AiVerificationCard";
 

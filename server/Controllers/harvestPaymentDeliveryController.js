@@ -218,6 +218,7 @@ exports.verifyDeliveryOtp = async (req, res) => {
   contract.delivery.otpVerified = true;
   contract.delivery.deliveredAt = new Date();
   contract.status = "COMPLETED";
+  contract.contractStatus = "COMPLETED"; // ✅ FIX: update contract-level status
 
   await contract.save();
 
@@ -309,16 +310,37 @@ exports.updateDriverLocation = async (req, res) => {
 
 /* ================= FARMER CONFIRM DELIVERY ================= */
 exports.confirmDelivery = async (req, res) => {
-  const contract = await HarvestSaleContract.findById(req.params.contractId);
-  if (!contract) return res.status(404).json({ message: "Contract not found" });
+  try {
+    const contract = await HarvestSaleContract.findById(req.params.contractId);
 
-  if (req.user.role !== "farmer")
-    return res.status(403).json({ message: "Only farmer allowed" });
+    if (!contract)
+      return res.status(404).json({ message: "Contract not found" });
 
-  contract.delivery.status = "DELIVERED";
-  contract.status = "COMPLETED";
+    if (req.user.role !== "farmer")
+      return res.status(403).json({ message: "Only farmer allowed" });
 
-  await contract.save();
+    // ✅ Mark delivery complete
+    contract.delivery.status = "DELIVERED";
 
-  res.json({ success: true });
+    // ✅ IMPORTANT FIX
+    contract.status = "COMPLETED";
+    contract.contractStatus = "COMPLETED";
+
+    await contract.save();
+
+    // 🔥 OPTIONAL (but recommended)
+    // update completed contract stats
+    await User.findByIdAndUpdate(contract.buyer.buyerId, {
+      $inc: { "stats.completedContracts": 1 },
+    });
+
+    await User.findByIdAndUpdate(contract.farmer.farmerId, {
+      $inc: { "stats.completedContracts": 1 },
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Confirm delivery error:", err);
+    res.status(500).json({ message: err.message });
+  }
 };

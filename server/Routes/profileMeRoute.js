@@ -15,7 +15,12 @@ router.get("/me", protect, async (req, res) => {
     const userId = req.user._id;
 
     /* ---------- USER ---------- */
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId).select("-password").lean();
+
+    // 🔥 ENSURE DEFAULTS (VERY IMPORTANT)
+    user.rating = user.rating || { average: 0, count: 0 };
+    user.karmaScore = user.karmaScore || 0;
+    user.stats = user.stats || { completedContracts: 0 };
     if (!user) {
       return res
         .status(404)

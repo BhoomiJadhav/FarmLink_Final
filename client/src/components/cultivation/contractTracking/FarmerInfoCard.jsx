@@ -46,6 +46,23 @@ const FarmerInfoCard = ({ farmer }) => {
 
         <div>
           <div className="font-medium">{farmer.name}</div>
+          <div className="flex items-center gap-2">
+            <span className="text-yellow-500 text-lg">⭐</span>
+            <span className="font-semibold">
+              {farmer.rating?.average?.toFixed(1) || "0.0"}
+            </span>
+            <span className="text-gray-500 text-sm">
+              ({farmer.rating?.count || 0} reviews)
+            </span>
+          </div>
+
+          {/* ⚡ Karma */}
+          <div className="text-sm text-gray-600">
+            Trust Score:{" "}
+            <span className="font-semibold text-emerald-600">
+              {farmer.karmaScore || 0}/100
+            </span>
+          </div>
           <div className="text-sm text-gray-500">{farmer.address || "—"}</div>
         </div>
       </div>

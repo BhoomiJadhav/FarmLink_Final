@@ -48,7 +48,7 @@ exports.createReview = async (req, res) => {
     // ✅ Create review
     const review = await Review.create({
       contractId,
-      contractType: contract.__t,
+      contractType: contract.contractType,
       reviewer: {
         userId,
         role: reviewerRole,
@@ -82,7 +82,7 @@ exports.createReview = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-exports.updateUserStats = async (userId, newRating) => {
+const updateUserStats = async (userId, newRating) => {
   const user = await User.findById(userId);
 
   if (!user) return;

@@ -531,6 +531,7 @@ import { useParams, Link } from "react-router-dom";
 import api from "../../api/axios";
 import { ArrowLeft, Phone, MapPin, CheckCircle } from "lucide-react";
 import LiveDeliveryMap from "./LiveDeliveryMap";
+import FeedbackModal from "../../components/FeedbackModal";
 
 /* ================= DELIVERY STEPS ================= */
 const DELIVERY_STEPS = [
@@ -581,22 +582,31 @@ export default function HarvestContractDetail() {
     const interval = setInterval(fetchContract, 5000);
     return () => clearInterval(interval);
   }, [id]);
-
-  if (loading) return <div className="p-8">Loading contract…</div>;
-  if (!contract) return <div className="p-8">Contract not found</div>;
   useEffect(() => {
-    if (contract?.contractStatus === "COMPLETED") {
+    if (
+      contract &&
+      (contract.contractStatus === "COMPLETED" ||
+        contract.status === "COMPLETED")
+    ) {
       checkReviewStatus();
     }
-  }, [contract?.contractStatus]);
+  }, [contract]);
+  if (loading) return <div className="p-8">Loading contract…</div>;
+  if (!contract) return <div className="p-8">Contract not found</div>;
+
   /* ================= SAFE EXTRACTION ================= */
   const {
     harvestDetails = {},
     farmer = {},
     buyer = {},
     delivery = {},
-    status: contractStatus,
+    contractStatus,
   } = contract;
+  console.log("DEBUG STATUS:", {
+    deliveryStatus: delivery.status,
+    contractStatus: contract.contractStatus,
+    baseStatus: contract.status,
+  });
 
   const payment = {
     mode: contract.payment?.mode ?? "BEFORE_DELIVERY",
@@ -947,6 +957,21 @@ export default function HarvestContractDetail() {
           </div>
         </div>
       )}
+      {showFeedbackModal && !hasReviewed && (
+        <>
+          {/* Block UI */}
+          <div className="fixed inset-0 bg-black/40 z-[99998]" />
+
+          {/* Modal */}
+          <FeedbackModal
+            contractId={contract._id}
+            onSuccess={() => {
+              setShowFeedbackModal(false);
+              setHasReviewed(true);
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -982,15 +1007,6 @@ function DeliveryProgress({ status }) {
             </div>
           );
         })}
-        {showFeedbackModal && !hasReviewed && (
-          <FeedbackModal
-            contractId={contract._id}
-            onSuccess={() => {
-              setShowFeedbackModal(false);
-              setHasReviewed(true);
-            }}
-          />
-        )}
       </div>
     </div>
   );

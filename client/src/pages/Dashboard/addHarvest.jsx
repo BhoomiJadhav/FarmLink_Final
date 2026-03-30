@@ -131,7 +131,7 @@ const AddHarvestListing = () => {
         }),
       );
       images.forEach((img) => formData.append("images", img));
-
+      formData.append("declarationAccepted", form.declarationAccepted);
       const res = await fetch(`${API_BASE}/harvest-listings/create`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -261,18 +261,18 @@ const AddHarvestListing = () => {
                       Select Month
                     </option>
                     {[
-                      "Jan",
-                      "Feb",
-                      "Mar",
-                      "Apr",
+                      "January",
+                      "February",
+                      "March",
+                      "April",
                       "May",
-                      "Jun",
-                      "Jul",
-                      "Aug",
-                      "Sep",
-                      "Oct",
-                      "Nov",
-                      "Dec",
+                      "June",
+                      "July",
+                      "August",
+                      "September",
+                      "October",
+                      "November",
+                      "December",
                     ].map((m) => (
                       <option key={m} value={m}>
                         {m}
@@ -332,7 +332,13 @@ const AddHarvestListing = () => {
                       Select
                     </option>
                     <option value="FRESH">Fresh</option>
-                    <option value="STORED">Stored</option>
+                    <option value="STORED_LT_1_MONTH">
+                      Stored &lt; 1 Month
+                    </option>
+                    <option value="STORED_1_3_MONTHS">Stored 1–3 Months</option>
+                    <option value="STORED_GT_3_MONTHS">
+                      Stored &gt; 3 Months
+                    </option>
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -350,7 +356,7 @@ const AddHarvestListing = () => {
                       Select
                     </option>
                     <option value="SORTED">Sorted</option>
-                    <option value="PARTIAL">Partial</option>
+                    <option value="PARTIALLY_SORTED">Partially Sorted</option>
                     <option value="NOT_SORTED">Not Sorted</option>
                   </select>
                 </div>

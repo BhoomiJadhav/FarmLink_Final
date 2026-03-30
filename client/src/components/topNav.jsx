@@ -214,7 +214,7 @@ export default function Topbar({
     audioRef.current = new Audio("/sounds/notification.mp3");
   }, []);
   useEffect(() => {
-    if (!profileData) {
+    if (!profileData || !profileData.user) {
       try {
         const storedUser =
           localStorage.getItem("user") || localStorage.getItem("userInfo");
@@ -249,8 +249,8 @@ export default function Topbar({
   }, [profileData]);
 
   // Determine which data source to use
-  const activeData = profileData || backupProfile;
-
+  const activeData = profileData?.user ? profileData : backupProfile;
+  console.log("TOPBAR FINAL DATA:", activeData);
   useEffect(() => {
     if (!notifications) return;
 
@@ -321,11 +321,16 @@ export default function Topbar({
   const displayPhone =
     activeData?.profile?.personal?.phone || activeData?.phone || "No Phone";
   const displayLocation =
-    activeData?.profile?.farm?.farmLocation ||
-    activeData?.location ||
+    activeData?.profile?.personal?.address ||
+    activeData?.user?.address ||
     "No Location";
   const displayInsurance =
     activeData?.profile?.insurance?.provider || "No Insurance";
+  const ratingAvg = activeData?.user?.rating?.average ?? 0;
+  const ratingCount = activeData?.user?.rating?.count ?? 0;
+
+  const karma = activeData?.user?.karmaScore ?? 0;
+  console.log("RATING DEBUG:", activeData?.user?.rating);
 
   const dateOptions = { weekday: "short", month: "short", day: "numeric" };
   const formattedDate = currentDate.toLocaleDateString("en-US", dateOptions);
@@ -458,6 +463,41 @@ export default function Topbar({
 
                 <div className="px-6 py-5 space-y-4 bg-white/50">
                   <div className="flex items-center gap-3 text-sm text-slate-600 group hover:text-emerald-700 transition-colors cursor-default">
+                    {/* ⭐ Rating */}
+                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                      <div className="p-1.5 rounded-lg bg-yellow-100 text-yellow-600">
+                        ⭐
+                      </div>
+
+                      <span className="font-medium">
+                        {ratingAvg ? ratingAvg.toFixed(1) : "0.0"}
+                        <span className="text-xs text-gray-400 ml-1">
+                          ({ratingCount} reviews)
+                        </span>
+                      </span>
+                    </div>
+
+                    {/* ⚡ Karma */}
+                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                      <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-600">
+                        ⚡
+                      </div>
+
+                      <span className="font-medium">
+                        Trust Score: {karma}/100
+                      </span>
+                    </div>
+                    {karma > 80 && (
+                      <div className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full w-fit">
+                        Trusted User
+                      </div>
+                    )}
+
+                    {karma < 40 && karma > 0 && (
+                      <div className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-full w-fit">
+                        Low Trust
+                      </div>
+                    )}
                     <div className="p-1.5 rounded-lg bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-600 transition-colors">
                       <Phone size={14} />
                     </div>

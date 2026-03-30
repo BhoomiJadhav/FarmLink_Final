@@ -142,8 +142,7 @@ const getHarvestContractById = async (req, res) => {
     const contract = await HarvestSaleContract.findById(req.params.id)
       .populate("buyer.buyerId", "name email mobile address")
       .populate("farmer.farmerId", "name email mobile address")
-      .populate("harvestListingId")
-      .lean(); // IMPORTANT
+      .populate("harvestListingId");
 
     if (!contract) {
       return res.status(404).json({ message: "Contract not found" });
@@ -152,15 +151,23 @@ const getHarvestContractById = async (req, res) => {
     // ✅ NORMALIZE AMOUNT (MISSING FIX)
     const amount = normalizeContractValue(contract);
 
-    res.json({
-      contract: {
-        ...contract,
-        payment: {
-          ...contract.payment,
-          amount,
-        },
-      },
-    });
+    // res.json({
+    //   contract: {
+    //     ...contract,
+    //     payment: {
+    //       ...contract.payment,
+    //       amount,
+    //     },
+    //   },
+    // });
+    const obj = contract.toObject(); // 🔥 IMPORTANT
+
+    obj.payment = {
+      ...obj.payment,
+      amount,
+    };
+
+    res.json({ contract: obj });
   } catch (err) {
     console.error("Fetch Harvest Contract Error:", err);
     res.status(500).json({ message: "Failed to fetch contract" });
