@@ -176,15 +176,15 @@ const CultivationContractSchema = new mongoose.Schema(
     policyVerification: {
       status: {
         type: String,
-        enum: ["PENDING", "VERIFIED", "REJECTED"],
+        enum: ["PENDING", "VERIFIED", "REJECTED", "RESUBMITTED"],
         default: "PENDING",
       },
+      remarks: String,
       verifiedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
       verifiedAt: Date,
-      remarks: String,
     },
     /* ======================================================
         RESPONSIBILITIES (LEGAL)

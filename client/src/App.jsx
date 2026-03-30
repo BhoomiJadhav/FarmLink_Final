@@ -38,6 +38,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import UsersPage from "./pages/admin/UsersPage.jsx";
 import DisputesPage from "./pages/admin/DisputesPage.jsx";
 import PolicyVerificationPage from "./pages/admin/PolicyVerification.jsx";
+import AdminSupport from "./pages/admin/AdminSupport.jsx";
+import AdminAnalytics from "./pages/admin/AdminAnalytics.jsx";
 import "./styles/pdf-safe.css";
 
 const App = () => {
@@ -76,6 +78,8 @@ const App = () => {
               path="/admin/policies"
               element={<PolicyVerificationPage />}
             />
+            <Route path="/admin/support" element={<AdminSupport />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/farmer/harvest-crop" element={<HarvestedCrop />} />
             {/* Farmer Dashboard */}
             <Route

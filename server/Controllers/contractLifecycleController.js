@@ -93,8 +93,7 @@ const markContractCompleted = async (req, res) => {
   res.json({ message: "Contract completed successfully" });
 };
 
-module.exports = {
-  acceptHarvestContract,
+module.exports = { acceptHarvestContract,
   rejectHarvestContract,
   markContractCompleted,
 };

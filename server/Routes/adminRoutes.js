@@ -12,7 +12,11 @@ const {
   resolveDispute,
   getDashboardStats,
   getAllPolicies,
+  getAllTickets,
+  updateTicket,
+  getAdminAnalytics,
 } = require("../Controllers/adminController");
+const { createUpdate } = require("../Controllers/GovUpdateController");
 
 // 🔥 Dashboard test
 router.get("/dashboard", protect, authorize("admin"), (req, res) => {
@@ -48,5 +52,9 @@ router.patch(
   authorize("admin"),
   resolveDispute,
 );
+router.get("/tickets", protect, authorize("admin"), getAllTickets);
 
+router.patch("/ticket/:id", protect, authorize("admin"), updateTicket);
+router.get("/analytics", protect, authorize("admin"), getAdminAnalytics);
+router.post("/govt-update", protect, authorize("admin"), createUpdate);
 module.exports = router;

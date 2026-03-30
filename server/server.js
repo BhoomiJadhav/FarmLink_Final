@@ -33,6 +33,7 @@ const devRoutes = require("./Routes/dev.routes");
 const disputeRoutes = require("./Routes/disputeRoutes.js");
 const cultivationDeliveryRoutes = require("./Routes/cultivationDeliveryRoutes.js");
 const adminRoutes = require("./Routes/adminRoutes");
+const reviewRoutes = require("./Routes/reviewRoutes");
 // New AI Route
 const aiRoutes = require("./Routes/aiRoutes");
 
@@ -115,7 +116,7 @@ cron.schedule("0 * * * *", () => {
 });
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use("/api/admin", adminRoutes);
 // Route Registration
 app.use("/api/contracts", contractRoutes);
 app.use("/api/auth", authRoutes);
@@ -135,8 +136,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api", messageRoutes);
 app.use("/api", disputeRoutes);
-
-app.use("/api/admin", adminRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // Register AI Route
 app.use("/api/ai", aiRoutes);

@@ -153,7 +153,7 @@ import {
 } from "lucide-react";
 import farmlinkLogo from "../assets/Farmlink_Logo-bg.png";
 
-export default function Sidebar({ onLogout }) {
+export default function Sidebar({ onLogout, onSupportClick }) {
   const [openMenus, setOpenMenus] = useState({
     harvestContracts: false,
     cultivationContracts: false,
@@ -284,10 +284,17 @@ export default function Sidebar({ onLogout }) {
         </NavLink>
 
         {/* Admin */}
-        <NavLink to="/farmer/admin" className={linkClasses}>
+        {/* <NavLink to="/farmer/admin" className={linkClasses}>
           <Headphones className="h-5 w-5 text-emerald-400" />
           Admin Contact
-        </NavLink>
+        </NavLink> */}
+        <button
+          onClick={onSupportClick}
+          className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 w-full"
+        >
+          <Headphones className="h-5 w-5 text-emerald-400" />
+          Admin Contact
+        </button>
       </nav>
 
       {/* LOGOUT */}
