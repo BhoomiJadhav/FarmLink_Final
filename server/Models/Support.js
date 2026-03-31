@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const SupportSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-
+  role: {
+    type: String,
+    enum: ["farmer", "buyer"],
+    required: true,
+  },
   subject: String,
   problem: String,
   fileUrl: String,

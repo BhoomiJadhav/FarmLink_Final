@@ -523,157 +523,679 @@
 //     </>
 //   );
 // }
+
+// import React, { useEffect, useState } from "react";
+// import api from "../../api/axios";
+// import Sidebar from "../../components/BuyerSidebar.jsx";
+// import Topbar from "../../components/topNav.jsx";
+// import { useNavigate } from "react-router-dom";
+// import { FileText, MessageSquare, CheckCircle2, Timer } from "lucide-react";
+
+// /* ---------- STAT CARD ---------- */
+// function StatCard({ title, value, icon: Icon }) {
+//   return (
+//     <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center justify-between">
+//       <div>
+//         <p className="text-[11px] font-bold text-slate-400 uppercase">
+//           {title}
+//         </p>
+//         <h2 className="text-2xl font-black text-[#064e3b]">{value}</h2>
+//       </div>
+//       <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+//         <Icon size={20} />
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* ---------- MAIN DASHBOARD ---------- */
+// export default function BuyerDashboard() {
+//   const navigate = useNavigate();
+
+//   const [profileData, setProfileData] = useState(null);
+//   const [contracts, setContracts] = useState([]);
+//   const [stats, setStats] = useState({
+//     total: 0,
+//     pending: 0,
+//     active: 0,
+//     negotiating: 0,
+//   });
+
+//   /* ---------- LOAD PROFILE ---------- */
+//   useEffect(() => {
+//     async function loadProfile() {
+//       try {
+//         const res = await api.get("/profile/me");
+//         setProfileData(res.data);
+
+//         const allContracts = res.data?.contracts || [];
+
+//         setContracts(allContracts);
+
+//         setStats({
+//           total: allContracts.length,
+//           pending: allContracts.filter((c) => c.status === "PENDING").length,
+//           active: allContracts.filter((c) =>
+//             ["ACTIVE", "ACCEPTED"].includes(c.status),
+//           ).length,
+//           negotiating: allContracts.filter((c) => c.status === "NEGOTIATING")
+//             .length,
+//         });
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     }
+
+//     loadProfile();
+//   }, []);
+
+//   /* ---------- LOGOUT ---------- */
+//   const logout = () => {
+//     localStorage.clear();
+//     window.location.href = "/login";
+//   };
+
+//   return (
+//     <div className="flex h-screen bg-[#f4f6f8] overflow-hidden">
+//       {/* SIDEBAR */}
+//       <Sidebar onLogout={logout} />
+
+//       {/* MAIN */}
+//       <main className="flex-1 flex flex-col overflow-hidden">
+//         {/* ✅ TOPBAR (FIXED) */}
+//         <Topbar profileData={profileData} onLogout={logout} />
+
+//         {/* CONTENT */}
+//         <div className="p-6 space-y-6 overflow-y-auto">
+//           {/* HEADER */}
+//           <div>
+//             <h1 className="text-2xl font-bold text-[#064e3b]">
+//               Welcome back, {profileData?.user?.name || "Buyer"}
+//             </h1>
+//             <p className="text-sm text-slate-500">
+//               Manage your contracts and track deals easily.
+//             </p>
+//           </div>
+
+//           {/* STATS */}
+//           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+//             <StatCard
+//               title="Total Contracts"
+//               value={stats.total}
+//               icon={FileText}
+//             />
+//             <StatCard title="Pending" value={stats.pending} icon={Timer} />
+//             <StatCard
+//               title="Active Deals"
+//               value={stats.active}
+//               icon={CheckCircle2}
+//             />
+//             <StatCard
+//               title="Negotiations"
+//               value={stats.negotiating}
+//               icon={MessageSquare}
+//             />
+//           </div>
+
+//           {/* QUICK ACTIONS */}
+//           <div className="bg-white p-5 rounded-xl shadow-sm border">
+//             <h2 className="font-bold text-lg mb-4 text-[#064e3b]">
+//               Quick Actions
+//             </h2>
+
+//             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+//               <button
+//                 onClick={() => navigate("/buyer/contracts")}
+//                 className="p-4 border rounded-lg hover:shadow"
+//               >
+//                 📄 Contracts
+//               </button>
+
+//               <button
+//                 onClick={() => navigate("/buyer/negotiations")}
+//                 className="p-4 border rounded-lg hover:shadow"
+//               >
+//                 💬 Negotiate
+//               </button>
+
+//               <button
+//                 onClick={() => navigate("/buyer/payments")}
+//                 className="p-4 border rounded-lg hover:shadow"
+//               >
+//                 💰 Payments
+//               </button>
+
+//               <button
+//                 onClick={() => navigate("/buyer/analytics")}
+//                 className="p-4 border rounded-lg hover:shadow"
+//               >
+//                 📊 Analytics
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </main>
+//     </div>
+//   );
+// }
+
 import React, { useEffect, useState } from "react";
+import { Routes, Route, Link, useParams } from "react-router-dom";
+import { FileText, Loader2 } from "lucide-react";
+import FarmerList from "./FarmerList";
 import api from "../../api/axios";
-import Sidebar from "../../components/Sidebar.jsx";
-import Topbar from "../../components/topNav.jsx";
-import { useNavigate } from "react-router-dom";
-import { FileText, MessageSquare, CheckCircle2, Timer } from "lucide-react";
 
-/* ---------- STAT CARD ---------- */
-function StatCard({ title, value, icon: Icon }) {
-  return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center justify-between">
-      <div>
-        <p className="text-[11px] font-bold text-slate-400 uppercase">
-          {title}
-        </p>
-        <h2 className="text-2xl font-black text-[#064e3b]">{value}</h2>
-      </div>
-      <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-        <Icon size={20} />
-      </div>
-    </div>
-  );
-}
+import BuyerSidebar from "../../components/BuyerSidebar";
+import Topbar from "../../components/topNav";
+import ProfileModal from "../../components/ProfileModal";
 
-/* ---------- MAIN DASHBOARD ---------- */
-export default function BuyerDashboard() {
-  const navigate = useNavigate();
+/* -------------------------------------------------------------------------- */
+/*  Static demo data (replace with API results later)                         */
+/* -------------------------------------------------------------------------- */
+const DEMO_STATS = {
+  totalContracts: 32,
+  pendingRequests: 6,
+  completedDeals: 22,
+  activeNegotiations: 4,
+  avgWheatPrice: "₹2,180/Q",
+  totalFarmers: 1240,
+  activeListings: 856,
+  monthVolume: "45,000 Q",
+};
 
+const DEMO_RECENT_PURCHASES = [
+  {
+    id: "p1",
+    crop: "Wheat",
+    farmer: "Ramesh Kumar",
+    price: "₹2,200/Q",
+    qtyLabel: "500 Quintals",
+    status: "delivered",
+  },
+  {
+    id: "p2",
+    crop: "Rice (Basmati)",
+    farmer: "Sunil Sharma",
+    price: "₹3,500/Q",
+    qtyLabel: "300 Quintals",
+    status: "in-transit",
+  },
+  {
+    id: "p3",
+    crop: "Cotton",
+    farmer: "Vijay Patel",
+    price: "₹6,800/Q",
+    qtyLabel: "200 Quintals",
+    status: "processing",
+  },
+  {
+    id: "p4",
+    crop: "Sugarcane",
+    farmer: "Mohan Das",
+    price: "₹350/Q",
+    qtyLabel: "1000 Quintals",
+    status: "delivered",
+  },
+];
+
+const DEMO_TOP_FARMERS = [
+  { id: "f1", name: "Ramesh Kumar", state: "Punjab", rating: 4.8, deals: 24 },
+  { id: "f2", name: "Sunil Sharma", state: "Haryana", rating: 4.7, deals: 18 },
+  { id: "f3", name: "Vijay Patel", state: "Gujarat", rating: 4.9, deals: 32 },
+  { id: "f4", name: "Mohan Das", state: "Maharashtra", rating: 4.6, deals: 15 },
+];
+
+/* -------------------------------------------------------------------------- */
+/*  Layout & small presentational components                                  */
+/* -------------------------------------------------------------------------- */
+
+function AppLayout({ children }) {
   const [profileData, setProfileData] = useState(null);
-  const [contracts, setContracts] = useState([]);
-  const [stats, setStats] = useState({
-    total: 0,
-    pending: 0,
-    active: 0,
-    negotiating: 0,
-  });
-
-  /* ---------- LOAD PROFILE ---------- */
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
   useEffect(() => {
     async function loadProfile() {
       try {
         const res = await api.get("/profile/me");
         setProfileData(res.data);
-
-        const allContracts = res.data?.contracts || [];
-
-        setContracts(allContracts);
-
-        setStats({
-          total: allContracts.length,
-          pending: allContracts.filter((c) => c.status === "PENDING").length,
-          active: allContracts.filter((c) =>
-            ["ACTIVE", "ACCEPTED"].includes(c.status),
-          ).length,
-          negotiating: allContracts.filter((c) => c.status === "NEGOTIATING")
-            .length,
-        });
       } catch (err) {
         console.error(err);
       }
     }
-
     loadProfile();
   }, []);
 
-  /* ---------- LOGOUT ---------- */
-  const logout = () => {
-    localStorage.clear();
+  function handleLogout() {
+    localStorage.removeItem("token");
     window.location.href = "/login";
-  };
+  }
 
   return (
-    <div className="flex h-screen bg-[#f4f6f8] overflow-hidden">
-      {/* SIDEBAR */}
-      <Sidebar onLogout={logout} />
+    <div className="flex h-screen overflow-hidden bg-[#fbf9f6]">
+      {/* ✅ NEW SIDEBAR */}
+      <BuyerSidebar
+        onClick={() => {
+          console.log("clicked");
+        }}
+        onLogout={handleLogout}
+        onSupportClick={() => setShowSupport(true)}
+      />
 
-      {/* MAIN */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        {/* ✅ TOPBAR (FIXED) */}
-        <Topbar profileData={profileData} onLogout={logout} />
+        {/* ✅ NEW TOPBAR */}
+        <Topbar
+          profileData={profileData}
+          notifications={[]}
+          onSearch={() => {}}
+          onOpenProfile={() => setShowProfileModal(true)}
+          onLogout={handleLogout}
+        />
 
-        {/* CONTENT */}
-        <div className="p-6 space-y-6 overflow-y-auto">
-          {/* HEADER */}
-          <div>
-            <h1 className="text-2xl font-bold text-[#064e3b]">
-              Welcome back, {profileData?.user?.name || "Buyer"}
-            </h1>
-            <p className="text-sm text-slate-500">
-              Manage your contracts and track deals easily.
-            </p>
-          </div>
-
-          {/* STATS */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard
-              title="Total Contracts"
-              value={stats.total}
-              icon={FileText}
-            />
-            <StatCard title="Pending" value={stats.pending} icon={Timer} />
-            <StatCard
-              title="Active Deals"
-              value={stats.active}
-              icon={CheckCircle2}
-            />
-            <StatCard
-              title="Negotiations"
-              value={stats.negotiating}
-              icon={MessageSquare}
-            />
-          </div>
-
-          {/* QUICK ACTIONS */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border">
-            <h2 className="font-bold text-lg mb-4 text-[#064e3b]">
-              Quick Actions
-            </h2>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <button
-                onClick={() => navigate("/buyer/contracts")}
-                className="p-4 border rounded-lg hover:shadow"
-              >
-                📄 Contracts
-              </button>
-
-              <button
-                onClick={() => navigate("/buyer/negotiations")}
-                className="p-4 border rounded-lg hover:shadow"
-              >
-                💬 Negotiate
-              </button>
-
-              <button
-                onClick={() => navigate("/buyer/payments")}
-                className="p-4 border rounded-lg hover:shadow"
-              >
-                💰 Payments
-              </button>
-
-              <button
-                onClick={() => navigate("/buyer/analytics")}
-                className="p-4 border rounded-lg hover:shadow"
-              >
-                📊 Analytics
-              </button>
-            </div>
-          </div>
-        </div>
+        <div className="p-6 overflow-y-auto">{children}</div>
       </main>
+
+      {/* ✅ PROFILE MODAL */}
+      <ProfileModal
+        show={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        profileData={profileData}
+      />
+      {showSupport && (
+        <BuyerSupportModal onClose={() => setShowSupport(false)} />
+      )}
     </div>
   );
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Dashboard main view (matches screenshot structure)                        */
+/* -------------------------------------------------------------------------- */
+
+function DashboardPageStatic() {
+  // for static version we use DEMO_* variables above
+  // Later: replace these local state values with fetches to your backend endpoints
+  const stats = DEMO_STATS;
+  const recent = DEMO_RECENT_PURCHASES;
+  const topFarmers = DEMO_TOP_FARMERS;
+
+  return (
+    <div className="space-y-6">
+      {/* Top stat cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <LargeStatCard
+          label="Total Contracts"
+          value={stats.totalContracts}
+          trend="+15% from last month"
+          iconBadge="📄"
+        />
+        <LargeStatCard
+          label="Pending Requests"
+          value={stats.pendingRequests}
+          trend="3% from last month"
+          negative
+          iconBadge="⏳"
+        />
+        <LargeStatCard
+          label="Completed Deals"
+          value={stats.completedDeals}
+          trend="+25% from last month"
+          positive
+          iconBadge="✅"
+        />
+        <LargeStatCard
+          label="Active Negotiations"
+          value={stats.activeNegotiations}
+          trend=""
+          iconBadge="💬"
+        />
+      </div>
+
+      {/* Main columns: recent purchases + right sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Recent purchases (wide) */}
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg">Recent Purchases</h3>
+            <button className="text-sm text-amber-500">View All</button>
+          </div>
+
+          <div className="mt-4 space-y-3">
+            {recent.map((r) => (
+              <div
+                key={r.id}
+                className="flex items-center justify-between bg-[#fbfbfb] p-4 rounded-lg"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center font-semibold">
+                    {r.crop[0]}
+                  </div>
+                  <div>
+                    <div className="font-medium">{r.crop}</div>
+                    <div className="text-sm text-gray-500">{r.farmer}</div>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <div className="font-semibold">{r.price}</div>
+                  <div className="text-sm text-gray-400">{r.qtyLabel}</div>
+                </div>
+
+                <div>
+                  <StatusBadge status={r.status} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Top Farmers */}
+        <aside className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">Top Farmers</h3>
+            <button className="text-sm text-amber-500">View All</button>
+          </div>
+
+          <div className="mt-4 space-y-3">
+            {topFarmers.map((f) => (
+              <div
+                key={f.id}
+                className="flex items-center justify-between bg-[#fbfbfb] p-3 rounded-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-semibold">
+                    {f.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .slice(0, 2)
+                      .join("")}
+                  </div>
+                  <div>
+                    <div className="font-medium">{f.name}</div>
+                    <div className="text-sm text-gray-500">{f.state}</div>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <div className="text-sm text-emerald-700 font-medium">
+                    {f.rating} <span className="text-xs text-gray-400">↗</span>
+                  </div>
+                  <div className="text-xs text-gray-400">{f.deals} deals</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </aside>
+      </div>
+
+      {/* Market insights row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <InsightCard
+          title="Avg. Wheat Price"
+          value={stats.avgWheatPrice}
+          trend="+2.5%"
+        />
+        <InsightCard
+          title="Total Farmers"
+          value={stats.totalFarmers}
+          trend="+12%"
+        />
+        <InsightCard
+          title="Active Listings"
+          value={stats.activeListings}
+          trend="+8%"
+        />
+        <InsightCard
+          title="This Month Volume"
+          value={stats.monthVolume}
+          trend="+18%"
+        />
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Small presentational subcomponents                                        */
+/* -------------------------------------------------------------------------- */
+
+function LargeStatCard({ label, value, trend, positive, negative, iconBadge }) {
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-sm flex items-start justify-between">
+      <div>
+        <p className="text-sm text-gray-500">{label}</p>
+        <p className="text-2xl font-bold mt-1">{value}</p>
+        {trend && (
+          <p
+            className={`text-sm mt-2 ${
+              negative ? "text-red-500" : "text-emerald-600"
+            }`}
+          >
+            {trend}
+          </p>
+        )}
+      </div>
+
+      <div className="w-12 h-12 rounded-lg bg-[#f6faf6] flex items-center justify-center text-xl">
+        {iconBadge}
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const map = {
+    delivered: "bg-emerald-100 text-emerald-700",
+    "in-transit": "bg-amber-100 text-amber-700",
+    processing: "bg-slate-100 text-slate-700",
+  };
+  return (
+    <div
+      className={`px-3 py-1 rounded-full text-sm font-medium ${
+        map[status] || "bg-gray-100"
+      }`}
+    >
+      {status}
+    </div>
+  );
+}
+
+function InsightCard({ title, value, trend }) {
+  return (
+    <div className="bg-white p-5 rounded-xl shadow-sm">
+      <p className="text-sm text-gray-500">{title}</p>
+      <p className="text-xl font-semibold mt-2">{value}</p>
+      {trend && <p className="text-sm text-emerald-600 mt-1">{trend}</p>}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Market ticker (sticky bottom)                                              */
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/*  Contracts Page and Farmers Directory kept simple (unchanged)              */
+/*  ContractsPage uses static placeholders; you can wire them to API later.   */
+/* -------------------------------------------------------------------------- */
+
+function ContractsPage() {
+  const { id = "buyer123" } = useParams(); // replace with auth
+  const [contracts, setContracts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // For static demo this is left empty.
+  // Later: fetch(`${API_BASE}/contracts/buyer/${id}`) and setContracts(...)
+  useEffect(() => {
+    // placeholder: simulate small loading behavior if desired
+  }, [id]);
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-lg font-semibold">My Contracts</h2>
+        <Link
+          to="/buyer/contract"
+          className="px-4 py-2 bg-emerald-800 text-white rounded-lg hover:bg-emerald-900 transition-colors flex items-center gap-2"
+        >
+          <FileText size={16} />
+          Create New Contract
+        </Link>
+      </div>
+
+      {contracts.length === 0 ? (
+        <div className="text-center py-12">
+          <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No contracts yet
+          </h3>
+          <p className="text-gray-500 mb-4">
+            Create your first contract to get started
+          </p>
+          <Link
+            to="/buyer/contract"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-800 text-white rounded-lg hover:bg-emerald-900 transition-colors"
+          >
+            <FileText size={16} />
+            Create Contract
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {contracts.map((c) => (
+            <div key={c._id} className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="font-bold">{c.contractTitle}</h3>
+              <p>
+                Status: <span className="font-medium">{c.status}</span>
+              </p>
+              <p>
+                Crop: {c.cropDetails?.cropName} ({c.cropDetails?.quantity}{" "}
+                tonnes)
+              </p>
+              <p>Farmer: {c.farmer?.name}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+function BuyerSupportModal({ onClose }) {
+  const [form, setForm] = useState({
+    subject: "",
+    problem: "",
+    file: null,
+  });
+
+  const submitTicket = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append("subject", form.subject);
+      formData.append("problem", form.problem);
+      if (form.file) formData.append("file", form.file);
+
+      // ✅ IMPORTANT CHANGE
+      await api.post("/buyer/support", formData);
+
+      alert("Request submitted ✅");
+      onClose();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to submit request ❌");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999]">
+      <div className="bg-white w-[500px] rounded-2xl p-6 shadow-xl">
+        <h2 className="text-lg font-bold text-[#064e3b] mb-4">Contact Admin</h2>
+
+        {/* FORM */}
+        <div className="space-y-3">
+          <input
+            placeholder="Subject"
+            value={form.subject}
+            onChange={(e) => setForm({ ...form, subject: e.target.value })}
+            className="w-full border p-2 rounded"
+          />
+
+          <textarea
+            placeholder="Describe your issue..."
+            value={form.problem}
+            onChange={(e) => setForm({ ...form, problem: e.target.value })}
+            className="w-full border p-2 rounded h-24"
+          />
+
+          <input
+            type="file"
+            onChange={(e) => setForm({ ...form, file: e.target.files[0] })}
+          />
+        </div>
+
+        {/* CONTACT INFO */}
+        <div className="mt-4 text-sm text-gray-600 border-t pt-3">
+          <p>📧 support@farmlink.com</p>
+          <p>📞 +91 9876543210</p>
+        </div>
+
+        {/* ACTIONS */}
+        <div className="flex justify-end gap-3 mt-5">
+          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">
+            Cancel
+          </button>
+
+          <button
+            onClick={submitTicket}
+            className="px-4 py-2 bg-emerald-600 text-white rounded"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  BuyerDashboard wrapper with routes                                        */
+/* -------------------------------------------------------------------------- */
+
+function BuyerDashboard() {
+  return (
+    <Routes>
+      <Route
+        path="dashboard"
+        element={
+          <AppLayout>
+            <DashboardPageStatic />
+          </AppLayout>
+        }
+      />
+      <Route
+        path="farmers"
+        element={
+          <AppLayout>
+            <FarmerList />
+          </AppLayout>
+        }
+      />
+      <Route
+        path="contracts"
+        element={
+          <AppLayout>
+            <ContractsPage />
+          </AppLayout>
+        }
+      />
+    </Routes>
+  );
+}
+
+export default BuyerDashboard;

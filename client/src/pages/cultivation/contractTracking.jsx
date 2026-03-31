@@ -409,7 +409,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import axios from "../../api/axios";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/Sidebar"; // farmer
+import BuyerSidebar from "../../components/BuyerSidebar"; // buyer
 import Topbar from "../../components/topNav.jsx";
 import ProfileModal from "../../components/profileModal.jsx";
 
@@ -422,7 +423,7 @@ const ActiveContracts = () => {
   // Navbar & Modal States
   const [profileData, setProfileData] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
-
+  const isFarmer = profileData?.user?.role === "farmer";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -521,7 +522,11 @@ const ActiveContracts = () => {
   return (
     <div className="flex h-screen bg-[#f4f6f8] font-sans text-slate-800 overflow-hidden">
       <div className="h-full flex-shrink-0 z-40 shadow-2xl bg-white">
-        <Sidebar onLogout={logout} />
+        {isFarmer ? (
+          <Sidebar onLogout={logout} />
+        ) : (
+          <BuyerSidebar onLogout={logout} />
+        )}
       </div>
 
       <main className="flex-1 h-full overflow-y-auto relative scroll-smooth bg-[#f4f6f8] flex flex-col">

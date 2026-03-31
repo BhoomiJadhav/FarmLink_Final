@@ -764,7 +764,6 @@
 //   }
 // };
 
-
 // const mongoose = require("mongoose");
 // const User = require("../Models/User");
 // const Profile = require("../Models/Profile");
@@ -867,11 +866,11 @@
 //           });
 
 //           // Logic-Safe Addition: Security Risk Calculation
-//           const openDisputeCount = await Dispute.countDocuments({ 
+//           const openDisputeCount = await Dispute.countDocuments({
 //             contractId: { $in: await CultivationContract.find({"farmer.farmerId": user._id}).distinct('_id') },
-//             status: "OPEN" 
+//             status: "OPEN"
 //           });
-          
+
 //           let riskLevel = "Low";
 //           if (user.status === "blocked" || openDisputeCount > 2) riskLevel = "High";
 //           else if (openDisputeCount > 0) riskLevel = "Medium";
@@ -896,9 +895,9 @@
 //           });
 
 //           // Logic-Safe Addition: Security Risk Calculation
-//           const openDisputeCount = await Dispute.countDocuments({ 
+//           const openDisputeCount = await Dispute.countDocuments({
 //             contractId: { $in: await HarvestContract.find({"buyer.buyerId": user._id}).distinct('_id') },
-//             status: "OPEN" 
+//             status: "OPEN"
 //           });
 
 //           let riskLevel = "Low";
@@ -1052,7 +1051,7 @@
 //       .map(c => {
 //         const expiryDate = new Date(c.insurance.policyValidTill);
 //         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
+
 //         if (daysRemaining <= 30) {
 //           return {
 //             farmerName: c.farmer.name,
@@ -1463,7 +1462,6 @@
 //   }
 // };
 
-
 // const mongoose = require("mongoose");
 // const User = require("../Models/User");
 // const Profile = require("../Models/Profile");
@@ -1559,9 +1557,9 @@
 //           const cultivationCount = await CultivationContract.countDocuments({
 //             "farmer.farmerId": user._id,
 //           });
-//           const openDisputeCount = await Dispute.countDocuments({ 
+//           const openDisputeCount = await Dispute.countDocuments({
 //             contractId: { $in: await CultivationContract.find({"farmer.farmerId": user._id}).distinct('_id') },
-//             status: "OPEN" 
+//             status: "OPEN"
 //           });
 //           let riskLevel = "Low";
 //           if (user.status === "blocked" || openDisputeCount > 2) riskLevel = "High";
@@ -1579,9 +1577,9 @@
 //           const harvestCount = await HarvestContract.countDocuments({
 //             "buyer.buyerId": user._id,
 //           });
-//           const openDisputeCount = await Dispute.countDocuments({ 
+//           const openDisputeCount = await Dispute.countDocuments({
 //             contractId: { $in: await HarvestContract.find({"buyer.buyerId": user._id}).distinct('_id') },
-//             status: "OPEN" 
+//             status: "OPEN"
 //           });
 //           let riskLevel = "Low";
 //           if (user.status === "blocked" || openDisputeCount > 1) riskLevel = "High";
@@ -1803,21 +1801,21 @@
 //       case "7d": start.setDate(now.getDate() - 7); break;
 //       case "14d": start.setDate(now.getDate() - 14); break;
 //       case "30d": start.setDate(now.getDate() - 30); break;
-//       case "90d": 
-//         start.setDate(now.getDate() - 90); 
+//       case "90d":
+//         start.setDate(now.getDate() - 90);
 //         groupingFormat = "%Y-W%U"; // Group by Week
 //         break;
-//       case "180d": 
-//         start.setDate(now.getDate() - 180); 
+//       case "180d":
+//         start.setDate(now.getDate() - 180);
 //         groupingFormat = "%Y-%m"; // Group by Month
 //         break;
-//       case "1y": 
-//         start.setFullYear(now.getFullYear() - 1); 
-//         groupingFormat = "%Y-%m"; 
+//       case "1y":
+//         start.setFullYear(now.getFullYear() - 1);
+//         groupingFormat = "%Y-%m";
 //         break;
-//       case "all": 
+//       case "all":
 //         start = new Date(2023, 0, 1); // System Genesis
-//         groupingFormat = "%Y-%m"; 
+//         groupingFormat = "%Y-%m";
 //         break;
 //       default: start.setDate(now.getDate() - 7);
 //     }
@@ -1836,7 +1834,7 @@
 //     const userTrend = await User.aggregate([
 //       { $match: { createdAt: { $gte: start }, role: { $in: ["farmer", "buyer"] } } },
 //       { $group: {
-//           _id: { 
+//           _id: {
 //             date: { $dateToString: { format: groupingFormat, date: "$createdAt" } },
 //             role: "$role"
 //           },
@@ -1854,7 +1852,7 @@
 //     res.json({
 //       success: true,
 //       revenueData: revenueTrend.map(r => ({ label: r._id, value: r.revenue })),
-//       userTrend: userTrend, 
+//       userTrend: userTrend,
 //       policyStats: [
 //         { name: "Verified", value: verified },
 //         { name: "Rejected", value: rejected },
@@ -1923,7 +1921,7 @@ exports.getAdminAnalytics = async (req, res) => {
   try {
     const { range = "30d" } = req.query;
     const { currentStart, prevStart } = getDateRange(range);
-    
+
     let groupingFormat = "%Y-%m-%d";
     if (range === "90d") groupingFormat = "%Y-W%U";
     if (range === "1y") groupingFormat = "%Y-%m";
@@ -1933,51 +1931,107 @@ exports.getAdminAnalytics = async (req, res) => {
       {
         $facet: {
           current: [
-            { $match: { createdAt: { $gte: currentStart }, contractStatus: { $ne: "CANCELLED" } } },
-            { $group: { _id: null, total: { $sum: "$pricing.estimatedValue" }, count: { $sum: 1 } } }
+            {
+              $match: {
+                createdAt: { $gte: currentStart },
+                contractStatus: { $ne: "CANCELLED" },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$pricing.estimatedValue" },
+                count: { $sum: 1 },
+              },
+            },
           ],
           previous: [
-            { $match: { createdAt: { $gte: prevStart, $lt: currentStart }, contractStatus: { $ne: "CANCELLED" } } },
-            { $group: { _id: null, total: { $sum: "$pricing.estimatedValue" }, count: { $sum: 1 } } }
-          ]
-        }
-      }
+            {
+              $match: {
+                createdAt: { $gte: prevStart, $lt: currentStart },
+                contractStatus: { $ne: "CANCELLED" },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$pricing.estimatedValue" },
+                count: { $sum: 1 },
+              },
+            },
+          ],
+        },
+      },
     ]);
 
     // 2. USER GROWTH
     const userGrowth = await User.aggregate([
       {
         $facet: {
-          farmers_curr: [{ $match: { role: "farmer", createdAt: { $gte: currentStart } } }, { $count: "count" }],
-          farmers_prev: [{ $match: { role: "farmer", createdAt: { $gte: prevStart, $lt: currentStart } } }, { $count: "count" }],
-          buyers_curr: [{ $match: { role: "buyer", createdAt: { $gte: currentStart } } }, { $count: "count" }],
-          buyers_prev: [{ $match: { role: "buyer", createdAt: { $gte: prevStart, $lt: currentStart } } }, { $count: "count" }]
-        }
-      }
+          farmers_curr: [
+            { $match: { role: "farmer", createdAt: { $gte: currentStart } } },
+            { $count: "count" },
+          ],
+          farmers_prev: [
+            {
+              $match: {
+                role: "farmer",
+                createdAt: { $gte: prevStart, $lt: currentStart },
+              },
+            },
+            { $count: "count" },
+          ],
+          buyers_curr: [
+            { $match: { role: "buyer", createdAt: { $gte: currentStart } } },
+            { $count: "count" },
+          ],
+          buyers_prev: [
+            {
+              $match: {
+                role: "buyer",
+                createdAt: { $gte: prevStart, $lt: currentStart },
+              },
+            },
+            { $count: "count" },
+          ],
+        },
+      },
     ]);
 
     // 3. SUPPLY-DEMAND GAP
     const marketGap = await HarvestListing.aggregate([
-      { $group: { _id: "$harvest.cropName", supply: { $sum: "$harvest.quantityAvailable" } } },
+      {
+        $group: {
+          _id: "$harvest.cropName",
+          supply: { $sum: "$harvest.quantityAvailable" },
+        },
+      },
       {
         $lookup: {
-          from: "harvestsalecontracts", 
+          from: "harvestsalecontracts",
           let: { crop: "$_id" },
           pipeline: [
             { $match: { $expr: { $eq: ["$cropDetails.cropName", "$$crop"] } } },
-            { $group: { _id: null, totalDemand: { $sum: "$cropDetails.quantity" } } }
+            {
+              $group: {
+                _id: null,
+                totalDemand: { $sum: "$cropDetails.quantity" },
+              },
+            },
           ],
-          as: "demandData"
-        }
+          as: "demandData",
+        },
       },
       {
         $project: {
           crop: "$_id",
           supply: 1,
-          demand: { $ifNull: [{ $arrayElemAt: ["$demandData.totalDemand", 0] }, 0] }
-        }
+          demand: {
+            $ifNull: [{ $arrayElemAt: ["$demandData.totalDemand", 0] }, 0],
+          },
+        },
       },
-      { $sort: { supply: -1 } }
+      { $sort: { supply: -1 } },
     ]);
 
     // 4. LOOPHOLES (Including PENDING status)
@@ -1986,10 +2040,22 @@ exports.getAdminAnalytics = async (req, res) => {
         $group: {
           _id: null,
           avgProgress: { $avg: { $ifNull: ["$tracking.progressPercent", 0] } },
-          stalledInSowing: { $sum: { $cond: [{ $eq: ["$tracking.currentStage", "SOWING"] }, 1, 0] } },
-          stalledInNegotiation: { $sum: { $cond: [{ $in: ["$contractStatus", ["PENDING", "PROPOSED"]] }, 1, 0] } }
-        }
-      }
+          stalledInSowing: {
+            $sum: {
+              $cond: [{ $eq: ["$tracking.currentStage", "SOWING"] }, 1, 0],
+            },
+          },
+          stalledInNegotiation: {
+            $sum: {
+              $cond: [
+                { $in: ["$contractStatus", ["PENDING", "PROPOSED"]] },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
     ]);
 
     // 5. TREND DATA (Main Line Chart)
@@ -1997,12 +2063,14 @@ exports.getAdminAnalytics = async (req, res) => {
       { $match: { createdAt: { $gte: currentStart } } },
       {
         $group: {
-          _id: { $dateToString: { format: groupingFormat, date: "$createdAt" } },
+          _id: {
+            $dateToString: { format: groupingFormat, date: "$createdAt" },
+          },
           value: { $sum: "$pricing.estimatedValue" },
-          contracts: { $sum: 1 }
-        }
+          contracts: { $sum: 1 },
+        },
       },
-      { $sort: { "_id": 1 } }
+      { $sort: { _id: 1 } },
     ]);
 
     res.json({
@@ -2019,14 +2087,23 @@ exports.getAdminAnalytics = async (req, res) => {
         buyers: userGrowth[0].buyers_curr[0]?.count || 0,
         prevBuyers: userGrowth[0].buyers_prev[0]?.count || 0,
         disputes: await Dispute.countDocuments({ status: "OPEN" }),
-        prevDisputes: 0
+        prevDisputes: 0,
       },
-      loopholes: loopholes[0] || { avgProgress: 0, stalledInSowing: 0, stalledInNegotiation: 0 },
-      revenueData: trendData.map(r => ({ label: r._id, value: r.value, contracts: r.contracts })),
+      loopholes: loopholes[0] || {
+        avgProgress: 0,
+        stalledInSowing: 0,
+        stalledInNegotiation: 0,
+      },
+      revenueData: trendData.map((r) => ({
+        label: r._id,
+        value: r.value,
+        contracts: r.contracts,
+      })),
       marketGap: marketGap,
-      disputeCauses: await Dispute.aggregate([{ $group: { _id: "$category", count: { $sum: 1 } } }]).then(res => res.map(d => ({ category: d._id, count: d.count })))
+      disputeCauses: await Dispute.aggregate([
+        { $group: { _id: "$category", count: { $sum: 1 } } },
+      ]).then((res) => res.map((d) => ({ category: d._id, count: d.count }))),
     });
-
   } catch (err) {
     console.error("ANALYTICS ENGINE ERROR:", err);
     res.status(500).json({ message: err.message });
@@ -2042,37 +2119,58 @@ exports.getAllUsers = async (req, res) => {
     const processUser = async (u) => {
       const isFarmer = u.role === "farmer";
       const profileModel = isFarmer ? Profile : BuyerProfile;
-      const profile = await profileModel.findOne(isFarmer ? { userId: u._id } : { user: u._id });
-      
-      const contractCount = await (isFarmer ? CultivationContract : HarvestContract).countDocuments(
-        isFarmer ? { "farmer.farmerId": u._id } : { "buyer.buyerId": u._id }
+      const profile = await profileModel.findOne(
+        isFarmer ? { userId: u._id } : { user: u._id },
+      );
+
+      const contractCount = await (
+        isFarmer ? CultivationContract : HarvestContract
+      ).countDocuments(
+        isFarmer ? { "farmer.farmerId": u._id } : { "buyer.buyerId": u._id },
       );
 
       let riskLevel = "Low";
       if (u.status === "blocked" || u.karmaScore < 30) riskLevel = "High";
       else if (u.karmaScore < 60) riskLevel = "Medium";
 
-      return { user: u, profile, contracts: contractCount, riskLevel, karma: u.karmaScore, verification: u.verificationStatus };
+      return {
+        user: u,
+        profile,
+        contracts: contractCount,
+        riskLevel,
+        karma: u.karmaScore,
+        verification: u.verificationStatus,
+      };
     };
 
-    const farmers = await Promise.all(users.filter(u => u.role === "farmer").map(processUser));
-    const buyers = await Promise.all(users.filter(u => u.role === "buyer").map(processUser));
+    const farmers = await Promise.all(
+      users.filter((u) => u.role === "farmer").map(processUser),
+    );
+    const buyers = await Promise.all(
+      users.filter((u) => u.role === "buyer").map(processUser),
+    );
     res.json({ farmers, buyers });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 exports.blockUser = async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.params.id, { status: "blocked" });
     res.json({ success: true, message: "User blocked" });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 exports.unblockUser = async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.params.id, { status: "active" });
     res.json({ success: true, message: "User unblocked" });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 /* ============================================================
@@ -2085,7 +2183,9 @@ exports.getAllDisputes = async (req, res) => {
       .populate("raisedByUserId", "name email role")
       .sort({ createdAt: -1 });
     res.json({ success: true, disputes });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 exports.resolveDispute = async (req, res) => {
@@ -2101,19 +2201,23 @@ exports.resolveDispute = async (req, res) => {
     await dispute.save();
 
     res.json({ success: true, message: "Dispute resolved successfully" });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 exports.freezeContract = async (req, res) => {
   try {
-    await Contract.findByIdAndUpdate(req.params.id, { 
-      contractStatus: "FROZEN", 
-      "adminOverride.isFrozen": true, 
+    await Contract.findByIdAndUpdate(req.params.id, {
+      contractStatus: "FROZEN",
+      "adminOverride.isFrozen": true,
       "adminOverride.reason": req.body.reason,
-      "adminOverride.actionAt": new Date()
+      "adminOverride.actionAt": new Date(),
     });
     res.json({ success: true, message: "Contract frozen" });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 /* ============================================================
@@ -2121,13 +2225,27 @@ exports.freezeContract = async (req, res) => {
    ============================================================ */
 exports.getAllPolicies = async (req, res) => {
   try {
-    const contracts = await CultivationContract.find({ "insurance.policyNumber": { $exists: true, $ne: "" } }).sort({ createdAt: -1 });
-    const policies = contracts.map(c => ({
-      user: { id: c.farmer.farmerId, name: c.farmer.name, email: c.farmer.email },
-      policies: [{ contractId: c._id, insurance: c.insurance, policyVerification: c.policyVerification }]
+    const contracts = await CultivationContract.find({
+      "insurance.policyNumber": { $exists: true, $ne: "" },
+    }).sort({ createdAt: -1 });
+    const policies = contracts.map((c) => ({
+      user: {
+        id: c.farmer.farmerId,
+        name: c.farmer.name,
+        email: c.farmer.email,
+      },
+      policies: [
+        {
+          contractId: c._id,
+          insurance: c.insurance,
+          policyVerification: c.policyVerification,
+        },
+      ],
     }));
     res.json({ success: true, policies });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 exports.verifyFarmerPolicy = async (req, res) => {
@@ -2137,27 +2255,49 @@ exports.verifyFarmerPolicy = async (req, res) => {
       "policyVerification.status": status,
       "policyVerification.remarks": remarks,
       "policyVerification.verifiedBy": req.user._id,
-      "policyVerification.verifiedAt": new Date()
+      "policyVerification.verifiedAt": new Date(),
     });
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 /* ============================================================
    SUPPORT TICKETS
    ============================================================ */
-exports.getAllTickets = async (req, res) => {
+exports.getTickets = async (req, res) => {
   try {
-    const tickets = await Support.find().populate("userId", "name email").sort({ createdAt: -1 });
+    let query = {};
+
+    // ✅ ADMIN → all tickets
+    if (req.user.role === "admin") {
+      query = {};
+    }
+    // ✅ BUYER / FARMER → only their tickets
+    else {
+      query = { userId: req.user._id };
+    }
+
+    const tickets = await Support.find(query)
+      .sort({ createdAt: -1 })
+      .populate("userId", "name email");
+
     res.json({ success: true, tickets });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 exports.updateTicket = async (req, res) => {
   try {
-    const ticket = await Support.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const ticket = await Support.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     res.json({ success: true, ticket });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 /* ============================================================
@@ -2169,19 +2309,114 @@ exports.getDashboardStats = async (req, res) => {
     const stats = {
       farmers: await User.countDocuments({ role: "farmer" }),
       buyers: await User.countDocuments({ role: "buyer" }),
-      activeContracts: await Contract.countDocuments({ contractStatus: "ACTIVE" }),
-      openDisputes: await Dispute.countDocuments({ status: "OPEN" })
+      activeContracts: await Contract.countDocuments({
+        contractStatus: "ACTIVE",
+      }),
+      openDisputes: await Dispute.countDocuments({ status: "OPEN" }),
     };
     const growth = {
-      newFarmers: await User.countDocuments({ role: "farmer", createdAt: { $gte: currentStart } }),
-      newBuyers: await User.countDocuments({ role: "buyer", createdAt: { $gte: currentStart } }),
+      newFarmers: await User.countDocuments({
+        role: "farmer",
+        createdAt: { $gte: currentStart },
+      }),
+      newBuyers: await User.countDocuments({
+        role: "buyer",
+        createdAt: { $gte: currentStart },
+      }),
     };
-    const activities = await User.find().sort({ createdAt: -1 }).limit(5).select("name role createdAt");
-    res.json({ 
-      success: true, 
-      stats, 
-      growth, 
-      activities: activities.map(u => ({ message: `${u.name} (${u.role}) joined`, time: u.createdAt })) 
+    const activities = await User.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select("name role createdAt");
+    res.json({
+      success: true,
+      stats,
+      growth,
+      activities: activities.map((u) => ({
+        message: `${u.name} (${u.role}) joined`,
+        time: u.createdAt,
+      })),
     });
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+exports.resubmitPolicy = async (req, res) => {
+  try {
+    const contract = await CultivationContract.findById(req.params.id);
+
+    if (!contract) {
+      return res.status(404).json({ message: "Contract not found" });
+    }
+
+    const { providerName, policyNumber, policyValidTill, flood, drought } =
+      req.body;
+
+    // 🔥 Update insurance
+    contract.insurance.providerName = providerName;
+    contract.insurance.policyNumber = policyNumber;
+    contract.insurance.policyValidTill = policyValidTill;
+
+    contract.insurance.riskManagement = {
+      flood,
+      drought,
+    };
+
+    // 🔥 Update document
+    if (req.file) {
+      contract.insurance.documentUrl = req.file.path;
+    }
+
+    // 🔥 RESET STATUS
+    contract.policyVerification = {
+      status: "RESUBMITTED",
+      remarks: "Resubmitted by farmer",
+      verifiedAt: null,
+      verifiedBy: null,
+    };
+
+    await contract.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("RESUBMIT ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+// exports.createSupportTicket = async (req, res) => {
+//   try {
+//     const ticket = await Support.create({
+//       userId: req.user._id,
+//       subject: req.body.subject,
+//       problem: req.body.problem,
+//       fileUrl: req.file ? req.file.path : null,
+//     });
+
+//     res.json({ success: true, ticket });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+exports.createSupportTicket = async (req, res) => {
+  try {
+    const ticket = await Support.create({
+      userId: req.user._id,
+
+      // ✅ NEW (VERY IMPORTANT)
+      role: req.user.role, // "farmer" or "buyer"
+
+      subject: req.body.subject,
+      problem: req.body.problem,
+
+      fileUrl: req.file ? req.file.path : null,
+    });
+
+    res.json({
+      success: true,
+      message: "Support ticket created successfully",
+      ticket,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };

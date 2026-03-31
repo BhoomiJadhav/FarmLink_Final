@@ -12,7 +12,7 @@ const {
   resolveDispute,
   getDashboardStats,
   getAllPolicies,
-  getAllTickets,
+  getTickets,
   updateTicket,
   getAdminAnalytics,
 } = require("../Controllers/adminController");
@@ -52,7 +52,7 @@ router.patch(
   authorize("admin"),
   resolveDispute,
 );
-router.get("/tickets", protect, authorize("admin"), getAllTickets);
+router.get("/tickets", protect, authorize("admin"), getTickets);
 
 router.patch("/ticket/:id", protect, authorize("admin"), updateTicket);
 router.get("/analytics", protect, authorize("admin"), getAdminAnalytics);

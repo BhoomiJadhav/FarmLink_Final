@@ -274,9 +274,6 @@
 //   );
 // }
 
-
-
-
 // import React, { useEffect, useState } from "react";
 // import api from "../../api/axios";
 // import { Link } from "react-router-dom";
@@ -555,7 +552,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { Link } from "react-router-dom";
-import Sidebar from "../../components/Sidebar.jsx";
+import Sidebar from "../../components/Sidebar.jsx"; // farmer
+import BuyerSidebar from "../../components/BuyerSidebar.jsx"; // buyer
 import Topbar from "../../components/topNav.jsx";
 import {
   Leaf,
@@ -627,7 +625,7 @@ export default function HarvestContractTracking() {
     <div className="flex h-screen bg-[#f4f6f8] font-sans text-slate-800 overflow-hidden">
       {/* SIDEBAR INTEGRATION */}
       <div className="h-full flex-shrink-0 z-30 shadow-2xl bg-white">
-        <Sidebar />
+        {isFarmer ? <Sidebar /> : <BuyerSidebar />}
       </div>
 
       <main className="flex-1 flex flex-col h-full overflow-y-auto relative scroll-smooth">
@@ -637,10 +635,13 @@ export default function HarvestContractTracking() {
           {/* Header */}
           <div className="mt-2">
             <h1 className="text-3xl md:text-[38px] font-bold text-[#064e3b] font-serif tracking-tight">
-              {isFarmer ? "Harvest Tracking (Farmer)" : "Harvest Tracking (Buyer)"}
+              {isFarmer
+                ? "Harvest Tracking (Farmer)"
+                : "Harvest Tracking (Buyer)"}
             </h1>
             <p className="text-[15px] text-slate-500 mt-2 font-medium italic">
-              Real-time monitoring of crop deliveries, transit status, and financial settlements. 🌱
+              Real-time monitoring of crop deliveries, transit status, and
+              financial settlements. 🌱
             </p>
           </div>
 
@@ -675,19 +676,25 @@ export default function HarvestContractTracking() {
           {/* Contracts List */}
           <div className="space-y-6">
             <div className="flex items-center gap-2 px-1">
-               <ClipboardList className="text-emerald-600" size={20} />
-               <h2 className="text-xl font-bold text-slate-800 font-serif">Monitoring Agreements</h2>
+              <ClipboardList className="text-emerald-600" size={20} />
+              <h2 className="text-xl font-bold text-slate-800 font-serif">
+                Monitoring Agreements
+              </h2>
             </div>
 
             {contracts.length === 0 ? (
               <div className="bg-white rounded-3xl p-20 border-2 border-dashed border-slate-200 text-center">
-                <p className="text-slate-400 font-medium text-lg">No active harvest contracts found.</p>
+                <p className="text-slate-400 font-medium text-lg">
+                  No active harvest contracts found.
+                </p>
               </div>
             ) : (
               contracts.map((c) => {
                 const crop = c.harvestDetails || {};
                 const delivery = c.delivery || {};
-                const counterPartyName = isFarmer ? c.buyer?.name : c.farmer?.name;
+                const counterPartyName = isFarmer
+                  ? c.buyer?.name
+                  : c.farmer?.name;
 
                 return (
                   <div
@@ -722,7 +729,10 @@ export default function HarvestContractTracking() {
                           <div className="mt-4 flex flex-wrap items-center gap-6 text-[13px] text-slate-600">
                             <span className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 font-medium">
                               <User size={16} className="text-emerald-600" />
-                              <span className="text-slate-400 mr-1">{isFarmer ? "Buyer:" : "Farmer:"}</span> {counterPartyName}
+                              <span className="text-slate-400 mr-1">
+                                {isFarmer ? "Buyer:" : "Farmer:"}
+                              </span>{" "}
+                              {counterPartyName}
                             </span>
 
                             <span className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 font-medium">
@@ -735,9 +745,15 @@ export default function HarvestContractTracking() {
 
                       <div className="w-full lg:w-auto flex lg:flex-col items-end justify-between lg:justify-center border-t lg:border-t-0 pt-4 lg:pt-0">
                         <div className="text-right">
-                          <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Contract Value</div>
+                          <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                            Contract Value
+                          </div>
                           <div className="text-2xl font-black text-[#064e3b] flex items-center justify-end">
-                            <IndianRupee size={20} strokeWidth={3} className="mr-0.5" />
+                            <IndianRupee
+                              size={20}
+                              strokeWidth={3}
+                              className="mr-0.5"
+                            />
                             {c.payment?.totalAmount?.toLocaleString()}
                           </div>
                         </div>
@@ -755,8 +771,8 @@ export default function HarvestContractTracking() {
                           c.payment?.status === "VERIFIED"
                             ? "Verified Secure"
                             : ["MARKED", "PAID"].includes(c.payment?.status)
-                            ? "Pending Review"
-                            : "Awaiting Action"
+                              ? "Pending Review"
+                              : "Awaiting Action"
                         }
                         highlight={c.payment?.status === "VERIFIED"}
                       />
@@ -774,7 +790,13 @@ export default function HarvestContractTracking() {
                         label="Est. Delivery Date"
                         value={
                           delivery.expectedDeliveryDate
-                            ? new Date(delivery.expectedDeliveryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric'})
+                            ? new Date(
+                                delivery.expectedDeliveryDate,
+                              ).toLocaleDateString("en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
                             : "To be scheduled"
                         }
                       />
@@ -786,7 +808,11 @@ export default function HarvestContractTracking() {
                         to={`/${isFarmer ? "farmer" : "buyer"}/harvest-contracts/${c._id}`}
                         className="group/btn flex items-center gap-2 px-6 py-3 rounded-xl bg-[#064e3b] text-white text-sm font-black hover:bg-[#059669] transition-all shadow-lg shadow-emerald-100 active:scale-95"
                       >
-                        Detailed Tracker <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                        Detailed Tracker{" "}
+                        <ArrowRight
+                          size={16}
+                          className="group-hover/btn:translate-x-1 transition-transform"
+                        />
                       </Link>
                     </div>
                   </div>
@@ -807,7 +833,9 @@ function StatCard({ title, value, icon, color }) {
     <div className="bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
       <div className="flex justify-between items-center">
         <div>
-          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</p>
+          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">
+            {title}
+          </p>
           <p className="text-2xl font-black text-slate-800">{value}</p>
         </div>
         <div className="h-12 w-12 rounded-2xl bg-[#f8fafc] text-emerald-600 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-inner">
@@ -827,8 +855,14 @@ function InfoBox({ label, value, highlight }) {
           : "bg-slate-50/50 border-slate-100"
       }`}
     >
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
-      <p className={`text-sm font-bold mt-1.5 ${highlight ? "text-emerald-700" : "text-slate-700"}`}>{value}</p>
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+        {label}
+      </p>
+      <p
+        className={`text-sm font-bold mt-1.5 ${highlight ? "text-emerald-700" : "text-slate-700"}`}
+      >
+        {value}
+      </p>
     </div>
   );
 }

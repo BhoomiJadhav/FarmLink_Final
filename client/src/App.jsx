@@ -32,6 +32,7 @@ import ViewContractDocument from "./pages/cultivation/ViewContractDocument.jsx";
 import Notifications from "./pages/Dashboard/Notifications.jsx";
 import DriverCultivationDelivery from "./pages/cultivation/DriverCultivationDelivery.jsx";
 import FarmerPolicy from "./pages/Dashboard/FarmerPolicy.jsx";
+import BuyerPolicy from "./pages/Dashboard/FarmerPolicy.jsx";
 import AppLayout from "./layouts/appLayout";
 import FarmerHarvestListings from "./pages/Dashboard/FarmerHarvestListings.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
@@ -40,6 +41,7 @@ import DisputesPage from "./pages/admin/DisputesPage.jsx";
 import PolicyVerificationPage from "./pages/admin/PolicyVerification.jsx";
 import AdminSupport from "./pages/admin/AdminSupport.jsx";
 import AdminAnalytics from "./pages/admin/AdminAnalytics.jsx";
+import FarmerList from "./pages/Dashboard/FarmerList.jsx";
 import "./styles/pdf-safe.css";
 
 const App = () => {
@@ -133,6 +135,7 @@ const App = () => {
               }
             />
             <Route path="/buyer/contracts" element={<BuyerContracts />} />
+            <Route path="/buyer/farmers" element={<FarmerList />} />
             {/* Buyer Contract Wizard */}
             {/* Buyer Contract Wizard */}
             <Route
@@ -219,6 +222,7 @@ const App = () => {
               element={<NegotiationsHub userRole="BUYER" />}
             />
             <Route path="/farmer/policy" element={<FarmerPolicy />} />
+            <Route path="/buyer/policy" element={<BuyerPolicy />} />
           </Routes>
         </ContractProvider>
       </BrowserRouter>

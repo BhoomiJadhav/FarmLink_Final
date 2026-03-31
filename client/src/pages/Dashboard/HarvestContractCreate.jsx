@@ -36,9 +36,91 @@ export default function HarvestContractCreate() {
   }, [listingId]);
 
   /* ================= SUBMIT CONTRACT ================= */
+  // const handleSubmit = async () => {
+  //   if (!confirmRead) {
+  //     alert("Please confirm that you have read the crop details");
+  //     return;
+  //   }
+
+  //   try {
+  //     setSubmitting(true);
+
+  //     await api.post("/harvest-contracts/create", {
+  //       harvestListingId: listingId,
+
+  //       buyerLocation:
+  //         listing?.farmer?.address || "Buyer location not specified",
+
+  //       payment: {
+  //         pricePerUnit: Number(pricePerUnit),
+  //         mode: paymentMode, // ✅ correct key
+  //       },
+
+  //       delivery: {
+  //         expectedDeliveryDate: deliveryDate,
+  //         deliveryLocation: deliveryLocation.trim(),
+  //         transportationByBuyer: transportByBuyer,
+  //       },
+
+  //       buyerConfirmation: true,
+  //     });
+
+  //     alert("Harvest contract sent to farmer");
+  //     navigate("/buyer/contracts");
+  //   } catch (err) {
+  //     alert(err.response?.data?.message || "Failed to send contract");
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
   const handleSubmit = async () => {
     if (!confirmRead) {
       alert("Please confirm that you have read the crop details");
+      return;
+    }
+
+    const price = Number(pricePerUnit);
+    const min = expectedPrice?.minPricePerUnit;
+    const max = expectedPrice?.maxPricePerUnit;
+
+    if (!price || price <= 0) {
+      alert("Please enter a valid price");
+      return;
+    }
+
+    if (price < min) {
+      alert(`Price must be at least ₹${min}`);
+      return;
+    }
+
+    if (max && price > max) {
+      alert(`Price cannot exceed ₹${max}`);
+      return;
+    }
+
+    if (!deliveryDate) {
+      alert("Please select delivery date");
+      return;
+    }
+
+    const selectedDate = new Date(deliveryDate);
+    if (selectedDate < new Date()) {
+      alert("Delivery date cannot be in the past");
+      return;
+    }
+
+    if (!deliveryLocation.trim()) {
+      alert("Delivery location is required");
+      return;
+    }
+
+    if (deliveryLocation.trim().length < 5) {
+      alert("Enter a proper delivery location");
+      return;
+    }
+
+    if (!["BEFORE_DELIVERY", "ON_DELIVERY"].includes(paymentMode)) {
+      alert("Invalid payment mode");
       return;
     }
 
@@ -47,21 +129,17 @@ export default function HarvestContractCreate() {
 
       await api.post("/harvest-contracts/create", {
         harvestListingId: listingId,
-
         buyerLocation:
           listing?.farmer?.address || "Buyer location not specified",
-
         payment: {
-          pricePerUnit: Number(pricePerUnit),
-          mode: paymentMode, // ✅ correct key
+          pricePerUnit: price,
+          mode: paymentMode,
         },
-
         delivery: {
           expectedDeliveryDate: deliveryDate,
           deliveryLocation: deliveryLocation.trim(),
           transportationByBuyer: transportByBuyer,
         },
-
         buyerConfirmation: true,
       });
 
