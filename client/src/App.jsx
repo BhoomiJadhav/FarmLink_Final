@@ -123,17 +123,7 @@ const App = () => {
             />
 
             {/* Buyer Dashboard */}
-            <Route
-              path="/buyer/*"
-              element={
-                <PrivateRoute
-                  allowedRoles={["buyer"]}
-                  mustHaveCompletedProfile={true}
-                >
-                  <BuyerDashboard />
-                </PrivateRoute>
-              }
-            />
+
             <Route path="/buyer/contracts" element={<BuyerContracts />} />
             <Route path="/buyer/farmers" element={<FarmerList />} />
             {/* Buyer Contract Wizard */}
@@ -221,6 +211,18 @@ const App = () => {
               path="/buyer/negotiations"
               element={<NegotiationsHub userRole="BUYER" />}
             />
+            <Route
+              path="/buyer/*"
+              element={
+                <PrivateRoute
+                  allowedRoles={["buyer"]}
+                  mustHaveCompletedProfile={true}
+                >
+                  <BuyerDashboard />
+                </PrivateRoute>
+              }
+            />
+
             <Route path="/farmer/policy" element={<FarmerPolicy />} />
             <Route path="/buyer/policy" element={<BuyerPolicy />} />
           </Routes>

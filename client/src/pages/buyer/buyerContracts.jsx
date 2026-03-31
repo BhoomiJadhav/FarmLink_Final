@@ -59,15 +59,36 @@ export default function BuyerContracts() {
     loadContracts();
   }, []);
 
+  // const handleEdit = (contract) => {
+  //   if (contract.contractType === "CULTIVATION") {
+  //     navigate(
+  //       `/buyer/cultivation-contract/${contract.farmer.farmerId}?contractId=${contract._id}`,
+  //     );
+  //   }
+
+  //   if (contract.contractType === "HARVEST") {
+  //     navigate(
+  //       `/buyer/harvest-contract/${contract.harvestListingId}?contractId=${contract._id}`,
+  //     );
+  //   }
+  // };
   const handleEdit = (contract) => {
-    if (contract.contractType === "CULTIVATION") {
-      navigate(
-        `/buyer/cultivation-contract/${contract.farmer.farmerId}?contractId=${contract._id}`,
-      );
-    }
+    console.log("EDIT CLICKED", contract);
 
     if (contract.contractType === "HARVEST") {
-      navigate(`/buyer/harvest-contracts/${contract._id}`);
+      const listingId =
+        contract.harvestListingId || contract.harvestDetails?._id;
+
+      console.log("Listing ID:", listingId);
+
+      if (!listingId) {
+        alert("Listing ID not found");
+        return;
+      }
+
+      navigate(
+        `/buyer/harvest-contract/${listingId}?contractId=${contract._id}`,
+      );
     }
   };
 
