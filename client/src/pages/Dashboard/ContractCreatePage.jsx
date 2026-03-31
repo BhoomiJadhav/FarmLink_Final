@@ -112,17 +112,31 @@ export default function ContractEditorPage() {
   }, [farmerId, contractId]);
 
   /* ================= PDF DOWNLOAD ================= */
-  const handleDownloadPDF = useReactToPrint({
-    contentRef: previewRef,
-    documentTitle: `Contract_${contract?.contractId || "DRAFT"}`,
-    pageStyle: `
-    @page { size: A4; margin: 20mm; }
-    body {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-  `,
-  });
+  // const handleDownloadPDF = useReactToPrint({
+  //   contentRef: previewRef,
+  //   documentTitle: `Contract_${contract?._id || "DRAFT"}`,
+  //   pageStyle: `
+  //   @page { size: A4; margin: 20mm; }
+
+  //   body {
+  //     -webkit-print-color-adjust: exact !important;
+  //     print-color-adjust: exact !important;
+  //   }
+
+  //   * {
+  //     visibility: visible !important;
+  //   }
+
+  //   .print-container {
+  //     display: block !important;
+  //   }
+  // `,
+  // });
+
+  // const handleDownloadPDF = useReactToPrint({
+  //   contentRef: previewRef,
+  //   documentTitle: `Contract_${contract?._id || "DRAFT"}`,
+  // });
 
   /* ================= SAVE ================= */
   const handleSave = async (mode) => {
@@ -170,17 +184,19 @@ export default function ContractEditorPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* ACTION BAR */}
-      <div className="flex justify-end mb-4">
+      {/* <div className="flex justify-end mb-4">
         <button
-          onClick={handleDownloadPDF}
+          onClick={() => {
+            handleDownloadPDF();
+          }}
           className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
         >
           Download PDF
         </button>
-      </div>
+      </div> */}
 
       {/* MAIN CONTENT */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6 print:">
         <ContractEditor
           contract={contract}
           setContract={setContract}

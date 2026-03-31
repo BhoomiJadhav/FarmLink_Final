@@ -75,21 +75,43 @@ export default function BuyerContracts() {
   const handleEdit = (contract) => {
     console.log("EDIT CLICKED", contract);
 
-    if (contract.contractType === "HARVEST") {
+    /* ================= HARVEST ================= */
+    if (contract.contractType === "HARVEST_SALE") {
       const listingId =
-        contract.harvestListingId || contract.harvestDetails?._id;
+        contract.harvestDetails?._id || contract.harvestListingId;
 
-      console.log("Listing ID:", listingId);
+      console.log("Harvest Listing ID:", listingId);
 
       if (!listingId) {
-        alert("Listing ID not found");
+        alert("Harvest listing ID missing");
         return;
       }
 
       navigate(
         `/buyer/harvest-contract/${listingId}?contractId=${contract._id}`,
       );
+      return;
     }
+
+    /* ================= CULTIVATION ================= */
+    if (contract.contractType === "CULTIVATION") {
+      const farmerId = contract.farmer?.farmerId || contract.farmer?._id;
+
+      console.log("Farmer ID:", farmerId);
+
+      if (!farmerId) {
+        alert("Farmer ID missing");
+        return;
+      }
+
+      navigate(
+        `/buyer/cultivation-contract/${farmerId}?contractId=${contract._id}`,
+      );
+      return;
+    }
+
+    /* ================= FALLBACK ================= */
+    console.warn("Unknown contract type:", contract.contractType);
   };
 
   const ongoingContracts = contracts.filter((c) =>
