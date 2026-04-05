@@ -34,6 +34,7 @@ const disputeRoutes = require("./Routes/disputeRoutes.js");
 const cultivationDeliveryRoutes = require("./Routes/cultivationDeliveryRoutes.js");
 const adminRoutes = require("./Routes/adminRoutes");
 const reviewRoutes = require("./Routes/reviewRoutes");
+const voiceRoutes = require("./Routes/voiceRoutes");
 // New AI Route
 const aiRoutes = require("./Routes/aiRoutes");
 
@@ -137,7 +138,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api", messageRoutes);
 app.use("/api", disputeRoutes);
 app.use("/api/reviews", reviewRoutes);
-
+app.use("/api", voiceRoutes);
 // Register AI Route
 app.use("/api/ai", aiRoutes);
 

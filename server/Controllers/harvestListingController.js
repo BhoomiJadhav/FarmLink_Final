@@ -51,6 +51,38 @@ const createHarvestListing = async (req, res) => {
         message: "Quality details are required",
       });
     }
+    // 📍 FIX PINCODE (IMPORTANT)
+    if (req.body.delivery?.pickupLocation?.pincode) {
+      req.body.delivery.pickupLocation.pincode =
+        req.body.delivery.pickupLocation.pincode.replace(/\D/g, "");
+    }
+    // 💧 FIX MOISTURE ENUM
+    let moisture = req.body.qualityDetails?.moistureLevel;
+
+    if (moisture) {
+      moisture = moisture.toUpperCase().replace(/\s/g, "");
+
+      if (moisture === "LOW") moisture = "LOW";
+      else if (moisture === "MEDIUM") moisture = "MEDIUM";
+      else if (moisture === "HIGH") moisture = "HIGH";
+      else moisture = "NOT_TESTED"; // fallback
+
+      req.body.qualityDetails.moistureLevel = moisture;
+    }
+    // 🧺 SORTING DEFAULT
+    if (!req.body.qualityDetails.sortingStatus) {
+      req.body.qualityDetails.sortingStatus = "NOT_SORTED";
+    }
+
+    // 🌾 CONDITION DEFAULT
+    if (!req.body.qualityDetails.cropCondition) {
+      req.body.qualityDetails.cropCondition = "FRESH";
+    }
+    // FINAL BACKEND PINCODE FIX
+    if (req.body.delivery?.pickupLocation?.pincode) {
+      req.body.delivery.pickupLocation.pincode =
+        req.body.delivery.pickupLocation.pincode.replace(/\D/g, "");
+    }
 
     if (!declarationAccepted) {
       return res.status(400).json({

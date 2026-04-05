@@ -102,19 +102,20 @@ const LoginPage = () => {
               </span>
             </div>
             <h2 className="text-4xl font-black leading-tight mb-4">
-              Direct Trade. <br />
-              <span className="text-[#70B62D]">Better Prices.</span>
+              {t("directTrade")}. <br />
+              <span className="text-[#70B62D]">{t("betterPrices")}.</span>
             </h2>
             <p className="text-emerald-100/70 text-sm leading-relaxed">
-              Join the ecosystem designed for transparency and growth in
-              agriculture.
+              {/* Join the ecosystem designed for transparency and growth in
+              agriculture. */}
+              {t("taglineDesc")}
             </p>
           </div>
 
           <div className="relative z-10 space-y-3">
             <div className="flex items-center space-x-3 text-xs font-medium bg-white/5 p-3 rounded-xl border border-white/10">
               <div className="w-1.5 h-1.5 rounded-full bg-[#70B62D]"></div>
-              <span>ML-Driven Price Analytics</span>
+              <span>{t("mlAnalytics")}</span>
             </div>
             <p className="text-[11px] text-emerald-100/40 italic">
               © 2026 FarmL Global Platforms
@@ -131,7 +132,8 @@ const LoginPage = () => {
                 {t("welcomeBack")}
               </h1>
               <p className="text-slate-400 text-sm font-medium">
-                Log in to your account
+                {/* Log in to your account */}
+                {t("loginDesc")}
               </p>
             </div>
             {/* Minimal Language Switcher */}
@@ -148,6 +150,12 @@ const LoginPage = () => {
               >
                 हिंदी
               </button>
+              <button
+                onClick={() => changeLanguage("mar")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg transition-all ${i18n.language === "hi" ? "bg-white text-emerald-800 shadow-sm" : "text-slate-400"}`}
+              >
+                मराठी
+              </button>
             </div>
           </div>
 
@@ -160,7 +168,7 @@ const LoginPage = () => {
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">
-                Email Address
+                {t("email")}
               </label>
               <div className="relative">
                 <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" />
@@ -169,7 +177,7 @@ const LoginPage = () => {
                   name="email"
                   type="email"
                   required
-                  placeholder="name@farmlink.com"
+                  placeholder={t("emailPlaceholder")}
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 outline-none transition-all text-sm"
@@ -180,13 +188,13 @@ const LoginPage = () => {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center ml-1">
                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  Password
+                  {t("password")}
                 </label>
                 <a
                   href="#"
                   className="text-[10px] text-emerald-700 font-bold hover:underline"
                 >
-                  Forgot?
+                  {t("forgot")}
                 </a>
               </div>
               <div className="relative">
@@ -229,7 +237,7 @@ const LoginPage = () => {
             <div className="relative flex items-center mb-6">
               <div className="flex-grow border-t border-slate-100"></div>
               <span className="mx-4 text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                Identify as
+                {t("identifyAs")}
               </span>
               <div className="flex-grow border-t border-slate-100"></div>
             </div>
@@ -245,7 +253,7 @@ const LoginPage = () => {
               >
                 <FaLeaf className="text-sm" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">
-                  Farmer
+                  {t("farmer")}
                 </span>
               </button>
               <button
@@ -258,7 +266,7 @@ const LoginPage = () => {
               >
                 <FaBuilding className="text-sm" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">
-                  Buyer
+                  {t("buyer")}
                 </span>
               </button>
             </div>
@@ -281,7 +289,7 @@ const LoginPage = () => {
               href="/register"
               className="text-emerald-700 font-bold hover:underline"
             >
-              Create an account
+              {t("createAccount")}
             </a>
           </p>
         </div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import { useTranslation } from "react-i18next";
 import {
   FaLeaf,
   FaBuilding,
@@ -29,6 +30,7 @@ const RegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -129,36 +131,71 @@ const RegisterPage = () => {
                 className="w-12 h-12 object-contain"
               />
               <span className="text-xl font-extrabold tracking-tight">
-                FarmLink
+                {t("appName")}
               </span>
             </div>
             <h2 className="text-4xl font-black leading-tight mb-4">
-              Start Your <br />
-              <span className="text-[#70B62D]">Digital Harvest.</span>
+              {t("startJourney")} <br />
+              <span className="text-[#70B62D]">{t("digitalHarvest")}</span>
             </h2>
             <p className="text-emerald-100/70 text-sm leading-relaxed max-w-xs">
-              Join thousands of farmers and buyers in a secure, transparent
-              agricultural marketplace.
+              {t("registerDesc")}
             </p>
           </div>
 
           <div className="relative z-10">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
               <p className="text-xs font-medium italic opacity-60">
-                "The best way to predict the future of farming is to create it."
+                {/* "The best way to predict the future of farming is to create it." */}
+                {t("quote")}
               </p>
             </div>
           </div>
         </div>
 
         {/* --- RIGHT SIDE: Registration Form --- */}
+
         <div className="w-full lg:w-7/12 p-8 lg:p-12 overflow-y-auto max-h-[90vh]">
+          <div className="flex justify-end mb-4">
+            <div className="flex bg-slate-100 p-1 rounded-xl">
+              <button
+                onClick={() => i18n.changeLanguage("en")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
+                  i18n.language === "en"
+                    ? "bg-white text-emerald-800"
+                    : "text-slate-400"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => i18n.changeLanguage("hi")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
+                  i18n.language === "hi"
+                    ? "bg-white text-emerald-800"
+                    : "text-slate-400"
+                }`}
+              >
+                हिंदी
+              </button>
+              <button
+                onClick={() => i18n.changeLanguage("mar")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
+                  i18n.language === "mr"
+                    ? "bg-white text-emerald-800"
+                    : "text-slate-400"
+                }`}
+              >
+                मराठी
+              </button>
+            </div>
+          </div>
           <div className="mb-8">
             <h1 className="text-2xl font-black text-slate-800 tracking-tight">
-              Create Account
+              {t("createAccount")}
             </h1>
             <p className="text-slate-400 text-sm font-medium tracking-tight">
-              Join the community today.
+              {t("joinCommunity")}
             </p>
           </div>
 
@@ -172,14 +209,14 @@ const RegisterPage = () => {
             {/* Full Name */}
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                Full Name
+                {t("fullName")}
               </label>
               <div className="relative">
                 <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" />
                 <input
                   name="fullName"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder={t("fullNamePlaceholder")}
                   value={formData.fullName}
                   onChange={handleChange}
                   className={`w-full pl-11 pr-4 py-2.5 bg-slate-50 border ${errors.fullName ? "border-rose-300" : "border-slate-200"} rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 outline-none transition-all text-sm`}
@@ -195,14 +232,14 @@ const RegisterPage = () => {
             {/* Email Address */}
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                Email Address
+                {t("email")}
               </label>
               <div className="relative">
                 <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" />
                 <input
                   name="email"
                   type="email"
-                  placeholder="name@farmlink.com"
+                  placeholder={t("emailPlaceholder")}
                   value={formData.email}
                   onChange={handleChange}
                   className={`w-full pl-11 pr-4 py-2.5 bg-slate-50 border ${errors.email ? "border-rose-300" : "border-slate-200"} rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 outline-none transition-all text-sm`}
@@ -219,7 +256,7 @@ const RegisterPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                  Password
+                  {t("password")}
                 </label>
                 <div className="relative">
                   <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" />
@@ -248,7 +285,7 @@ const RegisterPage = () => {
 
               <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                  Confirm
+                  {t("confirmPassword")}
                 </label>
                 <div className="relative">
                   <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" />
@@ -279,7 +316,7 @@ const RegisterPage = () => {
             {/* Role Selection */}
             <div className="py-2">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-2 block">
-                Registering as
+                {t("registerAs")}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <label
@@ -295,7 +332,7 @@ const RegisterPage = () => {
                   />
                   <FaLeaf className="mr-2 text-xs" />{" "}
                   <span className="text-[10px] font-bold uppercase">
-                    Farmer
+                    {t("farmer")}
                   </span>
                 </label>
                 <label
@@ -310,7 +347,9 @@ const RegisterPage = () => {
                     className="hidden"
                   />
                   <FaBuilding className="mr-2 text-xs" />{" "}
-                  <span className="text-[10px] font-bold uppercase">Buyer</span>
+                  <span className="text-[10px] font-bold uppercase">
+                    {t("buyer")}
+                  </span>
                 </label>
               </div>
             </div>
@@ -321,7 +360,7 @@ const RegisterPage = () => {
               className="w-full flex items-center justify-center space-x-2 py-3.5 bg-[#004B23] hover:bg-black text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-900/10 active:scale-[0.98] disabled:opacity-50 mt-4"
             >
               <span className="text-sm">
-                {isLoading ? "Creating Account..." : "Sign Up"}
+                {isLoading ? t("creatingAccount") : t("signUp")}
               </span>
               {!isLoading && <FaArrowRight className="text-xs opacity-50" />}
             </button>
@@ -332,7 +371,7 @@ const RegisterPage = () => {
             <div className="relative flex items-center mb-6">
               <div className="flex-grow border-t border-slate-100"></div>
               <span className="mx-4 text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                Or Signup with
+                {t("orSignupWith")}
               </span>
               <div className="flex-grow border-t border-slate-100"></div>
             </div>
@@ -363,23 +402,23 @@ const RegisterPage = () => {
           </div>
 
           <p className="mt-8 text-center text-[10px] text-slate-400 font-medium">
-            By signing up, you agree to our{" "}
+            {t("agreeTerms")}{" "}
             <a href="/termsofservice" className="text-emerald-700 underline">
-              Terms
+              {t("terms")}
             </a>{" "}
             &{" "}
             <a href="/privacypolicy" className="text-emerald-700 underline">
-              Privacy
+              {t("privacy")}
             </a>
           </p>
 
           <p className="mt-4 text-center text-xs text-slate-400 font-medium">
-            Already have an account?{" "}
+            {t("alreadyAccount")}{" "}
             <a
               href="/login"
               className="text-emerald-700 font-bold hover:underline ml-1"
             >
-              Sign in
+              {t("signIn")}
             </a>
           </p>
         </div>

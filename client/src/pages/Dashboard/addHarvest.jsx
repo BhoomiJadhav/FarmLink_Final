@@ -4,6 +4,10 @@ import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/topNav.jsx";
 import ProfileModal from "../../components/profileModal.jsx";
 import api from "../../api/axios";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { useTranslation } from "react-i18next";
 
 const API_BASE = "http://localhost:5000/api";
 
@@ -11,7 +15,9 @@ const AddHarvestListing = () => {
   // Functional Navbar States
   const [profileData, setProfileData] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
-
+  const [language, setLanguage] = useState("en-IN");
+  const { t, i18n } = useTranslation();
+  const { transcript, listening, resetTranscript } = useSpeechRecognition();
   // Form States
   const [form, setForm] = useState({
     cropName: "",
@@ -65,6 +71,176 @@ const AddHarvestListing = () => {
     const files = Array.from(e.target.files);
     if (files.length > 5) return alert("Max 5 images");
     setImages(files);
+  };
+  const startListening = () => {
+    resetTranscript();
+    SpeechRecognition.startListening({
+      continuous: true,
+      language: language,
+    });
+  };
+  const FIELD_MAPPINGS = {
+    cropCondition: {
+      fresh: "FRESH",
+      ताज़ा: "FRESH",
+      ताजे: "FRESH",
+    },
+
+    sortingStatus: {
+      sorted: "SORTED",
+      छांटी: "SORTED",
+      सॉर्ट: "SORTED",
+      आंशिक: "PARTIALLY_SORTED",
+    },
+
+    moistureLevel: {
+      low: "LOW",
+      "नमी कम": "LOW",
+      "ओलावा कमी": "LOW",
+      medium: "MEDIUM",
+      high: "HIGH",
+    },
+  };
+  const normalizeAIData = (data) => {
+    const normalized = { ...data };
+
+    // 🌾 Crop
+    if (data.cropName?.includes("तांदूळ") || data.cropName?.includes("चावल")) {
+      normalized.cropName = "Rice";
+    }
+
+    // 🌾 Variety
+    if (data.variety?.includes("बासमती")) {
+      normalized.variety = "Basmati";
+    }
+
+    // 📦 Quantity (number only)
+    if (data.quantityAvailable) {
+      normalized.quantityAvailable = Number(
+        String(data.quantityAvailable).replace(/\D/g, ""),
+      );
+    }
+
+    // 📅 Extract month (remove year if combined)
+    if (data.harvestedMonth) {
+      const monthOnly = data.harvestedMonth.replace(/\d{4}/, "").trim();
+      normalized.harvestedMonth = monthOnly;
+    }
+
+    // 📅 Month mapping (IMPORTANT FIX)
+    const monthMap = {
+      जानेवारी: "January",
+      फेब्रुवारी: "February",
+      मार्च: "March",
+    };
+
+    if (monthMap[normalized.harvestedMonth]) {
+      normalized.harvestedMonth = monthMap[normalized.harvestedMonth];
+    }
+
+    // 🌟 Condition
+    if (
+      data.cropCondition?.toLowerCase().includes("taje") ||
+      data.cropCondition?.includes("FRESH")
+    ) {
+      normalized.cropCondition = "FRESH";
+    }
+
+    // 🧺 Sorting (FINAL FIX)
+    if (data.sortingStatus) {
+      const val = data.sortingStatus.toLowerCase();
+
+      if (
+        val.includes("sorted") ||
+        val.includes("छांट") ||
+        val.includes("सॉर्ट") ||
+        val.includes("पूर्ण")
+      ) {
+        normalized.sortingStatus = "SORTED";
+      } else if (val.includes("partial") || val.includes("आंशिक")) {
+        normalized.sortingStatus = "PARTIALLY_SORTED";
+      } else {
+        normalized.sortingStatus = "NOT_SORTED";
+      }
+    }
+
+    // 💧 Moisture
+    if (
+      data.moistureLevel?.includes("LOW") ||
+      data.moistureLevel?.includes("कमी")
+    ) {
+      normalized.moistureLevel = "LOW";
+    } else if (data.moistureLevel?.includes("MEDIUM")) {
+      normalized.moistureLevel = "MEDIUM";
+    } else if (data.moistureLevel?.includes("HIGH")) {
+      normalized.moistureLevel = "HIGH";
+    } else {
+      normalized.moistureLevel = "NOT_TESTED";
+    }
+
+    // 💰 Price
+    if (data.minPrice)
+      normalized.minPrice = String(data.minPrice).replace(/\D/g, "");
+    if (data.maxPrice)
+      normalized.maxPrice = String(data.maxPrice).replace(/\D/g, "");
+
+    // 📍 Pincode (REMOVE SPACES)
+    if (data.pincode) {
+      normalized.pincode = String(data.pincode).replace(/\D/g, "");
+    }
+
+    // 📍 State
+    if (data.state?.includes("महाराष्ट्र") || data.state?.includes("महाराज")) {
+      normalized.state = "Maharashtra";
+    }
+
+    // 📍 District
+    if (data.district?.includes("ठाणे") || data.addressLine?.includes("ठाणे")) {
+      normalized.district = "Thane";
+    }
+
+    // 📍 City
+    if (!data.villageOrCity && data.addressLine) {
+      if (data.addressLine.includes("अंबरनाथ")) {
+        normalized.villageOrCity = "Ambernath";
+      }
+    }
+
+    // 📍 Address fallback
+    if (!data.addressLine && data.villageOrCity) {
+      normalized.addressLine = data.villageOrCity;
+    }
+
+    return normalized;
+  };
+  const stopListening = async () => {
+    SpeechRecognition.stopListening();
+
+    try {
+      const res = await fetch("http://localhost:5000/api/voice-parse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: transcript }),
+      });
+
+      const data = await res.json();
+
+      const cleanedData = normalizeAIData(data);
+
+      console.log("AI RAW:", data);
+      console.log("FINAL CLEAN DATA:", cleanedData); // 🔥 IMPORTANT
+
+      setForm((prev) => ({
+        ...prev,
+        ...cleanedData,
+      }));
+
+      resetTranscript(); // optional clean UX
+    } catch (err) {
+      console.error("Voice API error:", err);
+    }
   };
 
   const isFormFilled =
@@ -156,6 +332,23 @@ const AddHarvestListing = () => {
   const inputStyle =
     "w-full bg-[#f0f4f1] border border-[#d1dcd3] rounded-lg px-4 py-3 text-[14px] text-[#1a2e1f] placeholder-[#8ca391] focus:outline-none focus:ring-2 focus:ring-[#10b981]/20 focus:border-[#10b981] transition-all shadow-sm";
   const navigate = useNavigate();
+  const voiceExamples = {
+    "en-IN": [
+      "I have 50 kg Basmati rice harvested in February 2026.",
+      "It is fresh, sorted, low moisture, price 400 to 450.",
+      "My location is Shivaji Nagar, Ambernath, Thane, Maharashtra 421501.",
+    ],
+    "hi-IN": [
+      "मेरे पास 50 किलो बासमती चावल है, फरवरी 2026 में कटा है।",
+      "यह ताज़ा है, छांटा हुआ है, नमी कम है, कीमत 400 से 450 है।",
+      "मेरा पता शिवाजी नगर, अंबरनाथ, ठाणे, महाराष्ट्र 421501 है।",
+    ],
+    "mr-IN": [
+      "माझ्याकडे 50 किलो बासमती तांदूळ आहे, फेब्रुवारी 2026 मध्ये कापणी केली आहे।",
+      "पीक ताजे आहे, सॉर्ट केलेले आहे, ओलावा कमी आहे, किंमत 400 ते 450 आहे।",
+      "माझा पत्ता शिवाजीनगर, अंबरनाथ, ठाणे, महाराष्ट्र 421501 आहे।",
+    ],
+  };
   return (
     <div className="flex bg-[#f4f6f8] h-screen overflow-hidden font-sans text-slate-800">
       <div className="h-full flex-shrink-0 z-30 shadow-2xl bg-white">
@@ -174,21 +367,114 @@ const AddHarvestListing = () => {
 
         {/* HERO SECTION */}
         <div className="w-full bg-gradient-to-r from-[#064e3b] via-[#065f46] to-[#064e3b] animate-bg-pan pt-16 pb-32 px-4 text-center relative shadow-inner">
+          <div className="flex justify-end mb-4">
+            <div className="flex bg-slate-100 p-1 rounded-xl">
+              <button
+                onClick={() => i18n.changeLanguage("en")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
+                  i18n.language === "en"
+                    ? "bg-white text-emerald-800"
+                    : "text-slate-400"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => i18n.changeLanguage("hi")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
+                  i18n.language === "hi"
+                    ? "bg-white text-emerald-800"
+                    : "text-slate-400"
+                }`}
+              >
+                हिंदी
+              </button>
+              <button
+                onClick={() => i18n.changeLanguage("mar")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
+                  i18n.language === "mr"
+                    ? "bg-white text-emerald-800"
+                    : "text-slate-400"
+                }`}
+              >
+                मराठी
+              </button>
+            </div>
+          </div>
           <div className="relative z-10 flex flex-col items-center justify-center">
             <h1 className="text-3xl md:text-[40px] font-bold text-white tracking-tight font-serif mb-2">
-              Add Harvest Listing
+              {t("addHarvestListing")}
             </h1>
             <p className="text-[15px] text-[#d1fae5] font-light max-w-xl mx-auto">
-              List your harvested crops and connect with buyers faster.
+              {t("harvestDesc")}
             </p>
           </div>
         </div>
 
         {/* FORM CONTAINER */}
         <div className="max-w-[850px] w-full mx-auto px-6 pb-24 -mt-16 relative z-20">
+          {/* 🎤 VOICE INPUT SECTION */}
+          <div className="bg-white p-5 rounded-xl shadow mb-6 border border-[#e2e8f0]">
+            <h3 className="font-semibold mb-3 text-[#1a2e1f]">
+              🎤 {t("voiceAssitant")}
+            </h3>
+
+            {/* Language Selector */}
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="mb-3 p-2 border rounded"
+            >
+              <option value="en-IN">English</option>
+              <option value="hi-IN">Hindi</option>
+              <option value="mr-IN">Marathi</option>
+            </select>
+
+            <div className="flex gap-3 mb-3">
+              <button
+                type="button"
+                onClick={startListening}
+                disabled={listening}
+                className={`px-4 py-2 rounded text-white ${
+                  listening ? "bg-gray-400 cursor-not-allowed" : "bg-green-600"
+                }`}
+              >
+                🎤 {t("start")}
+              </button>
+
+              <button
+                type="button"
+                onClick={stopListening}
+                disabled={!listening}
+                className={`px-4 py-2 rounded text-white ${
+                  !listening ? "bg-gray-400 cursor-not-allowed" : "bg-red-500"
+                }`}
+              >
+                ⏹ {t("stop")}
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600">
+              {listening ? "Listening..." : t("voiceDesc")}
+            </p>
+
+            <div className="mt-2 p-2 bg-gray-100 rounded text-sm">
+              {transcript}
+            </div>
+
+            {/* Guide */}
+            <div className="mt-3 text-xs text-gray-500">
+              <p>👉 Try saying:</p>
+              <ul className="list-disc ml-4">
+                {voiceExamples[language].map((example, index) => (
+                  <li key={index}>{example}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-8">
             <Section
-              title="Crop Details"
+              title={t("cropDetails")}
               step="1"
               icon={
                 <svg
@@ -209,7 +495,7 @@ const AddHarvestListing = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Crop Name <span className="text-[#ef4444]">*</span>
+                    {t("cropName")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <input
                     name="cropName"
@@ -222,7 +508,7 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Variety
+                    {t("Variety")}
                   </label>
                   <input
                     name="variety"
@@ -234,7 +520,7 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Quantity (kg) <span className="text-[#ef4444]">*</span>
+                    {t("quantity")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <input
                     name="quantityAvailable"
@@ -248,7 +534,8 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Harvest Month <span className="text-[#ef4444]">*</span>
+                    {t("HarvestMonth")}{" "}
+                    <span className="text-[#ef4444]">*</span>
                   </label>
                   <select
                     name="harvestedMonth"
@@ -258,21 +545,21 @@ const AddHarvestListing = () => {
                     required
                   >
                     <option value="" disabled>
-                      Select Month
+                      {t("monthvalue")}
                     </option>
                     {[
-                      "January",
-                      "February",
-                      "March",
-                      "April",
-                      "May",
-                      "June",
-                      "July",
-                      "August",
-                      "September",
-                      "October",
-                      "November",
-                      "December",
+                      t("january"),
+                      t("february"),
+                      t("march"),
+                      t("april"),
+                      t("may"),
+                      t("june"),
+                      t("july"),
+                      t("august"),
+                      t("september"),
+                      t("october"),
+                      t("november"),
+                      t("december"),
                     ].map((m) => (
                       <option key={m} value={m}>
                         {m}
@@ -282,7 +569,7 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Harvest Year <span className="text-[#ef4444]">*</span>
+                    {t("HarvestYear")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <input
                     name="harvestedYear"
@@ -298,7 +585,7 @@ const AddHarvestListing = () => {
             </Section>
 
             <Section
-              title="Quality Details"
+              title={t("QualityDetails")}
               step="2"
               icon={
                 <svg
@@ -319,7 +606,7 @@ const AddHarvestListing = () => {
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Condition <span className="text-[#ef4444]">*</span>
+                    {t("Condition")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <select
                     name="cropCondition"
@@ -331,19 +618,21 @@ const AddHarvestListing = () => {
                     <option value="" disabled>
                       Select
                     </option>
-                    <option value="FRESH">Fresh</option>
+                    <option value="FRESH">{t("fresh")}</option>
                     <option value="STORED_LT_1_MONTH">
-                      Stored &lt; 1 Month
+                      {t("stored1moth")}
                     </option>
-                    <option value="STORED_1_3_MONTHS">Stored 1–3 Months</option>
+                    <option value="STORED_1_3_MONTHS">
+                      {t("stored3moth")}
+                    </option>
                     <option value="STORED_GT_3_MONTHS">
-                      Stored &gt; 3 Months
+                      {t("stored>3moth")}
                     </option>
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Sorting <span className="text-[#ef4444]">*</span>
+                    {t("Sorting")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <select
                     name="sortingStatus"
@@ -355,14 +644,16 @@ const AddHarvestListing = () => {
                     <option value="" disabled>
                       Select
                     </option>
-                    <option value="SORTED">Sorted</option>
-                    <option value="PARTIALLY_SORTED">Partially Sorted</option>
-                    <option value="NOT_SORTED">Not Sorted</option>
+                    <option value="SORTED">{t("sorted")}</option>
+                    <option value="PARTIALLY_SORTED">
+                      {t("Partially_sorted")}
+                    </option>
+                    <option value="NOT_SORTED">{t("Not_sorted")}</option>
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Moisture
+                    {t("Moisture")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <select
                     name="moistureLevel"
@@ -370,17 +661,17 @@ const AddHarvestListing = () => {
                     className={inputStyle}
                     onChange={handleChange}
                   >
-                    <option value="NOT_TESTED">Not Tested</option>
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
+                    <option value="NOT_TESTED">{t("nottested")}</option>
+                    <option value="LOW">{t("low")}</option>
+                    <option value="MEDIUM">{t("medium")}</option>
+                    <option value="HIGH">{t("high")}</option>
                   </select>
                 </div>
               </div>
             </Section>
 
             <Section
-              title="Expected Pricing"
+              title={t("expectedPricing")}
               step="3"
               icon={
                 <svg
@@ -401,7 +692,8 @@ const AddHarvestListing = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Min Price (₹) <span className="text-[#ef4444]">*</span>
+                    {t("minPrice")} (₹){" "}
+                    <span className="text-[#ef4444]">*</span>
                   </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8ca391] font-medium">
@@ -419,7 +711,8 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Max Price (₹) <span className="text-[#ef4444]">*</span>
+                    {t("maxPrice")} (₹){" "}
+                    <span className="text-[#ef4444]">*</span>
                   </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8ca391] font-medium">
@@ -439,7 +732,7 @@ const AddHarvestListing = () => {
             </Section>
 
             <Section
-              title="Pickup Location"
+              title={t("pickupLocation")}
               step="4"
               icon={
                 <svg
@@ -460,7 +753,7 @@ const AddHarvestListing = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-1.5 md:col-span-2">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Address Line <span className="text-[#ef4444]">*</span>
+                    {t("addressLine")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <input
                     name="addressLine"
@@ -472,7 +765,8 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Village / City <span className="text-[#ef4444]">*</span>
+                    {t("villageorcity")}{" "}
+                    <span className="text-[#ef4444]">*</span>
                   </label>
                   <input
                     name="villageOrCity"
@@ -484,7 +778,7 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    District <span className="text-[#ef4444]">*</span>
+                    {t("District")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <input
                     name="district"
@@ -496,7 +790,7 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    State <span className="text-[#ef4444]">*</span>
+                    {t("State")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <input
                     name="state"
@@ -508,7 +802,7 @@ const AddHarvestListing = () => {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-[#344d3a]">
-                    Pincode <span className="text-[#ef4444]">*</span>
+                    {t("pinCode")} <span className="text-[#ef4444]">*</span>
                   </label>
                   <input
                     name="pincode"
@@ -522,7 +816,7 @@ const AddHarvestListing = () => {
             </Section>
 
             <Section
-              title="Crop Images"
+              title={t("cropImage")}
               step="5"
               icon={
                 <svg
@@ -566,7 +860,7 @@ const AddHarvestListing = () => {
                   <p className="text-sm font-semibold text-[#1a2e1f]">
                     {images.length > 0
                       ? `${images.length} images selected`
-                      : "Click or drag images to upload"}
+                      : t("imgVal")}
                   </p>
                 </div>
               </div>
@@ -600,7 +894,7 @@ const AddHarvestListing = () => {
                     />
                   </svg>
                   <span className="text-[14px] leading-relaxed text-[#5e4a2d] font-medium">
-                    I declare that the information provided is accurate.
+                    {t("Declaration")}
                   </span>
                 </div>
               </label>
@@ -609,7 +903,7 @@ const AddHarvestListing = () => {
                 disabled={!isFormValid || submitting}
                 className={`w-full py-4 rounded-xl font-bold shadow-lg transition-all duration-300 text-lg ${isFormValid ? "bg-[#10b981] hover:bg-[#059669] text-white hover:-translate-y-1" : "bg-[#cbd5e1] text-[#64748b] cursor-not-allowed shadow-none"}`}
               >
-                {submitting ? "Publishing..." : "Publish Harvest Listing"}
+                {submitting ? t("publishing") : t("publishHarvest")}
               </button>
             </div>
           </form>
