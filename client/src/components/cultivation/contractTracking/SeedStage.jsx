@@ -1,117 +1,3 @@
-// import { CheckCircle, Clock, Lock, Camera } from "lucide-react";
-
-// export default function SeedStage({
-//   seedDispatch,
-//   seedProvider = "BUYER", // BUYER | FARMER
-//   role, // BUYER | FARMER
-//   onDispatch,
-//   onConfirm,
-// }) {
-//   const buyerDispatched = seedDispatch?.buyerConfirmed;
-//   const farmerReceived = seedDispatch?.farmerConfirmed;
-
-//   return (
-//     <div className="bg-white rounded-xl p-6 border">
-//       <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-//         🌾 Seed Supply & Confirmation
-//       </h2>
-
-//       {/* INFO */}
-//       <div className="text-sm text-gray-600 mb-4">
-//         Seed Provider:{" "}
-//         <span className="font-medium text-gray-800">{seedProvider}</span>
-//       </div>
-
-//       {/* CASE 1: BUYER PROVIDES SEEDS */}
-//       {seedProvider === "BUYER" && (
-//         <>
-//           {/* Buyer Dispatch */}
-//           <StageRow
-//             title="Buyer dispatched seeds"
-//             status={buyerDispatched ? "COMPLETED" : "PENDING"}
-//             action={
-//               role === "BUYER" && !buyerDispatched ? (
-//                 <button
-//                   onClick={onDispatch}
-//                   className="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm"
-//                 >
-//                   Mark Dispatched
-//                 </button>
-//               ) : null
-//             }
-//           />
-
-//           {/* Farmer Confirm */}
-//           <StageRow
-//             title="Farmer confirmed seed receipt"
-//             status={
-//               farmerReceived
-//                 ? "COMPLETED"
-//                 : buyerDispatched
-//                   ? "PENDING"
-//                   : "LOCKED"
-//             }
-//             action={
-//               role === "FARMER" && buyerDispatched && !farmerReceived ? (
-//                 <button
-//                   onClick={onConfirm}
-//                   className="px-3 py-1.5 border rounded-md text-sm flex items-center gap-2"
-//                 >
-//                   <Camera size={16} /> Upload Proof
-//                 </button>
-//               ) : null
-//             }
-//           />
-//         </>
-//       )}
-
-//       {/* CASE 2: FARMER PROVIDES SEEDS */}
-//       {seedProvider === "FARMER" && (
-//         <StageRow
-//           title="Farmer confirmed seed usage"
-//           status={farmerReceived ? "COMPLETED" : "PENDING"}
-//           action={
-//             role === "FARMER" && !farmerReceived ? (
-//               <button
-//                 onClick={onConfirm}
-//                 className="px-3 py-1.5 border rounded-md text-sm flex items-center gap-2"
-//               >
-//                 <Camera size={16} /> Upload Proof
-//               </button>
-//             ) : null
-//           }
-//         />
-//       )}
-
-//       {/* LOCK MESSAGE */}
-//       {!farmerReceived && (
-//         <div className="mt-4 text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md">
-//           Cultivation timeline will start only after seed confirmation.
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// /* -------- SUB COMPONENT -------- */
-
-// function StageRow({ title, status, action }) {
-//   const icons = {
-//     COMPLETED: <CheckCircle className="text-green-600" />,
-//     PENDING: <Clock className="text-yellow-500" />,
-//     LOCKED: <Lock className="text-gray-400" />,
-//   };
-
-//   return (
-//     <div className="flex justify-between items-center py-3 border-b last:border-none">
-//       <div className="flex items-center gap-3">
-//         {icons[status]}
-//         <span className="text-sm">{title}</span>
-//       </div>
-//       {action}
-//     </div>
-//   );
-// }
 import React, { useState } from "react";
 import axios from "../../../api/axios";
 
@@ -188,163 +74,215 @@ export default function SeedStage({ contract, role, refreshContract }) {
     ) : null;
 
   return (
-    <div className="border rounded-lg p-4 space-y-4 bg-white">
-      <h3 className="font-semibold text-lg">Seed Supply</h3>
+    <div className="bg-white rounded-[2rem] border border-slate-200 p-6 shadow-sm space-y-6">
+      {/* HEADER */}
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-black text-slate-900 uppercase tracking-wide">
+          Seed Supply
+        </h3>
 
-      {/* ===== Seed Details ===== */}
+        <span
+          className={`px-4 py-1 text-[10px] font-black rounded-xl uppercase tracking-wider
+        ${
+          seedSupply.status === "PENDING"
+            ? "bg-amber-100 text-amber-700"
+            : seedSupply.status === "DISPATCHED"
+              ? "bg-blue-100 text-blue-700"
+              : seedSupply.status === "VERIFIED"
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-slate-100 text-slate-600"
+        }`}
+        >
+          {seedSupply.status}
+        </span>
+      </div>
+
+      {/* ===== SEED DETAILS ===== */}
       {seedSupply.seedDetails && (
-        <div className="text-sm bg-gray-50 p-3 rounded border">
-          <p>
-            <b>Crop:</b> {seedSupply.seedDetails.cropName}
+        <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200">
+          <p className="text-xs font-black text-slate-500 uppercase mb-2">
+            Seed Details
           </p>
-          <p>
-            <b>Brand:</b> {seedSupply.seedDetails.brand}
-          </p>
-          <p>
-            <b>Variety:</b> {seedSupply.seedDetails.variety || "—"}
-          </p>
-          <p>
-            <b>Quantity:</b> {seedSupply.seedDetails.quantityKg} kg
-          </p>
+
+          <div className="grid grid-cols-2 gap-3 text-sm font-semibold text-slate-700">
+            <p>
+              <span className="text-slate-400">Crop:</span>{" "}
+              {seedSupply.seedDetails.cropName}
+            </p>
+            <p>
+              <span className="text-slate-400">Brand:</span>{" "}
+              {seedSupply.seedDetails.brand}
+            </p>
+            <p>
+              <span className="text-slate-400">Variety:</span>{" "}
+              {seedSupply.seedDetails.variety || "—"}
+            </p>
+            <p>
+              <span className="text-slate-400">Quantity:</span>{" "}
+              {seedSupply.seedDetails.quantityKg} kg
+            </p>
+          </div>
         </div>
       )}
 
-      {/* ===== Buyer Dispatch Section ===== */}
-      {isBuyer &&
+      {/* ===== FORM SECTION ===== */}
+      {(isBuyer &&
         seedSupply.provider === "BUYER" &&
-        seedSupply.status === "PENDING" && (
-          <div className="space-y-2 border-t pt-3">
-            <h4 className="font-medium">Dispatch Seeds</h4>
-
-            <input
-              name="cropName"
-              placeholder="Crop Name"
-              onChange={handleChange}
-            />
-            <input
-              name="variety"
-              placeholder="Variety"
-              onChange={handleChange}
-            />
-            <input
-              name="brand"
-              placeholder="Seed Brand"
-              onChange={handleChange}
-            />
-            <input
-              name="quantityKg"
-              type="number"
-              placeholder="Quantity (kg)"
-              onChange={handleChange}
-            />
-            <textarea
-              name="remarks"
-              placeholder="Remarks"
-              onChange={handleChange}
-            />
-            <input type="file" multiple onChange={handleFiles} />
-
-            <button
-              onClick={() => submit(`/contracts/${contract._id}/seed/dispatch`)}
-              disabled={loading}
-              className="btn-primary"
-            >
-              Dispatch Seeds
-            </button>
-          </div>
-        )}
-
-      {/* ===== Farmer Accept Section ===== */}
-      {isFarmer &&
+        seedSupply.status === "PENDING") ||
+      (isFarmer &&
         seedSupply.provider === "BUYER" &&
-        seedSupply.status === "DISPATCHED" && (
-          <div className="space-y-2 border-t pt-3">
-            <h4 className="font-medium">Confirm Seed Receipt</h4>
-
-            <textarea
-              name="remarks"
-              placeholder="Remarks"
-              onChange={handleChange}
-            />
-            <input type="file" multiple onChange={handleFiles} />
-
-            <button
-              onClick={() => submit(`contracts/${contract._id}/seed/confirm`)}
-              disabled={loading}
-              className="btn-primary"
-            >
-              Accept & Verify Seeds
-            </button>
-          </div>
-        )}
-
-      {/* ===== Farmer Provided Seed Upload ===== */}
-      {isFarmer &&
+        seedSupply.status === "DISPATCHED") ||
+      (isFarmer &&
         seedSupply.provider === "FARMER" &&
-        seedSupply.status !== "VERIFIED" && (
-          <div className="space-y-2 border-t pt-3">
-            <h4 className="font-medium">Upload Seed Proof</h4>
+        seedSupply.status !== "VERIFIED") ? (
+        <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-5">
+          <h4 className="text-sm font-black text-slate-700 uppercase">
+            {isBuyer
+              ? "Dispatch Seeds"
+              : seedSupply.provider === "FARMER"
+                ? "Upload Seed Proof"
+                : "Confirm Seed Receipt"}
+          </h4>
 
-            <input
-              name="cropName"
-              placeholder="Crop Name"
-              onChange={handleChange}
-            />
-            <input
-              name="variety"
-              placeholder="Variety"
-              onChange={handleChange}
-            />
-            <input
-              name="brand"
-              placeholder="Seed Brand"
-              onChange={handleChange}
-            />
-            <input
-              name="quantityKg"
-              type="number"
-              placeholder="Quantity (kg)"
-              onChange={handleChange}
-            />
+          {/* INPUT GRID */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="label-style">Crop Name</label>
+              <input
+                name="cropName"
+                placeholder="e.g. Wheat"
+                onChange={handleChange}
+                className="input-style"
+              />
+            </div>
+
+            <div>
+              <label className="label-style">Variety</label>
+              <input
+                name="variety"
+                placeholder="e.g. Basmati"
+                onChange={handleChange}
+                className="input-style"
+              />
+            </div>
+
+            <div>
+              <label className="label-style">Seed Brand</label>
+              <input
+                name="brand"
+                placeholder="e.g. Pioneer"
+                onChange={handleChange}
+                className="input-style"
+              />
+            </div>
+
+            <div>
+              <label className="label-style">Quantity (kg)</label>
+              <input
+                name="quantityKg"
+                type="number"
+                placeholder="Enter quantity"
+                onChange={handleChange}
+                className="input-style"
+              />
+            </div>
+          </div>
+
+          {/* REMARKS */}
+          <div>
+            <label className="label-style">Remarks</label>
             <textarea
               name="remarks"
-              placeholder="Remarks"
+              placeholder="Add any notes..."
               onChange={handleChange}
+              className="w-full border-2 border-slate-100 p-3 rounded-xl text-sm font-medium outline-none focus:border-emerald-500"
             />
-            <input type="file" multiple onChange={handleFiles} />
-
-            <button
-              onClick={() => submit(`/contracts/${contract._id}/seed/upload`)}
-              disabled={loading}
-              className="btn-primary"
-            >
-              Upload Seed Proof
-            </button>
           </div>
-        )}
 
-      {/* ===== Proofs (VISIBLE TO BOTH BUYER & FARMER) ===== */}
-      {seedSupply.dispatchProof && (
-        <ProofGallery
-          title="Buyer Dispatch Proof"
-          images={seedSupply.dispatchProof.images}
-        />
+          {/* FILE UPLOAD */}
+          <div>
+            <label className="label-style">Upload Proof Images</label>
+
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-5 text-center hover:border-emerald-400 transition">
+              <input
+                type="file"
+                multiple
+                onChange={handleFiles}
+                className="text-sm"
+              />
+              <p className="text-xs text-slate-500 mt-2">PNG, JPG up to 5MB</p>
+            </div>
+
+            {/* PREVIEW BEFORE UPLOAD */}
+            {form.images.length > 0 && (
+              <div className="flex gap-3 mt-3 flex-wrap">
+                {form.images.map((file, i) => (
+                  <img
+                    key={i}
+                    src={URL.createObjectURL(file)}
+                    className="w-20 h-20 object-cover rounded-lg border"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* BUTTON */}
+          <button
+            onClick={() => {
+              if (isBuyer) submit(`/contracts/${contract._id}/seed/dispatch`);
+              else if (seedSupply.provider === "BUYER")
+                submit(`/contracts/${contract._id}/seed/confirm`);
+              else submit(`/contracts/${contract._id}/seed/upload`);
+            }}
+            disabled={loading}
+            className="w-full py-3 bg-emerald-600 text-white rounded-xl font-black uppercase text-xs tracking-wider hover:bg-emerald-700 transition-all"
+          >
+            {loading ? "Processing..." : "Submit"}
+          </button>
+        </div>
+      ) : null}
+
+      {/* ===== PROOF GALLERY ===== */}
+      {(seedSupply.dispatchProof || seedSupply.receiveProof) && (
+        <div className="space-y-4">
+          {seedSupply.dispatchProof && (
+            <div>
+              <p className="text-xs font-black text-slate-500 uppercase mb-2">
+                Buyer Dispatch Proof
+              </p>
+              <div className="flex gap-3 flex-wrap">
+                {seedSupply.dispatchProof.images.map((img, i) => (
+                  <img
+                    key={i}
+                    src={`http://localhost:5000/${img}`}
+                    className="w-24 h-24 object-cover rounded-xl border border-slate-200 hover:scale-105 transition"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {seedSupply.receiveProof && (
+            <div>
+              <p className="text-xs font-black text-slate-500 uppercase mb-2">
+                Farmer Receiving Proof
+              </p>
+              <div className="flex gap-3 flex-wrap">
+                {seedSupply.receiveProof.images.map((img, i) => (
+                  <img
+                    key={i}
+                    src={`http://localhost:5000/${img}`}
+                    className="w-24 h-24 object-cover rounded-xl border border-slate-200 hover:scale-105 transition"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
-      {seedSupply.receiveProof && (
-        <ProofGallery
-          title="Farmer Receiving Proof"
-          images={seedSupply.receiveProof.images}
-        />
-      )}
-
-      {/* ===== Status ===== */}
-      <div className="text-sm mt-2">
-        <b>Status:</b>{" "}
-        <span className="capitalize">{seedSupply.status.toLowerCase()}</span>
-      </div>
-
-      {error && <p className="text-red-600">{error}</p>}
+      {error && <p className="text-red-600 text-xs font-semibold">{error}</p>}
     </div>
   );
 }

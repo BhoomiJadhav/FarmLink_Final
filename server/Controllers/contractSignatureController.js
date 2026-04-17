@@ -140,13 +140,24 @@ const farmerSignContract = async (req, res) => {
     }
 
     /* ===============================
-       FILE PATH (NEW 🔥)
-    =============================== */
-    document: req.file?.path.replace(/\\/g, "/");
+   FILE PATH
+=============================== */
+    const documentUrl = req.file?.path
+      ? req.file.path.replace(/\\/g, "/")
+      : null;
 
     /* ===============================
-       SAVE INSURANCE IN CONTRACT
-    =============================== */
+   AUTO POLICY CHECK
+=============================== */
+    const autoCheck = await autoPolicyCheck({
+      providerName: insuranceProvider,
+      policyNumber,
+      policyValidTill,
+    });
+
+    /* ===============================
+   SAVE INSURANCE
+=============================== */
     contract.insurance = {
       providedByCompany: false,
       pmfbyMandatory: true,
@@ -154,9 +165,8 @@ const farmerSignContract = async (req, res) => {
       policyNumber,
       policyValidTill,
       documentUrl,
-      autoCheck, // 🔥 ADD THIS
+      autoCheck,
     };
-
     /* ===============================
        SAVE FARMER SIGNATURE
     =============================== */
@@ -171,11 +181,6 @@ const farmerSignContract = async (req, res) => {
        UPDATE CONTRACT STATUS
     =============================== */
     contract.status = "AWAITING_BUYER_SIGNATURE";
-    const autoCheck = await autoPolicyCheck({
-      providerName: insuranceProvider,
-      policyNumber,
-      policyValidTill,
-    });
     if (autoCheck.status === "AUTO_VERIFIED") {
       contract.policyVerification = {
         status: "VERIFIED",
