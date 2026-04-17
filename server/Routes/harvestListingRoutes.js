@@ -24,5 +24,6 @@ router.get("/farmer/my-listings", protect, getFarmerHarvestListings);
 router.get("/market", protect, getOpenHarvestListings);
 router.get("/:id", protect, getHarvestListingById);
 router.delete("/:id", protect, deleteListing);
-router.put("/:id", protect, updateListing);
+router.put("/:id", protect, uploadCropImages.array("images"), updateListing);
+// router.put("/:id", protect, updateListing);
 module.exports = router;

@@ -214,14 +214,42 @@ const getHarvestListingById = async (req, res) => {
 };
 const updateListing = async (req, res) => {
   try {
+    const existingListing = await HarvestListing.findById(req.params.id);
+
+    // 🧠 Parse incoming data
+    const harvest = JSON.parse(req.body.harvest);
+    const expectedPrice = JSON.parse(req.body.expectedPrice);
+    const delivery = JSON.parse(req.body.delivery);
+    const qualityDetails = JSON.parse(req.body.qualityDetails);
+
+    // 📸 Existing images user kept
+    const existingImages = req.body.existingImages
+      ? JSON.parse(req.body.existingImages)
+      : [];
+
+    // 📸 New uploaded images (multer)
+    const newImages = req.files ? req.files.map((file) => file.path) : [];
+
+    // 🧠 Final images = kept + new
+    const finalImages = [...existingImages, ...newImages];
+
     const updated = await HarvestListing.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      {
+        harvest,
+        expectedPrice,
+        delivery,
+        qualityDetails: {
+          ...qualityDetails,
+          images: finalImages,
+        },
+      },
       { new: true },
     );
 
     res.json({ success: true, listing: updated });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 };

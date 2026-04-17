@@ -8,77 +8,286 @@ import { format } from "date-fns";
    EDIT MODAL
 ========================= */
 function EditListingModal({ listing, onClose, onSave }) {
+  const [newImages, setNewImages] = useState([]);
   const [form, setForm] = useState({
-    quantityAvailable: listing.harvest.quantityAvailable,
-    minPrice: listing.expectedPrice.minPricePerUnit,
-    maxPrice: listing.expectedPrice.maxPricePerUnit,
+    cropName: listing.harvest.cropName || "",
+    variety: listing.harvest.variety || "",
+    quantityAvailable: listing.harvest.quantityAvailable || "",
+    unit: listing.harvest.unit || "Quintal",
+    harvestedMonth: listing.harvest.harvestedMonth || "",
+    harvestedYear: listing.harvest.harvestedYear || "",
+
+    minPrice: listing.expectedPrice.minPricePerUnit || "",
+    maxPrice: listing.expectedPrice.maxPricePerUnit || "",
+
+    addressLine: listing.delivery?.pickupLocation?.addressLine || "",
+    villageOrCity: listing.delivery?.pickupLocation?.villageOrCity || "",
     district: listing.delivery?.pickupLocation?.district || "",
     state: listing.delivery?.pickupLocation?.state || "",
-  });
+    pincode: listing.delivery?.pickupLocation?.pincode || "",
 
+    cropCondition: listing.qualityDetails?.cropCondition || "FRESH",
+    moistureLevel: listing.qualityDetails?.moistureLevel || "NOT_TESTED",
+    sortingStatus: listing.qualityDetails?.sortingStatus || "SORTED",
+
+    images: listing.qualityDetails?.images || [],
+  });
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = () => {
-    onSave(form);
+    onSave({ ...form, newImages });
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl animate-fadeIn">
-        <h2 className="text-xl font-semibold mb-4">Edit Listing</h2>
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
+      <div className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 shadow-xl animate-fadeIn">
+        <div className="space-y-6">
+          {/* 🌾 HARVEST */}
+          <div>
+            <h3 className="font-semibold mb-2">Harvest Details</h3>
 
-        <div className="grid gap-4">
-          <input
-            name="quantityAvailable"
-            value={form.quantityAvailable}
-            onChange={handleChange}
-            placeholder="Quantity"
-            className="border p-2 rounded-lg"
-          />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label>Crop Name</label>
+                <input
+                  name="cropName"
+                  value={form.cropName}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
 
-          <input
-            name="minPrice"
-            value={form.minPrice}
-            onChange={handleChange}
-            placeholder="Min Price"
-            className="border p-2 rounded-lg"
-          />
+              <div>
+                <label>Variety</label>
+                <input
+                  name="variety"
+                  value={form.variety}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
 
-          <input
-            name="maxPrice"
-            value={form.maxPrice}
-            onChange={handleChange}
-            placeholder="Max Price"
-            className="border p-2 rounded-lg"
-          />
+              <div>
+                <label>Quantity</label>
+                <input
+                  name="quantityAvailable"
+                  value={form.quantityAvailable}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
 
-          <input
-            name="district"
-            value={form.district}
-            onChange={handleChange}
-            placeholder="District"
-            className="border p-2 rounded-lg"
-          />
+              <div>
+                <label>Unit</label>
+                <input
+                  name="unit"
+                  value={form.unit}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
 
-          <input
-            name="state"
-            value={form.state}
-            onChange={handleChange}
-            placeholder="State"
-            className="border p-2 rounded-lg"
-          />
+              <div>
+                <label>Month</label>
+                <select
+                  name="harvestedMonth"
+                  value={form.harvestedMonth}
+                  onChange={handleChange}
+                  className="input"
+                >
+                  {[
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December",
+                  ].map((m) => (
+                    <option key={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label>Year</label>
+                <input
+                  name="harvestedYear"
+                  value={form.harvestedYear}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 💰 PRICE */}
+          <div>
+            <h3 className="font-semibold mb-2">Pricing</h3>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label>Min Price</label>
+                <input
+                  name="minPrice"
+                  value={form.minPrice}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
+
+              <div>
+                <label>Max Price</label>
+                <input
+                  name="maxPrice"
+                  value={form.maxPrice}
+                  onChange={handleChange}
+                  className="input"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 📍 LOCATION */}
+          <div>
+            <h3 className="font-semibold mb-2">Pickup Location</h3>
+
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                name="addressLine"
+                placeholder="Address"
+                value={form.addressLine}
+                onChange={handleChange}
+                className="input"
+              />
+              <input
+                name="villageOrCity"
+                placeholder="Village/City"
+                value={form.villageOrCity}
+                onChange={handleChange}
+                className="input"
+              />
+              <input
+                name="district"
+                placeholder="District"
+                value={form.district}
+                onChange={handleChange}
+                className="input"
+              />
+              <input
+                name="state"
+                placeholder="State"
+                value={form.state}
+                onChange={handleChange}
+                className="input"
+              />
+              <input
+                name="pincode"
+                placeholder="Pincode"
+                value={form.pincode}
+                onChange={handleChange}
+                className="input"
+              />
+            </div>
+          </div>
+
+          {/* 🌿 QUALITY */}
+          <div>
+            <h3 className="font-semibold mb-2">Quality</h3>
+
+            <div className="grid grid-cols-3 gap-3">
+              <select
+                name="cropCondition"
+                value={form.cropCondition}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="FRESH">Fresh</option>
+                <option value="STORED_LT_1_MONTH">Stored &lt;1 month</option>
+                <option value="STORED_1_3_MONTHS">Stored 1-3 months</option>
+                <option value="STORED_GT_3_MONTHS">Stored &gt;3 months</option>
+              </select>
+
+              <select
+                name="moistureLevel"
+                value={form.moistureLevel}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="NOT_TESTED">Not Tested</option>
+              </select>
+
+              <select
+                name="sortingStatus"
+                value={form.sortingStatus}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="SORTED">Sorted</option>
+                <option value="PARTIALLY_SORTED">Partially</option>
+                <option value="NOT_SORTED">Not Sorted</option>
+              </select>
+            </div>
+          </div>
+
+          {/* 🖼 IMAGES */}
+          {/* 🖼 IMAGES */}
+          <div>
+            <h3 className="font-semibold mb-2">Images</h3>
+
+            {/* Existing Images */}
+            <div className="flex gap-3 flex-wrap">
+              {form.images.map((img, i) => (
+                <div key={i} className="relative">
+                  <img src={img} className="w-20 h-20 rounded object-cover" />
+
+                  {/* DELETE BUTTON */}
+                  <button
+                    onClick={() => {
+                      const updated = form.images.filter(
+                        (_, index) => index !== i,
+                      );
+                      setForm({ ...form, images: updated });
+                    }}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* ADD IMAGE INPUT */}
+            <input
+              type="file"
+              multiple
+              onChange={(e) => {
+                const files = Array.from(e.target.files);
+                setNewImages(files);
+              }}
+            />
+          </div>
         </div>
 
-        <div className="flex justify-end gap-3 mt-6">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg border">
+        {/* ACTIONS */}
+        <div className="sticky bottom-0 bg-white pt-4 flex justify-end gap-3 mt-6">
+          <button onClick={onClose} className="px-4 py-2 border rounded-lg">
             Cancel
           </button>
 
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 rounded-lg bg-green-600 text-white"
+            className="px-4 py-2 bg-green-600 text-white rounded-lg"
           >
             Save Changes
           </button>
@@ -87,7 +296,6 @@ function EditListingModal({ listing, onClose, onSave }) {
     </div>
   );
 }
-
 /* =========================
    LISTING CARD
 ========================= */
@@ -97,63 +305,44 @@ function ListingCard({ listing, onDelete, onEdit }) {
     : "—";
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E1E6D8] p-6 shadow-sm hover:shadow-md transition">
-      <div className="flex justify-between gap-4">
+    <div className="bg-white rounded-2xl border p-6 shadow-sm">
+      <div className="flex justify-between">
         {/* LEFT */}
         <div>
-          <h3 className="text-lg font-semibold text-[#1F2933]">
-            {listing.harvest.cropName}
-          </h3>
+          <h3 className="text-lg font-semibold">{listing.harvest.cropName}</h3>
 
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-gray-600">{listing.harvest.variety}</p>
+
+          <p className="text-sm mt-1">
             Qty: {listing.harvest.quantityAvailable} {listing.harvest.unit}
           </p>
 
-          <p className="text-sm mt-2 text-gray-700">
+          <p className="text-sm mt-1">
             ₹{listing.expectedPrice.minPricePerUnit} - ₹
-            {listing.expectedPrice.maxPricePerUnit} / {listing.harvest.unit}
+            {listing.expectedPrice.maxPricePerUnit}
           </p>
 
           <p className="text-xs text-gray-500 mt-2">
             {listing.delivery?.pickupLocation?.district},{" "}
             {listing.delivery?.pickupLocation?.state}
           </p>
-
-          <p className="text-xs text-gray-500 mt-2">
-            Offers: {listing.pendingContracts?.length || 0}
-          </p>
         </div>
 
         {/* RIGHT */}
-        <div className="text-right flex flex-col justify-between">
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold
-              ${
-                listing.status === "OPEN"
-                  ? "bg-green-100 text-green-700"
-                  : listing.status === "CONTRACT_SENT"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : listing.status === "SOLD"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-200 text-gray-700"
-              }`}
-          >
-            {listing.status}
-          </span>
+        <div className="text-right">
+          <p className="text-xs text-gray-400">{createdOn}</p>
 
-          <p className="text-xs text-gray-400 mt-3">{createdOn}</p>
-
-          <div className="flex gap-3 mt-4 justify-end">
+          <div className="flex gap-3 mt-3 justify-end">
             <button
               onClick={() => onEdit(listing)}
-              className="text-blue-600 text-sm font-semibold hover:underline"
+              className="text-blue-600 text-sm"
             >
               Edit
             </button>
 
             <button
               onClick={() => onDelete(listing._id)}
-              className="text-red-600 text-sm font-semibold hover:underline"
+              className="text-red-600 text-sm"
             >
               Delete
             </button>
@@ -165,14 +354,12 @@ function ListingCard({ listing, onDelete, onEdit }) {
       {listing.qualityDetails?.images?.length > 0 && (
         <img
           src={listing.qualityDetails.images[0]}
-          alt="crop"
-          className="mt-4 h-32 w-full object-cover rounded-lg"
+          className="mt-4 h-32 w-full object-cover rounded"
         />
       )}
     </div>
   );
 }
-
 /* =========================
    MAIN PAGE
 ========================= */
@@ -215,23 +402,108 @@ export default function FarmerHarvestListings() {
   };
 
   /* SAVE EDIT */
+  // const handleSaveEdit = async (form) => {
+  //   try {
+  //     await api.put(`/harvest-listings/${editingListing._id}`, {
+  //       harvest: {
+  //         cropName: form.cropName,
+  //         variety: form.variety,
+  //         quantityAvailable: Number(form.quantityAvailable),
+  //         unit: form.unit,
+  //         harvestedMonth: form.harvestedMonth,
+  //         harvestedYear: Number(form.harvestedYear),
+  //       },
+  //       expectedPrice: {
+  //         minPricePerUnit: Number(form.minPrice),
+  //         maxPricePerUnit: Number(form.maxPrice),
+  //       },
+  //       delivery: {
+  //         pickupLocation: {
+  //           addressLine: form.addressLine,
+  //           villageOrCity: form.villageOrCity,
+  //           district: form.district,
+  //           state: form.state,
+  //           pincode: form.pincode,
+  //         },
+  //       },
+  //       qualityDetails: {
+  //         cropCondition: form.cropCondition,
+  //         moistureLevel: form.moistureLevel,
+  //         sortingStatus: form.sortingStatus,
+  //         images: form.images,
+  //       },
+  //     });
+
+  //     setEditingListing(null);
+  //     fetchListings();
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Update failed");
+  //   }
+  // };
   const handleSaveEdit = async (form) => {
     try {
-      await api.put(`/harvest-listings/${editingListing._id}`, {
-        "harvest.quantityAvailable": Number(form.quantityAvailable),
-        "expectedPrice.minPricePerUnit": Number(form.minPrice),
-        "expectedPrice.maxPricePerUnit": Number(form.maxPrice),
-        "delivery.pickupLocation.district": form.district,
-        "delivery.pickupLocation.state": form.state,
+      const formData = new FormData();
+
+      formData.append(
+        "harvest",
+        JSON.stringify({
+          cropName: form.cropName,
+          variety: form.variety,
+          quantityAvailable: Number(form.quantityAvailable),
+          unit: form.unit,
+          harvestedMonth: form.harvestedMonth,
+          harvestedYear: Number(form.harvestedYear),
+        }),
+      );
+
+      formData.append(
+        "expectedPrice",
+        JSON.stringify({
+          minPricePerUnit: Number(form.minPrice),
+          maxPricePerUnit: Number(form.maxPrice),
+        }),
+      );
+
+      formData.append(
+        "delivery",
+        JSON.stringify({
+          pickupLocation: {
+            addressLine: form.addressLine,
+            villageOrCity: form.villageOrCity,
+            district: form.district,
+            state: form.state,
+            pincode: form.pincode,
+          },
+        }),
+      );
+
+      formData.append(
+        "qualityDetails",
+        JSON.stringify({
+          cropCondition: form.cropCondition,
+          moistureLevel: form.moistureLevel,
+          sortingStatus: form.sortingStatus,
+        }),
+      );
+
+      // ✅ VERY IMPORTANT → existing images (after delete)
+      formData.append("existingImages", JSON.stringify(form.images));
+
+      // ✅ NEW IMAGES (FILES)
+      form.newImages?.forEach((file) => {
+        formData.append("images", file);
       });
+
+      await api.put(`/harvest-listings/${editingListing._id}`, formData);
 
       setEditingListing(null);
       fetchListings();
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Update failed");
     }
   };
-
   return (
     <div className="flex min-h-screen bg-[#F5F7F2]">
       <Sidebar />
@@ -280,6 +552,14 @@ export default function FarmerHarvestListings() {
 
       {/* ANIMATION */}
       <style>
+        {`
+          .input {
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 8px;
+            width: 100%;
+          }
+        `}
         {`
           @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
