@@ -1,175 +1,3 @@
-// // src/components/Topbar.jsx
-// import React, { useState, useEffect } from "react";
-
-// import { Bell, ChevronDown, User } from "lucide-react";
-// import NotificationPopup from "./NotificationPopup";
-
-// export default function Topbar({
-//   profileData = null,
-//   notifications = [],
-//   onSearch = null,
-//   onLogout = null,
-//   onOpenProfile = null,
-// }) {
-//   const [search, setSearch] = useState("");
-
-//   const [showProfileMenu, setShowProfileMenu] = useState(false);
-//   const [openNotif, setOpenNotif] = useState(false);
-//   const [unreadCount, setUnreadCount] = useState(0);
-//   useEffect(() => {
-//     if (!notifications) return;
-//     const unread = notifications.filter((n) => !n.read).length;
-//     setUnreadCount(unread);
-//   }, [notifications]);
-
-//   function handleSearchChange(e) {
-//     const v = e.target.value;
-//     setSearch(v);
-//     if (typeof onSearch === "function") onSearch(v);
-//   }
-
-//   function toggleProfileMenu() {
-//     setShowProfileMenu((v) => !v);
-//     // close notifications when opening profile menu
-//     if (!showProfileMenu) setOpenNotif(false);
-//   }
-
-//   const displayName = profileData?.user?.name || "Unknown";
-//   const displayRole = profileData?.user?.role || "";
-
-//   return (
-//     <header className="h-20 flex items-center px-10 border-b border-[#E1E4D9] bg-[#F5F7F2] relative z-10">
-//       <div className="flex-1 flex justify-center">
-//         <div className="w-full max-w-xl">
-//           <div className="relative">
-//             <input
-//               value={search}
-//               onChange={handleSearchChange}
-//               className="w-full rounded-full bg-[#E5EDE4] border border-transparent pl-10 pr-5 py-2.5 text-sm placeholder:text-[#94A38A] focus:outline-none focus:ring-2 focus:ring-[#B5D184]"
-//               placeholder="Search contracts, crops..."
-//             />
-//             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94A38A] text-sm">
-//               🔍
-//             </span>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="flex items-center gap-6">
-//         <div className="relative">
-//           <div className="relative">
-//             <button
-//               onClick={() => setOpenNotif((o) => !o)}
-//               className="relative p-2 rounded-full hover:bg-gray-100"
-//             >
-//               <Bell size={18} />
-//               {unreadCount > 0 && (
-//                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-//                   {unreadCount}
-//                 </span>
-//               )}
-//             </button>
-
-//             <NotificationPopup
-//               open={openNotif}
-//               onClose={() => setOpenNotif(false)}
-//             />
-//           </div>
-//         </div>
-
-//         <div className="relative">
-//           <button
-//             onClick={toggleProfileMenu}
-//             className="flex items-center gap-3 rounded-full px-2 py-1 hover:bg-[#E5EFE0] transition-colors"
-//             aria-label="Profile menu"
-//           >
-//             <div className="h-9 w-9 rounded-full bg-emerald-300 overflow-hidden flex items-center justify-center text-sm font-semibold">
-//               {profileData?.user?.name
-//                 ? profileData.user.name
-//                     .split(" ")
-//                     .map((n) => n[0])
-//                     .join("")
-//                 : "?"}
-//             </div>
-//             <div className="text-right">
-//               <div className="text-sm font-semibold text-[#314028]">
-//                 {displayName}
-//               </div>
-//               <div className="text-xs text-[#86947B]">{displayRole}</div>
-//             </div>
-//             <ChevronDown className="h-3.5 w-3.5 text-[#86947B]" />
-//           </button>
-
-//           {showProfileMenu && (
-//             <div className="absolute right-0 mt-3 w-72 bg-white rounded-xl shadow-lg border border-[#E2E8D8] z-30">
-//               <div className="px-4 py-3 border-b border-[#E2E8D8]">
-//                 <div className="flex items-center gap-3">
-//                   <div className="h-9 w-9 rounded-full bg-emerald-300 flex items-center justify-center text-sm font-semibold">
-//                     {profileData?.user?.name
-//                       ? profileData.user.name
-//                           .split(" ")
-//                           .map((n) => n[0])
-//                           .join("")
-//                       : "?"}
-//                   </div>
-//                   <div>
-//                     <p className="text-sm font-semibold text-[#314028]">
-//                       {displayName}
-//                     </p>
-//                     <p className="text-xs text-[#86947B]">
-//                       {profileData?.user?.email || ""}
-//                     </p>
-//                   </div>
-//                 </div>
-
-//                 <div className="mt-3 text-xs text-[#6B7280]">
-//                   <div>
-//                     Phone: {profileData?.profile?.personal?.phone || "-"}
-//                   </div>
-//                   <div>
-//                     Location: {profileData?.profile?.farm?.farmLocation || "-"}
-//                   </div>
-//                   <div>
-//                     Insurance:{" "}
-//                     {profileData?.profile?.insurance?.provider
-//                       ? `${profileData.profile.insurance.provider} (${profileData.profile.insurance.policyNumber})`
-//                       : "Not set"}
-//                   </div>
-//                 </div>
-//               </div>
-
-//               <div className="py-2">
-//                 <button
-//                   onClick={() => {
-//                     setShowProfileMenu(false);
-//                     if (typeof onOpenProfile === "function") onOpenProfile();
-//                   }}
-//                   className="w-full flex items-center gap-2 px-4 py-2 text-xs text-[#374532] hover:bg-[#F7FAF3]"
-//                 >
-//                   <User className="h-4 w-4" /> View Profile
-//                 </button>
-
-//                 <button
-//                   onClick={() => {
-//                     setShowProfileMenu(false);
-//                     if (typeof onLogout === "function") onLogout();
-//                   }}
-//                   className="w-full flex items-center gap-2 px-4 py-2 text-xs text-[#374532] hover:bg-[#F7FAF3]"
-//                 >
-//                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
-//                     {/* placeholder icon if lucide not desired */}
-//                   </svg>
-//                   Logout
-//                 </button>
-//               </div>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </header>
-//   );
-// }
-// src/components/Topbar.jsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   Bell,
@@ -209,12 +37,13 @@ export default function Topbar({
   // Frontend-only date for display utility
   const [currentDate, setCurrentDate] = useState(new Date());
   const audioRef = useRef(null);
-  // --- FIX: Auto-fetch user from LocalStorage if profileData is missing ---
+
   useEffect(() => {
     audioRef.current = new Audio("/sounds/notification.mp3");
   }, []);
+
   useEffect(() => {
-    if (!profileData || !profileData.user) {
+    if (!backupProfile) {
       try {
         const storedUser =
           localStorage.getItem("user") || localStorage.getItem("userInfo");
@@ -226,18 +55,12 @@ export default function Topbar({
           const parsedUser = JSON.parse(storedUser);
           const parsedProfile = storedProfile ? JSON.parse(storedProfile) : {};
 
-          if (parsedUser.user || parsedUser.role) {
-            setBackupProfile(
-              parsedUser.user
-                ? parsedUser
-                : { user: parsedUser, profile: parsedProfile },
-            );
-          } else {
-            setBackupProfile({
-              user: parsedUser,
-              profile: parsedProfile,
-            });
-          }
+          const normalizedUser = parsedUser.user ? parsedUser.user : parsedUser;
+
+          setBackupProfile({
+            user: normalizedUser,
+            profile: parsedProfile,
+          });
         }
       } catch (error) {
         console.warn(
@@ -246,11 +69,16 @@ export default function Topbar({
         );
       }
     }
-  }, [profileData]);
+  }, [backupProfile]);
 
-  // Determine which data source to use
-  const activeData = profileData?.user ? profileData : backupProfile;
-  console.log("TOPBAR FINAL DATA:", activeData);
+  // Determine the active user/profile source
+  const activeData = profileData?.user
+    ? profileData
+    : backupProfile || profileData;
+  const activeProfile =
+    activeData?.profile || activeData?.personal || activeData || {};
+  const activeUser = activeData?.user || activeData || {};
+
   useEffect(() => {
     if (!notifications) return;
 
@@ -309,28 +137,35 @@ export default function Topbar({
       : "U";
   };
 
-  // Extract and Format Data
-  const rawName = activeData?.user?.name || activeData?.name || "Guest User";
-  const displayName = formatName(rawName); // Applies the capitalization
+  const rawName =
+    activeUser?.name ||
+    activeUser?.fullName ||
+    activeProfile?.personal?.fullName ||
+    activeProfile?.fullName ||
+    "Guest User";
+  const displayName = formatName(rawName);
   const userInitials = getInitials(displayName);
 
-  const displayRole = activeData?.user?.role || activeData?.role || "Visitor";
+  const displayRole = activeUser?.role || activeData?.role || "Visitor";
   const displayEmail =
-    activeData?.user?.email || activeData?.email || "No Email";
+    activeUser?.email || activeProfile?.personal?.email || "No Email";
 
   const displayPhone =
-    activeData?.profile?.personal?.phone || activeData?.phone || "No Phone";
+    activeProfile?.personal?.phone || activeProfile?.phone || "No Phone";
   const displayLocation =
-    activeData?.profile?.personal?.address ||
-    activeData?.user?.address ||
+    activeProfile?.personal?.address ||
+    activeProfile?.farm?.farmLocation ||
+    activeData?.address ||
     "No Location";
   const displayInsurance =
-    activeData?.profile?.insurance?.provider || "No Insurance";
-  const ratingAvg = activeData?.user?.rating?.average ?? 0;
-  const ratingCount = activeData?.user?.rating?.count ?? 0;
+    activeProfile?.insurance?.provider ||
+    activeProfile?.farm?.insurance?.provider ||
+    "No Insurance";
+  const ratingAvg = activeUser?.rating?.average ?? 0;
+  const ratingCount = activeUser?.rating?.count ?? 0;
 
-  const karma = activeData?.user?.karmaScore ?? 0;
-  console.log("RATING DEBUG:", activeData?.user?.rating);
+  const karma = activeUser?.karmaScore ?? 0;
+  console.log("RATING DEBUG:", activeUser?.rating);
 
   const dateOptions = { weekday: "short", month: "short", day: "numeric" };
   const formattedDate = currentDate.toLocaleDateString("en-US", dateOptions);

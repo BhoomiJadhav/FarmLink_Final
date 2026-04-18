@@ -37,16 +37,24 @@ const saveProfile = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    const userId = req.user.id; // from auth middleware
-    const profile = await Profile.findOne({ userId });
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).select("-password").lean();
+
+    const profile = await Profile.findOne({ userId }).lean();
 
     if (!profile) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Profile not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Profile not found",
+      });
     }
 
-    res.status(200).json(profile);
+    res.status(200).json({
+      success: true,
+      user,
+      profile,
+    });
   } catch (err) {
     console.error("Get Profile Error:", err);
     res.status(500).json({ success: false, message: err.message });

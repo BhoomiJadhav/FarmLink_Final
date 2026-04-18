@@ -172,7 +172,7 @@ export default function ProfileModal({
                       handleFormChange(
                         "personal",
                         "governmentId",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     className="mt-1 block w-full rounded-md border px-3 py-2"
@@ -259,7 +259,7 @@ export default function ProfileModal({
                       handleFormChange(
                         "farm",
                         "cropTypes",
-                        e.target.value.split(",").map((s) => s.trim())
+                        e.target.value.split(",").map((s) => s.trim()),
                       )
                     }
                     className="mt-1 block w-full rounded-md border px-3 py-2"
@@ -300,11 +300,19 @@ export default function ProfileModal({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Item
                   label="Insurance Provider"
-                  value={profileData?.profile?.insurance?.provider || "-"}
+                  value={
+                    profileData?.profile?.insurance?.provider ||
+                    profileData?.profile?.farm?.insurance?.provider ||
+                    "-"
+                  }
                 />
                 <Item
                   label="Policy Number"
-                  value={profileData?.profile?.insurance?.policyNumber || "-"}
+                  value={
+                    profileData?.profile?.insurance?.policyNumber ||
+                    profileData?.profile?.farm?.insurance?.policyNumber ||
+                    "-"
+                  }
                 />
                 <Item
                   label="Notes"
@@ -337,7 +345,7 @@ export default function ProfileModal({
                       handleFormChange(
                         "insurance",
                         "policyNumber",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     className="mt-1 block w-full rounded-md border px-3 py-2"
@@ -352,7 +360,7 @@ export default function ProfileModal({
                       handleFormChange(
                         "preferences",
                         "additionalInfo",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     className="mt-1 block w-full rounded-md border px-3 py-2"
