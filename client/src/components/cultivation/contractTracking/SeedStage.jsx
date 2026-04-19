@@ -286,9 +286,256 @@
 //     </div>
 //   );
 // }
+
+// import React, { useState } from "react";
+// import axios from "../../../api/axios";
+// import { Upload, Package, Info, Image as ImageIcon } from "lucide-react";
+
+// export default function SeedStage({ contract, role, refreshContract }) {
+//   const seedSupply = contract?.seedSupply;
+
+//   const isBuyer = role === "BUYER";
+//   const isFarmer = role === "FARMER";
+
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+
+//   const [form, setForm] = useState({
+//     cropName: "",
+//     variety: "",
+//     brand: "",
+//     quantityKg: "",
+//     remarks: "",
+//     images: [],
+//   });
+
+//   const handleChange = (e) =>
+//     setForm({ ...form, [e.target.name]: e.target.value });
+
+//   const handleFiles = (e) =>
+//     setForm({ ...form, images: Array.from(e.target.files) });
+
+//   const submit = async (url) => {
+//     // ... Unchanged Submit Logic ...
+//   };
+
+//   /* ----------------------------------------------------
+//       SHARED PROOF VIEW (VISIBLE TO BOTH)
+//   ---------------------------------------------------- */
+//   const ProofGallery = ({ images, title }) =>
+//     images?.length ? (
+//       <div className="mt-5">
+//         {/* ✅ FONT INCREASED & SHADE DEEPENED */}
+//         <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3.5 flex items-center gap-1.5">
+//           <ImageIcon size={14}/> {title}
+//         </p>
+//         <div className="flex gap-3.5 mt-1 flex-wrap">
+//           {images.map((img, i) => (
+//             <img
+//               key={i}
+//               src={`http://localhost:5000/${img}`}
+//               alt="proof"
+//               className="w-24 h-24 object-cover rounded-xl border border-slate-200 hover:scale-105 transition-transform shadow-sm"
+//             />
+//           ))}
+//         </div>
+//       </div>
+//     ) : null;
+
+//   return (
+//     <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-7">
+      
+//       {/* HEADER */}
+//       <div className="flex justify-between items-center border-b border-slate-100 pb-5">
+//         <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+//           <Package size={16} className="text-emerald-600"/> Seed Supply Phase
+//         </h3>
+
+//         {/* ✅ FONT INCREASED & SHADE DEEPENED */}
+//         <span
+//           className={`px-3 py-1.5 text-[11px] font-black rounded-lg uppercase tracking-widest border
+//         ${
+//           seedSupply.status === "PENDING"
+//             ? "bg-amber-50 text-amber-800 border-amber-200"
+//             : seedSupply.status === "DISPATCHED"
+//               ? "bg-blue-50 text-blue-700 border-blue-200"
+//               : seedSupply.status === "VERIFIED"
+//                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+//                 : "bg-slate-50 text-slate-600 border-slate-200"
+//         }`}
+//         >
+//           {seedSupply.status}
+//         </span>
+//       </div>
+
+//       {/* ===== SEED DETAILS ===== */}
+//       {seedSupply.seedDetails && (
+//         <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-4">
+//           {/* ✅ FONT INCREASED & SHADE DEEPENED */}
+//           <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+//             <Info size={12}/> Confirmed Details
+//           </p>
+
+//           {/* ✅ FONT INCREASED & SHADE DEEPENED */}
+//           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+//             <div>
+//               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Crop</p>
+//               <p className="text-sm font-black text-slate-900">{seedSupply.seedDetails.cropName}</p>
+//             </div>
+//             <div>
+//               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Brand</p>
+//               <p className="text-sm font-black text-slate-900">{seedSupply.seedDetails.brand}</p>
+//             </div>
+//             <div>
+//               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Variety</p>
+//               <p className="text-sm font-black text-slate-900">{seedSupply.seedDetails.variety || "—"}</p>
+//             </div>
+//             <div>
+//               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Quantity</p>
+//               <p className="text-sm font-black text-slate-900">{seedSupply.seedDetails.quantityKg} kg</p>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+
+//       {/* ===== FORM SECTION ===== */}
+//       {(isBuyer && seedSupply.provider === "BUYER" && seedSupply.status === "PENDING") ||
+//       (isFarmer && seedSupply.provider === "BUYER" && seedSupply.status === "DISPATCHED") ||
+//       (isFarmer && seedSupply.provider === "FARMER" && seedSupply.status !== "VERIFIED") ? (
+        
+//         <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
+//           {/* ✅ FONT INCREASED */}
+//           <h4 className="text-[11px] font-black text-slate-700 uppercase tracking-widest flex items-center gap-1.5">
+//             <Upload size={14} className="text-emerald-600"/>
+//             {isBuyer
+//               ? "Dispatch Seeds Form"
+//               : seedSupply.provider === "FARMER"
+//                 ? "Upload Seed Proof"
+//                 : "Confirm Seed Receipt"}
+//           </h4>
+
+//           {/* INPUT GRID */}
+//           {/* ✅ FONT INCREASED & SHADE DEEPENED ACROSS ALL INPUTS */}
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+//             <div>
+//               <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Crop Name</label>
+//               <input
+//                 name="cropName"
+//                 placeholder="e.g. Wheat"
+//                 onChange={handleChange}
+//                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[13px] font-bold text-slate-900 outline-none focus:border-emerald-500 transition-colors"
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Variety</label>
+//               <input
+//                 name="variety"
+//                 placeholder="e.g. Basmati"
+//                 onChange={handleChange}
+//                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[13px] font-bold text-slate-900 outline-none focus:border-emerald-500 transition-colors"
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Seed Brand</label>
+//               <input
+//                 name="brand"
+//                 placeholder="e.g. Pioneer"
+//                 onChange={handleChange}
+//                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[13px] font-bold text-slate-900 outline-none focus:border-emerald-500 transition-colors"
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Quantity (kg)</label>
+//               <input
+//                 name="quantityKg"
+//                 type="number"
+//                 placeholder="Enter quantity"
+//                 onChange={handleChange}
+//                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[13px] font-bold text-slate-900 outline-none focus:border-emerald-500 transition-colors"
+//               />
+//             </div>
+//           </div>
+
+//           {/* REMARKS */}
+//           {/* ✅ FONT INCREASED & SHADE DEEPENED */}
+//           <div>
+//             <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Remarks</label>
+//             <textarea
+//               name="remarks"
+//               placeholder="Add any specific notes or instructions..."
+//               onChange={handleChange}
+//               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[13px] font-bold text-slate-900 outline-none focus:border-emerald-500 transition-colors min-h-[90px]"
+//             />
+//           </div>
+
+//           {/* FILE UPLOAD */}
+//           <div>
+//             <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Evidence / Invoices</label>
+//             <div className="relative">
+//                <input
+//                  type="file"
+//                  multiple
+//                  onChange={handleFiles}
+//                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+//                />
+//                {/* ✅ FONT INCREASED & SHADE DEEPENED */}
+//                <div className="w-full border-2 border-dashed border-slate-300 rounded-xl p-7 text-center bg-slate-50 hover:bg-emerald-50 hover:border-emerald-400 transition-colors flex flex-col items-center justify-center">
+//                   <Upload size={24} className="text-slate-500 mb-2"/>
+//                   <p className="text-[11px] font-black text-slate-700 uppercase tracking-widest">Click or drag files here</p>
+//                   <p className="text-[11px] text-slate-500 mt-1">PNG, JPG up to 5MB</p>
+//                </div>
+//             </div>
+
+//             {/* PREVIEW BEFORE UPLOAD */}
+//             {form.images.length > 0 && (
+//               <div className="flex gap-3 mt-4 flex-wrap">
+//                 {form.images.map((file, i) => (
+//                   <img
+//                     key={i}
+//                     src={URL.createObjectURL(file)}
+//                     className="w-20 h-20 object-cover rounded-xl border border-slate-200 shadow-sm"
+//                     alt="preview"
+//                   />
+//                 ))}
+//               </div>
+//             )}
+//           </div>
+
+//           {/* SUBMIT BUTTON */}
+//           <button
+//             onClick={() => {
+//               // ... Unchanged Button Submit Logic ...
+//             }}
+//             disabled={loading}
+//             className="w-full py-4 bg-[#0f172a] text-white rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-lg shadow-slate-200 hover:bg-emerald-600 active:scale-[0.99] transition-all disabled:opacity-50"
+//           >
+//             {loading ? "Processing Upload..." : "Submit Dispatch Record"}
+//           </button>
+//         </div>
+//       ) : null}
+
+//       {/* ===== PROOF GALLERY ===== */}
+//       {(seedSupply.dispatchProof || seedSupply.receiveProof) && (
+//         <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-6">
+//           <ProofGallery images={seedSupply.dispatchProof?.images} title="Buyer Dispatch Proof" />
+//           <ProofGallery images={seedSupply.receiveProof?.images} title="Farmer Receiving Proof" />
+//         </div>
+//       )}
+
+//       {error && (
+//         <div className="bg-rose-50 border border-rose-200 p-3.5 rounded-lg text-[11px] font-black text-rose-700 uppercase tracking-widest text-center">
+//           {error}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
 import React, { useState } from "react";
 import axios from "../../../api/axios";
-import { Upload, Package, Info, Image as ImageIcon } from "lucide-react";
+import { Upload, Package, Info, Image as ImageIcon, AlertTriangle, Clock, CheckCircle2 } from "lucide-react";
 
 export default function SeedStage({ contract, role, refreshContract }) {
   const seedSupply = contract?.seedSupply;
@@ -315,7 +562,31 @@ export default function SeedStage({ contract, role, refreshContract }) {
     setForm({ ...form, images: Array.from(e.target.files) });
 
   const submit = async (url) => {
-    // ... Unchanged Submit Logic ...
+    try {
+      setLoading(true);
+      setError("");
+
+      const fd = new FormData();
+      Object.entries(form).forEach(([k, v]) => {
+        if (k === "images") v.forEach((f) => fd.append("images", f));
+        else fd.append(k, v);
+      });
+
+      await axios.post(url, fd, { withCredentials: true });
+      refreshContract();
+      setForm({
+        cropName: "",
+        variety: "",
+        brand: "",
+        quantityKg: "",
+        remarks: "",
+        images: [],
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || "Action failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   /* ----------------------------------------------------
@@ -324,7 +595,6 @@ export default function SeedStage({ contract, role, refreshContract }) {
   const ProofGallery = ({ images, title }) =>
     images?.length ? (
       <div className="mt-5">
-        {/* ✅ FONT INCREASED & SHADE DEEPENED */}
         <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3.5 flex items-center gap-1.5">
           <ImageIcon size={14}/> {title}
         </p>
@@ -342,7 +612,7 @@ export default function SeedStage({ contract, role, refreshContract }) {
     ) : null;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-7">
+    <div className="bg-white rounded-[1.8rem] border border-slate-200/60 p-6 shadow-xl shadow-slate-200/40 space-y-7">
       
       {/* HEADER */}
       <div className="flex justify-between items-center border-b border-slate-100 pb-5">
@@ -350,7 +620,6 @@ export default function SeedStage({ contract, role, refreshContract }) {
           <Package size={16} className="text-emerald-600"/> Seed Supply Phase
         </h3>
 
-        {/* ✅ FONT INCREASED & SHADE DEEPENED */}
         <span
           className={`px-3 py-1.5 text-[11px] font-black rounded-lg uppercase tracking-widest border
         ${
@@ -367,15 +636,70 @@ export default function SeedStage({ contract, role, refreshContract }) {
         </span>
       </div>
 
+      {/* ==========================================
+          BACKEND ALERT SYSTEM INTEGRATION 
+      ========================================== */}
+      
+      {/* ALERT 1: Buyer must dispatch seeds */}
+      {seedSupply.status === "PENDING" && isBuyer && seedSupply.provider === "BUYER" && (
+        <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-start gap-3">
+           <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
+           <div>
+             <p className="text-[11px] font-black text-amber-900 uppercase tracking-widest">Action Required: Dispatch Seeds</p>
+             <p className="text-[13px] font-bold text-amber-700 mt-1">You are the designated seed provider. Please dispatch the materials and upload proof below to initiate the cultivation lifecycle.</p>
+           </div>
+        </div>
+      )}
+
+      {/* ALERT 2: Farmer waiting for Buyer to dispatch */}
+      {seedSupply.status === "PENDING" && isFarmer && seedSupply.provider === "BUYER" && (
+        <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-start gap-3">
+           <Clock size={18} className="text-slate-500 shrink-0 mt-0.5" />
+           <div>
+             <p className="text-[11px] font-black text-slate-700 uppercase tracking-widest">Awaiting Logistics</p>
+             <p className="text-[13px] font-bold text-slate-500 mt-1">Waiting for the buyer to dispatch the seeds. Stage 1 Cultivation is locked until this step is verified.</p>
+           </div>
+        </div>
+      )}
+
+      {/* ALERT 3: Farmer must confirm receipt (Unlocks Advance Payment) */}
+      {seedSupply.status === "DISPATCHED" && isFarmer && seedSupply.provider === "BUYER" && (
+        <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl flex items-start gap-3">
+           <AlertTriangle size={18} className="text-blue-600 shrink-0 mt-0.5" />
+           <div>
+             <p className="text-[11px] font-black text-blue-900 uppercase tracking-widest">Action Required: Verification</p>
+             <p className="text-[13px] font-bold text-blue-700 mt-1">The buyer has dispatched the seeds. Confirm receipt and upload proof below to unlock your Advance Payment.</p>
+           </div>
+        </div>
+      )}
+
+      {/* ALERT 4: Farmer must provide their own seeds */}
+      {seedSupply.status !== "VERIFIED" && isFarmer && seedSupply.provider === "FARMER" && (
+        <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-start gap-3">
+           <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
+           <div>
+             <p className="text-[11px] font-black text-amber-900 uppercase tracking-widest">Action Required: Upload Seed Data</p>
+             <p className="text-[13px] font-bold text-amber-700 mt-1">You are providing the seeds for this contract. Upload seed details and procurement proof to unlock Cultivation Phase 1.</p>
+           </div>
+        </div>
+      )}
+
+      {/* ALERT 5: Success State */}
+      {seedSupply.status === "VERIFIED" && (
+         <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex items-center gap-3">
+           <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
+           <p className="text-[12px] font-black text-emerald-800 uppercase tracking-widest">Seed Supply Verified. Cultivation Phase is Active.</p>
+        </div>
+      )}
+      {/* ========================================== */}
+
       {/* ===== SEED DETAILS ===== */}
       {seedSupply.seedDetails && (
         <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-4">
-          {/* ✅ FONT INCREASED & SHADE DEEPENED */}
           <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1.5">
             <Info size={12}/> Confirmed Details
           </p>
 
-          {/* ✅ FONT INCREASED & SHADE DEEPENED */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Crop</p>
@@ -403,7 +727,6 @@ export default function SeedStage({ contract, role, refreshContract }) {
       (isFarmer && seedSupply.provider === "FARMER" && seedSupply.status !== "VERIFIED") ? (
         
         <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
-          {/* ✅ FONT INCREASED */}
           <h4 className="text-[11px] font-black text-slate-700 uppercase tracking-widest flex items-center gap-1.5">
             <Upload size={14} className="text-emerald-600"/>
             {isBuyer
@@ -414,7 +737,6 @@ export default function SeedStage({ contract, role, refreshContract }) {
           </h4>
 
           {/* INPUT GRID */}
-          {/* ✅ FONT INCREASED & SHADE DEEPENED ACROSS ALL INPUTS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Crop Name</label>
@@ -459,7 +781,6 @@ export default function SeedStage({ contract, role, refreshContract }) {
           </div>
 
           {/* REMARKS */}
-          {/* ✅ FONT INCREASED & SHADE DEEPENED */}
           <div>
             <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Remarks</label>
             <textarea
@@ -480,7 +801,6 @@ export default function SeedStage({ contract, role, refreshContract }) {
                  onChange={handleFiles}
                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                />
-               {/* ✅ FONT INCREASED & SHADE DEEPENED */}
                <div className="w-full border-2 border-dashed border-slate-300 rounded-xl p-7 text-center bg-slate-50 hover:bg-emerald-50 hover:border-emerald-400 transition-colors flex flex-col items-center justify-center">
                   <Upload size={24} className="text-slate-500 mb-2"/>
                   <p className="text-[11px] font-black text-slate-700 uppercase tracking-widest">Click or drag files here</p>
@@ -506,7 +826,10 @@ export default function SeedStage({ contract, role, refreshContract }) {
           {/* SUBMIT BUTTON */}
           <button
             onClick={() => {
-              // ... Unchanged Button Submit Logic ...
+              if (isBuyer) submit(`/contracts/${contract._id}/seed/dispatch`);
+              else if (seedSupply.provider === "BUYER")
+                submit(`/contracts/${contract._id}/seed/confirm`);
+              else submit(`/contracts/${contract._id}/seed/upload`);
             }}
             disabled={loading}
             className="w-full py-4 bg-[#0f172a] text-white rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-lg shadow-slate-200 hover:bg-emerald-600 active:scale-[0.99] transition-all disabled:opacity-50"

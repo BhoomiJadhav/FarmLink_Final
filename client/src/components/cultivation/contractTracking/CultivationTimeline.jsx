@@ -850,6 +850,2364 @@
 //   };
 //   return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-sm ${colors[color]}`}>{label}</span>;
 // }
+
+// import {
+//   CheckCircle2,
+//   CircleDot,
+//   CircleDashed,
+//   AlertTriangle,
+//   Image as ImageIcon,
+//   UploadCloud,
+//   ShieldCheck,
+//   Cpu,
+//   ChevronRight,
+//   Clock
+// } from "lucide-react";
+
+// /* =========================================================
+//    MAIN TIMELINE COMPONENT
+// ========================================================= */
+
+// export default function CultivationTimeline({
+//   stages = [],
+//   role, 
+//   seedSupply,
+//   aiQualityDetails,
+//   onUpload,
+//   onVerify,
+//   onView,
+//   onAiAction,
+// }) {
+//   const allStagesFinished = stages.length > 0 && stages.every((s) => s.buyerVerified === true);
+  
+//   const aiCompleted = aiQualityDetails && 
+//                       aiQualityDetails.grade && 
+//                       aiQualityDetails.grade !== "Pending";
+
+//   const aiCurrent = allStagesFinished && !aiCompleted;
+
+//   return (
+//     <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+//       {/* Header */}
+//       <div className="flex justify-between items-center mb-10 pb-4 border-b border-slate-100">
+//         <div>
+//           <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+//             <Clock size={16} className="text-emerald-600" /> Cultivation Lifecycle
+//           </h2>
+//           <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-wider">Milestone Tracking & Evidence Verification</p>
+//         </div>
+
+//         {role === "BUYER" && aiCompleted && (
+//           <button 
+//             onClick={onAiAction}
+//             className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200"
+//           >
+//             <Cpu size={14} /> Full AI Analysis Report
+//           </button>
+//         )}
+//       </div>
+
+//       {/* Timeline Container */}
+//       <div className="relative pl-12">
+//         {/* Continuous Vertical Line - More Prominent */}
+//         <div className="absolute left-[19px] top-2 bottom-2 w-[3px] bg-slate-100 rounded-full" />
+
+//         {/* 1-6: Cultivation Stages */}
+//         {stages.map((stage, index) => (
+//           <StageItem
+//             key={stage._id}
+//             stage={stage}
+//             role={role}
+//             seedSupply={seedSupply}
+//             onUpload={onUpload}
+//             onVerify={onVerify}
+//             onView={onView}
+//           />
+//         ))}
+
+//         {/* 7: AI QUALITY VERIFICATION */}
+//         {allStagesFinished && (
+//           <AiStageItem 
+//             aiDetails={aiQualityDetails}
+//             isCurrent={aiCurrent}
+//             isCompleted={aiCompleted}
+//             role={role}
+//           />
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    AI STAGE ITEM (STAGE 7)
+// ========================================================= */
+
+// function AiStageItem({ aiDetails, isCurrent, isCompleted, role }) {
+//   return (
+//     <div className="relative flex gap-6 mb-4 animate-in fade-in slide-in-from-left-4 duration-500">
+//       <div className="absolute left-[-48px] top-1 z-10 flex items-center justify-center w-10 h-10">
+//         {isCompleted ? (
+//           <div className="bg-emerald-600 p-2 rounded-xl shadow-lg shadow-emerald-100">
+//             <ShieldCheck size={20} className="text-white" />
+//           </div>
+//         ) : (
+//           <div className="relative">
+//             <Cpu size={24} className={`${isCurrent ? "text-emerald-500 animate-pulse" : "text-slate-300"} bg-white rounded-full`} />
+//             {isCurrent && <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-25"></span>}
+//           </div>
+//         )}
+//       </div>
+
+//       <div className={`w-full rounded-2xl border-2 transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-emerald-50/50 border-emerald-100" : "bg-slate-50 border-slate-200 border-dashed"
+//       }`}>
+//         <div className="flex justify-between items-center mb-4">
+//           <div className="flex items-center gap-3">
+//             <div className={`p-2 rounded-lg ${isCompleted ? "bg-emerald-100 text-emerald-700" : "bg-white text-slate-400 border border-slate-200"}`}>
+//               <Cpu size={18} />
+//             </div>
+//             <div>
+//               <h3 className={`text-sm font-black uppercase tracking-widest ${isCompleted ? "text-emerald-900" : "text-slate-500"}`}>
+//                 Phase 07: AI Quality Protocol
+//               </h3>
+//               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Automated Crop Grading & Purity Check</p>
+//             </div>
+//           </div>
+//           <span className={`text-[9px] font-black uppercase tracking-[0.1em] px-3 py-1 rounded-lg border ${
+//             isCompleted ? "bg-emerald-600 text-white border-emerald-600 shadow-md" : "bg-white text-slate-400 border-slate-200"
+//           }`}>
+//             {isCompleted ? "Protocol Verified" : "Awaiting Input"}
+//           </span>
+//         </div>
+
+//         {isCompleted ? (
+//           <div className="mt-4 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-colors">
+//             <div>
+//               <p className="text-[9px] text-emerald-600 font-black uppercase tracking-[0.2em] mb-2">
+//                 Digital Grade Certificate
+//               </p>
+//               <h4 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+//                 {aiDetails.grade}
+//               </h4>
+//               <div className="flex items-center gap-2 mt-2">
+//                 <div className="h-1.5 w-24 bg-slate-100 rounded-full overflow-hidden">
+//                    <div className="h-full bg-emerald-500" style={{width: `${aiDetails.confidence}%`}}></div>
+//                 </div>
+//                 <span className="text-[10px] text-slate-500 font-black">CONFIDENCE: {aiDetails.confidence?.toFixed(1)}%</span>
+//               </div>
+//             </div>
+            
+//             {aiDetails.evidenceUrl ? (
+//               <div className="relative group">
+//                 <img 
+//                   src={aiDetails.evidenceUrl} 
+//                   alt="Verified Crop" 
+//                   className="w-20 h-20 object-cover rounded-xl border-4 border-slate-50 shadow-md transform group-hover:scale-105 transition-transform" 
+//                 />
+//                 <div className="absolute -top-2 -right-2 bg-emerald-600 text-white p-1 rounded-full border-2 border-white shadow-sm">
+//                    <ShieldCheck size={12}/>
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="w-20 h-20 bg-slate-50 rounded-xl border-2 border-slate-100 flex items-center justify-center">
+//                 <CheckCircle2 className="text-emerald-500 opacity-30" size={32} />
+//               </div>
+//             )}
+//           </div>
+//         ) : (
+//           <div className="mt-2">
+//             <p className="text-[11px] font-bold text-slate-600 leading-relaxed uppercase tracking-tight">
+//               Physical production phase finished. Farmer must provide high-resolution harvest images in the specialized upload section below to trigger AI analysis.
+//             </p>
+//             {role === "FARMER" && (
+//               <div className="mt-4 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-emerald-600 bg-white border border-emerald-100 w-fit px-3 py-1.5 rounded-lg shadow-sm">
+//                 <UploadCloud size={14} className="animate-bounce" />
+//                 Upload portal active below
+//               </div>
+//             )}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    STANDARD STAGE ITEM (STAGES 1-6)
+// ========================================================= */
+
+// function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
+//   const isCompleted = stage.buyerVerified === true;
+//   const isCurrent = stage.status === "PENDING";
+//   const isSowingStage = stage.name?.toLowerCase().includes("sowing") || stage.stageIndex === 0;
+
+//   const seedBlocked =
+//     isSowingStage &&
+//     seedSupply?.provider === "BUYER" &&
+//     seedSupply?.status !== "VERIFIED";
+
+//   const isOverdue = !isCompleted && stage.expectedDays !== undefined && stage.reminder?.levelSent >= 2;
+
+//   return (
+//     <div className="relative flex gap-8 mb-12 group">
+//       <div className="absolute left-[-42px] top-1 z-10">
+//         <TimelineIcon
+//           isCompleted={isCompleted}
+//           isCurrent={isCurrent}
+//           isOverdue={isOverdue}
+//         />
+//       </div>
+
+//       <div className={`w-full rounded-2xl border transition-all duration-300 p-5 ${
+//         isCompleted ? "bg-white border-slate-200" : 
+//         isOverdue ? "bg-rose-50/50 border-rose-200 shadow-lg shadow-rose-100/50" : 
+//         isCurrent ? "bg-white border-blue-200 shadow-xl shadow-blue-50" : "bg-slate-50/50 border-slate-100 grayscale opacity-60"
+//       }`}>
+//         <div className="flex justify-between items-start">
+//           <div className="min-w-0">
+//             <div className="flex items-center gap-2 mb-1">
+//               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Phase 0{stage.stageIndex + 1}</span>
+//               {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>}
+//             </div>
+//             <h3 className={`text-base font-black tracking-tight ${isCompleted ? "text-slate-900" : isOverdue ? "text-rose-900" : "text-slate-800"}`}>
+//               {stage.name}
+//             </h3>
+//             {stage.completedAt && (
+//               <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-tight flex items-center gap-1">
+//                 <CheckCircle2 size={10} className="text-emerald-500"/> Finalized on {new Date(stage.completedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+//               </p>
+//             )}
+//           </div>
+//           <StatusBadge isCompleted={isCompleted} isCurrent={isCurrent} isOverdue={isOverdue} />
+//         </div>
+
+//         {stage.farmerImages?.length > 0 && (
+//           <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+//             <div className="flex items-center gap-2">
+//                <div className="flex -space-x-2">
+//                  {stage.farmerImages.slice(0, 3).map((_, i) => (
+//                     <div key={i} className="w-8 h-8 rounded-lg bg-slate-200 border-2 border-white flex items-center justify-center">
+//                        <ImageIcon size={12} className="text-slate-500"/>
+//                     </div>
+//                  ))}
+//                </div>
+//                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Evidence Logged</span>
+//             </div>
+//             <button
+//               onClick={() => onView?.(stage)}
+//               className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-900 hover:text-white transition-all border border-slate-200"
+//             >
+//               Inspect File
+//             </button>
+//           </div>
+//         )}
+
+//         {role === "FARMER" && isCurrent && seedBlocked && (
+//           <div className="mt-4 flex items-start gap-2 text-[10px] font-black uppercase tracking-tight text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-100">
+//             <AlertTriangle size={14} className="shrink-0" />
+//             <span>Dependency Error: Seed verification required before phase activation.</span>
+//           </div>
+//         )}
+
+//         {role === "FARMER" && isCurrent && !stage.farmerConfirmed && !seedBlocked && (
+//           <button
+//             onClick={() => onUpload(stage)}
+//             className="mt-5 w-full flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] font-black uppercase tracking-widest bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <UploadCloud size={14} /> Submit Phase Evidence
+//           </button>
+//         )}
+
+//         {role === "BUYER" && stage.farmerConfirmed && !stage.buyerVerified && (
+//           <div className="mt-5 flex gap-2">
+//             <button
+//               onClick={() => onVerify(stage, true)}
+//               className="flex-1 flex items-center justify-center gap-2 py-2.5 text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-md transition-all active:scale-[0.98]"
+//             >
+//               <ShieldCheck size={14} /> Verify Phase
+//             </button>
+//             <button
+//               onClick={() => onVerify(stage, false)}
+//               className="flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest border-2 border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-all"
+//             >
+//               Request Fix
+//             </button>
+//           </div>
+//         )}
+
+//         {isCurrent && !isCompleted && !stage.farmerConfirmed && (
+//           <div className="mt-4 flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-tighter italic">
+//             <Clock size={10}/> Pending {role === "FARMER" ? "your submission" : "farmer logs"}...
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    UI HELPERS
+// ========================================================= */
+
+// function TimelineIcon({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return (
+//     <div className="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-100 border-4 border-white transition-all">
+//        <CheckCircle2 size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isOverdue) return (
+//     <div className="w-10 h-10 rounded-2xl bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-100 border-4 border-white transition-all animate-pulse">
+//        <AlertTriangle size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isCurrent) return (
+//     <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-100 border-4 border-white transition-all">
+//        <CircleDot size={18} className="text-white" />
+//     </div>
+//   );
+//   return (
+//     <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center border-4 border-white">
+//        <CircleDashed size={18} className="text-slate-300" />
+//     </div>
+//   );
+// }
+
+// function StatusBadge({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return <Badge label="Verified" color="green" icon={<ShieldCheck size={10}/>} />;
+//   if (isOverdue) return <Badge label="Overdue" color="red" icon={<AlertCircle size={10}/>} />;
+//   if (isCurrent) return <Badge label="Active" color="blue" icon={<Activity size={10}/>} />;
+//   return <Badge label="Queued" color="gray" />;
+// }
+
+// function Badge({ label, color, icon }) {
+//   const colors = {
+//     green: "bg-emerald-50 text-emerald-700 border-emerald-200",
+//     blue: "bg-blue-50 text-blue-700 border-blue-200",
+//     red: "bg-rose-50 text-rose-700 border-rose-200",
+//     gray: "bg-slate-50 text-slate-400 border-slate-200",
+//   };
+//   return (
+//     <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md border flex items-center gap-1 shadow-sm ${colors[color]}`}>
+//       {icon} {label}
+//     </span>
+//   );
+// }
+
+// function Activity({ size }) {
+//   return (
+//     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+//   );
+// }
+
+// function AlertCircle({ size }) {
+//     return (
+//       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+//     );
+// }
+
+// import {
+//   CheckCircle2,
+//   CircleDot,
+//   CircleDashed,
+//   AlertTriangle,
+//   Image as ImageIcon,
+//   UploadCloud,
+//   ShieldCheck,
+//   Cpu,
+//   Clock
+// } from "lucide-react";
+
+// /* =========================================================
+//    MAIN TIMELINE COMPONENT
+// ========================================================= */
+
+// export default function CultivationTimeline({
+//   stages = [],
+//   role, 
+//   seedSupply,
+//   aiQualityDetails,
+//   onUpload,
+//   onVerify,
+//   onView,
+//   onAiAction,
+// }) {
+//   const allStagesFinished = stages.length > 0 && stages.every((s) => s.buyerVerified === true);
+  
+//   const aiCompleted = aiQualityDetails && 
+//                       aiQualityDetails.grade && 
+//                       aiQualityDetails.grade !== "Pending";
+
+//   const aiCurrent = allStagesFinished && !aiCompleted;
+
+//   return (
+//     <div className="bg-white rounded-[1.8rem] border border-slate-200/60 p-8 shadow-xl shadow-slate-200/40">
+//       {/* Header */}
+//       <div className="flex justify-between items-center mb-10 pb-5 border-b border-slate-100">
+//         <div>
+//           <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+//             <Clock size={16} className="text-emerald-600" /> Cultivation Lifecycle
+//           </h2>
+//           <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-wider">Milestone Tracking & Evidence Verification</p>
+//         </div>
+
+//         {role === "BUYER" && aiCompleted && (
+//           <button 
+//             onClick={onAiAction}
+//             className="text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <Cpu size={14} /> Full AI Analysis
+//           </button>
+//         )}
+//       </div>
+
+//       {/* Timeline Container */}
+//       <div className="relative pl-12">
+//         {/* Continuous Vertical Line */}
+//         <div className="absolute left-[19px] top-2 bottom-2 w-[3px] bg-slate-100 rounded-full" />
+
+//         {/* 1-6: Cultivation Stages */}
+//         {stages.map((stage) => (
+//           <StageItem
+//             key={stage._id}
+//             stage={stage}
+//             role={role}
+//             seedSupply={seedSupply}
+//             onUpload={onUpload}
+//             onVerify={onVerify}
+//             onView={onView}
+//           />
+//         ))}
+
+//         {/* 7: AI QUALITY VERIFICATION */}
+//         {allStagesFinished && (
+//           <AiStageItem 
+//             aiDetails={aiQualityDetails}
+//             isCurrent={aiCurrent}
+//             isCompleted={aiCompleted}
+//             role={role}
+//           />
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    AI STAGE ITEM (STAGE 7)
+// ========================================================= */
+
+// function AiStageItem({ aiDetails, isCurrent, isCompleted, role }) {
+//   return (
+//     <div className="relative flex gap-6 mb-4 animate-in fade-in slide-in-from-left-4 duration-500">
+//       <div className="absolute left-[-48px] top-1 z-10 flex items-center justify-center w-10 h-10">
+//         {isCompleted ? (
+//           <div className="bg-emerald-600 p-2 rounded-xl shadow-lg shadow-emerald-100">
+//             <ShieldCheck size={20} className="text-white" />
+//           </div>
+//         ) : (
+//           <div className="relative">
+//             <Cpu size={24} className={`${isCurrent ? "text-emerald-500 animate-pulse" : "text-slate-300"} bg-white rounded-full`} />
+//             {isCurrent && <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-25"></span>}
+//           </div>
+//         )}
+//       </div>
+
+//       <div className={`w-full rounded-2xl border-2 transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-emerald-50/50 border-emerald-100" : "bg-slate-50 border-slate-200 border-dashed"
+//       }`}>
+//         <div className="flex justify-between items-center mb-4">
+//           <div className="flex items-center gap-3">
+//             <div className={`p-2.5 rounded-xl ${isCompleted ? "bg-emerald-100 text-emerald-700" : "bg-white text-slate-400 border border-slate-200"}`}>
+//               <Cpu size={18} />
+//             </div>
+//             <div>
+//               <h3 className={`text-sm font-black uppercase tracking-widest ${isCompleted ? "text-emerald-900" : "text-slate-600"}`}>
+//                 Phase 07: AI Quality Protocol
+//               </h3>
+//               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Automated Crop Grading & Purity Check</p>
+//             </div>
+//           </div>
+//           <span className={`text-[10px] font-black uppercase tracking-[0.1em] px-3 py-1.5 rounded-lg border ${
+//             isCompleted ? "bg-emerald-600 text-white border-emerald-600 shadow-md" : "bg-white text-slate-500 border-slate-200"
+//           }`}>
+//             {isCompleted ? "Protocol Verified" : "Awaiting Input"}
+//           </span>
+//         </div>
+
+//         {isCompleted ? (
+//           <div className="mt-5 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-colors">
+//             <div>
+//               <p className="text-[11px] text-emerald-700 font-black uppercase tracking-[0.2em] mb-2">
+//                 Digital Grade Certificate
+//               </p>
+//               <h4 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+//                 {aiDetails.grade}
+//               </h4>
+//               <div className="flex items-center gap-3 mt-3">
+//                 <div className="h-2 w-32 bg-slate-100 rounded-full overflow-hidden">
+//                    <div className="h-full bg-emerald-500" style={{width: `${aiDetails.confidence}%`}}></div>
+//                 </div>
+//                 <span className="text-[11px] text-slate-600 font-black tracking-widest">CONFIDENCE: {aiDetails.confidence?.toFixed(1)}%</span>
+//               </div>
+//             </div>
+            
+//             {aiDetails.evidenceUrl ? (
+//               <div className="relative group">
+//                 <img 
+//                   src={aiDetails.evidenceUrl} 
+//                   alt="Verified Crop" 
+//                   className="w-24 h-24 object-cover rounded-xl border-4 border-slate-50 shadow-md transform group-hover:scale-105 transition-transform" 
+//                 />
+//                 <div className="absolute -top-3 -right-3 bg-emerald-600 text-white p-1.5 rounded-full border-2 border-white shadow-sm">
+//                    <ShieldCheck size={14}/>
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="w-24 h-24 bg-slate-50 rounded-xl border-2 border-slate-100 flex items-center justify-center">
+//                 <CheckCircle2 className="text-emerald-500 opacity-30" size={32} />
+//               </div>
+//             )}
+//           </div>
+//         ) : (
+//           <div className="mt-3">
+//             <p className="text-[12px] font-bold text-slate-500 leading-relaxed uppercase tracking-tight">
+//               Physical production phase finished. Farmer must provide high-resolution harvest images in the specialized upload section below to trigger AI analysis.
+//             </p>
+//             {role === "FARMER" && (
+//               <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-white border border-emerald-200 w-fit px-4 py-2 rounded-xl shadow-sm">
+//                 <UploadCloud size={14} className="animate-bounce" />
+//                 Upload portal active below
+//               </div>
+//             )}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    STANDARD STAGE ITEM (STAGES 1-6)
+// ========================================================= */
+
+// function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
+//   const isCompleted = stage.buyerVerified === true;
+//   const isCurrent = stage.status === "PENDING" || stage.status === "IN_PROGRESS";
+//   const isSowingStage = stage.name?.toLowerCase().includes("sowing") || stage.stageIndex === 0;
+
+//   // DEPENDENCY CHECK
+//   const seedBlocked =
+//     isSowingStage &&
+//     seedSupply?.provider === "BUYER" &&
+//     seedSupply?.status !== "VERIFIED";
+
+//   // BACKEND OVERDUE LOGIC 
+//   const isOverdue = !isCompleted && (stage.isOverdue || stage.reminder?.levelSent >= 2);
+
+//   return (
+//     <div className="relative flex gap-8 mb-12 group">
+//       <div className="absolute left-[-42px] top-1 z-10">
+//         <TimelineIcon
+//           isCompleted={isCompleted}
+//           isCurrent={isCurrent}
+//           isOverdue={isOverdue}
+//         />
+//       </div>
+
+//       <div className={`w-full rounded-2xl border transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-white border-slate-200" : 
+//         isOverdue ? "bg-rose-50/50 border-rose-200 shadow-lg shadow-rose-100/50" : 
+//         isCurrent ? "bg-white border-blue-200 shadow-xl shadow-blue-50" : "bg-slate-50/50 border-slate-100 grayscale opacity-60"
+//       }`}>
+//         <div className="flex justify-between items-start">
+//           <div className="min-w-0">
+//             <div className="flex items-center gap-2 mb-1">
+//               <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Phase 0{stage.stageIndex + 1 || stage.name.split(" ")[0]}</span>
+//               {isCurrent && <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>}
+//             </div>
+            
+//             <h3 className={`text-[17px] font-black tracking-tight ${isCompleted ? "text-slate-900" : isOverdue ? "text-rose-900" : "text-slate-800"}`}>
+//               {stage.name}
+//             </h3>
+
+//             {/* ALERTS: OVERDUE DEADLINE */}
+//             {isOverdue && (
+//               <p className="text-[11px] font-black text-rose-700 uppercase mt-2 tracking-widest flex items-center gap-1.5 bg-rose-100/80 w-fit px-3 py-1 rounded-lg border border-rose-300 shadow-sm">
+//                 <AlertTriangle size={14}/> DEADLINE BREACHED: {Math.abs(stage.daysRemaining || 0)} DAYS LATE
+//               </p>
+//             )}
+
+//             {stage.completedDate && (
+//               <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-widest flex items-center gap-1.5">
+//                 <CheckCircle2 size={12} className="text-emerald-500"/> Finalized on {new Date(stage.completedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+//               </p>
+//             )}
+//           </div>
+//           <StatusBadge isCompleted={isCompleted} isCurrent={isCurrent} isOverdue={isOverdue} />
+//         </div>
+
+//         {/* LOGGED EVIDENCE */}
+//         {stage.farmerImages?.length > 0 && (
+//           <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
+//             <div className="flex items-center gap-3">
+//                <div className="flex -space-x-2">
+//                  {stage.farmerImages.slice(0, 3).map((_, i) => (
+//                     <div key={i} className="w-10 h-10 rounded-xl bg-slate-200 border-2 border-white flex items-center justify-center shadow-sm">
+//                        <ImageIcon size={14} className="text-slate-500"/>
+//                     </div>
+//                  ))}
+//                </div>
+//                <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Evidence Logged</span>
+//             </div>
+//             <button
+//               onClick={() => onView?.(stage)}
+//               className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm"
+//             >
+//               Inspect File
+//             </button>
+//           </div>
+//         )}
+
+//         {/* ALERT: SEED DEPENDENCY BLOCK */}
+//         {role === "FARMER" && isCurrent && seedBlocked && (
+//           <div className="mt-5 flex items-start gap-3 text-[11px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 p-4 rounded-xl border border-amber-200">
+//             <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+//             <span>Dependency Lock: You must verify Seed Receipt in the section above before uploading Sowing evidence.</span>
+//           </div>
+//         )}
+
+//         {/* ALERT: AWAITING BUYER VERIFICATION */}
+//         {stage.farmerConfirmed && !isCompleted && (
+//           <div className="mt-5 flex flex-col md:flex-row md:items-center justify-between bg-blue-50 border border-blue-200 p-4 rounded-xl gap-4">
+//              <div className="flex items-start md:items-center gap-3">
+//                <ShieldCheck size={20} className="text-blue-600 shrink-0"/>
+//                <div>
+//                  <span className="text-[11px] font-black text-blue-900 uppercase tracking-widest block">
+//                    {role === "BUYER" ? "Action Required: Verify Evidence" : "Awaiting Buyer Audit"}
+//                  </span>
+//                  <span className="text-[12px] font-bold text-blue-700 mt-0.5 block">
+//                    {role === "BUYER" ? "Review the farmer's upload and approve or request a fix." : "Evidence logged. Cultivation will advance once the buyer approves."}
+//                  </span>
+//                </div>
+//              </div>
+//              <button onClick={() => onView?.(stage)} className="shrink-0 text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-white text-blue-700 rounded-xl hover:bg-blue-600 hover:text-white transition-all border border-blue-200 shadow-sm">
+//                Review Files
+//              </button>
+//           </div>
+//         )}
+
+//         {/* FARMER SUBMIT BUTTON */}
+//         {role === "FARMER" && isCurrent && !stage.farmerConfirmed && !seedBlocked && (
+//           <button
+//             onClick={() => onUpload(stage)}
+//             className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-3.5 text-[11px] font-black uppercase tracking-widest bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <UploadCloud size={16} /> Submit Phase Evidence
+//           </button>
+//         )}
+
+//         {/* BUYER VERIFICATION ACTIONS */}
+//         {role === "BUYER" && stage.farmerConfirmed && !isCompleted && (
+//           <div className="mt-6 flex flex-col sm:flex-row gap-3">
+//             <button
+//               onClick={() => onVerify(stage, true)}
+//               className="flex-1 flex items-center justify-center gap-2 py-3.5 text-[11px] font-black uppercase tracking-widest bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-[0.98]"
+//             >
+//               <ShieldCheck size={16} /> Approve Phase
+//             </button>
+//             <button
+//               onClick={() => onVerify(stage, false)}
+//               className="flex-1 py-3.5 text-[11px] font-black uppercase tracking-widest border border-rose-200 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+//             >
+//               Reject / Request Fix
+//             </button>
+//           </div>
+//         )}
+
+//         {/* PENDING SUBMISSION STATUS */}
+//         {isCurrent && !isCompleted && !stage.farmerConfirmed && !seedBlocked && (
+//           <div className="mt-5 flex items-center gap-1.5 text-[11px] font-black text-slate-400 uppercase tracking-widest italic">
+//             <Clock size={12}/> Pending {role === "FARMER" ? "your submission" : "farmer logs"}...
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    UI HELPERS
+// ========================================================= */
+
+// function TimelineIcon({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return (
+//     <div className="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-100 border-4 border-white transition-all">
+//        <CheckCircle2 size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isOverdue) return (
+//     <div className="w-10 h-10 rounded-2xl bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-100 border-4 border-white transition-all animate-pulse">
+//        <AlertTriangle size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isCurrent) return (
+//     <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-100 border-4 border-white transition-all">
+//        <CircleDot size={18} className="text-white" />
+//     </div>
+//   );
+//   return (
+//     <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center border-4 border-white">
+//        <CircleDashed size={18} className="text-slate-400" />
+//     </div>
+//   );
+// }
+
+// function StatusBadge({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return <Badge label="Verified" color="green" icon={<ShieldCheck size={12}/>} />;
+//   if (isOverdue) return <Badge label="Overdue" color="red" icon={<AlertCircle size={12}/>} />;
+//   if (isCurrent) return <Badge label="Active" color="blue" icon={<Activity size={12}/>} />;
+//   return <Badge label="Queued" color="gray" />;
+// }
+
+// function Badge({ label, color, icon }) {
+//   const colors = {
+//     green: "bg-emerald-50 text-emerald-700 border-emerald-200",
+//     blue: "bg-blue-50 text-blue-700 border-blue-200",
+//     red: "bg-rose-50 text-rose-700 border-rose-200",
+//     gray: "bg-slate-50 text-slate-500 border-slate-200",
+//   };
+//   return (
+//     <span className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border flex items-center gap-1.5 shadow-sm ${colors[color]}`}>
+//       {icon} {label}
+//     </span>
+//   );
+// }
+
+// function Activity({ size }) {
+//   return (
+//     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+//   );
+// }
+
+// function AlertCircle({ size }) {
+//     return (
+//       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+//     );
+// }
+
+// import {
+//   CheckCircle2,
+//   CircleDot,
+//   CircleDashed,
+//   AlertTriangle,
+//   Image as ImageIcon,
+//   UploadCloud,
+//   ShieldCheck,
+//   Cpu,
+//   Clock
+// } from "lucide-react";
+
+// // NEW IMPORTS FOR PDF GENERATION
+// import jsPDF from "jspdf";
+// import "jspdf-autotable";
+// import farmlinkStamp from "../../../assets/farmlink-stamp.png";
+
+// /* =========================================================
+//    PDF GENERATOR: AI QUALITY REPORT
+// ========================================================= */
+// const generateAiReportPDF = async (contract, aiDetails) => {
+//   if (!contract || !aiDetails) {
+//     alert("Missing contract or AI details to generate report.");
+//     return;
+//   }
+
+//   const doc = new jsPDF("p", "mm", "a4");
+//   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+//   // --- HELPER: Convert Image to Base64 (Prevents CORS issues in PDF) ---
+//   const fetchImageBase64 = async (url) => {
+//     try {
+//       const response = await fetch(url);
+//       const blob = await response.blob();
+//       return new Promise((resolve) => {
+//         const reader = new FileReader();
+//         reader.onloadend = () => resolve(reader.result);
+//         reader.readAsDataURL(blob);
+//       });
+//     } catch (e) {
+//       console.error("Failed to load image for PDF", e);
+//       return null;
+//     }
+//   };
+
+//   // --- HEADER SECTION ---
+//   doc.setFontSize(16);
+//   doc.setFont("helvetica", "bold");
+//   doc.setTextColor(15, 23, 42);
+//   doc.text("FARMLINK DIGITAL AGRICULTURE", 105, 20, { align: "center" });
+
+//   doc.setFontSize(12);
+//   doc.setFont("helvetica", "normal");
+//   doc.setTextColor(100, 116, 139);
+//   doc.text("AI Crop Quality Verification Certificate", 105, 27, { align: "center" });
+
+//   doc.setDrawColor(226, 232, 240);
+//   doc.line(14, 32, 196, 32);
+
+//   // --- CONTRACT DETAILS SECTION ---
+//   doc.setFontSize(10);
+//   doc.setTextColor(15, 23, 42);
+//   doc.setFont("helvetica", "bold");
+//   doc.text(`Contract ID: ${contract._id?.toUpperCase() || "N/A"}`, 14, 42);
+//   doc.text(`Date of Analysis: ${new Date(aiDetails.verifiedAt || Date.now()).toLocaleString()}`, 14, 48);
+
+//   // Parties Table
+//   doc.autoTable({
+//     startY: 55,
+//     theme: 'plain',
+//     styles: { fontSize: 10, cellPadding: 2, textColor: [15, 23, 42] },
+//     body: [
+//       [{ content: "Farmer Information", fontStyle: "bold" }, { content: "Buyer Information", fontStyle: "bold" }],
+//       [`Name: ${contract.farmer?.name || "N/A"}`, `Name: ${contract.buyer?.name || "N/A"}`],
+//       [`Address: ${contract.farmer?.address || "N/A"}`, `Address: ${contract.buyer?.address || "N/A"}`]
+//     ]
+//   });
+
+//   // Crop Details Table
+//   doc.autoTable({
+//     startY: doc.lastAutoTable.finalY + 8,
+//     theme: 'grid',
+//     headStyles: { fillColor: [248, 250, 252], textColor: [15, 23, 42], fontStyle: "bold", lineColor: [226, 232, 240] },
+//     styles: { fontSize: 10, textColor: [71, 85, 105], lineColor: [226, 232, 240] },
+//     head: [["Crop Name", "Variety", "Season", "Expected Yield"]],
+//     body: [[
+//       contract.cropDetails?.cropName || "-", 
+//       contract.cropDetails?.variety || "-", 
+//       contract.cropDetails?.season || "-", 
+//       contract.cropDetails?.expectedYield || "-"
+//     ]]
+//   });
+
+//   // --- AI GRADING RESULTS ---
+//   const startY = doc.lastAutoTable.finalY + 15;
+  
+//   doc.setFillColor(236, 253, 245); 
+//   doc.setDrawColor(16, 185, 129); 
+//   doc.roundedRect(14, startY, 182, 28, 3, 3, "FD");
+
+//   doc.setFontSize(11);
+//   doc.setFont("helvetica", "bold");
+//   doc.setTextColor(4, 120, 87);
+//   doc.text("AI GRADING VERDICT", 20, startY + 8);
+  
+//   doc.setFontSize(16);
+//   doc.text(aiDetails.grade?.toUpperCase() || "PENDING", 20, startY + 18);
+
+//   doc.setFontSize(10);
+//   doc.text(`CONFIDENCE LEVEL: ${aiDetails.confidence?.toFixed(2) || 0}%`, 120, startY + 18);
+
+//   // --- COMPOSITION BREAKDOWN ---
+//   if (aiDetails.breakdown) {
+//     doc.autoTable({
+//       startY: startY + 35,
+//       theme: 'grid',
+//       headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] },
+//       head: [["Quality Parameter", "Detected Composition (%)"]],
+//       body: [
+//         ["Premium Grains", `${((aiDetails.breakdown.Premium || 0) * 100).toFixed(1)}%`],
+//         ["Chalky Grains", `${((aiDetails.breakdown.Chalky || 0) * 100).toFixed(1)}%`],
+//         ["Discolored Grains", `${((aiDetails.breakdown.Discolored || 0) * 100).toFixed(1)}%`]
+//       ]
+//     });
+//   }
+
+//   // --- UPLOADED CROP EVIDENCE IMAGE ---
+//   if (aiDetails.evidenceUrl) {
+//     doc.setFontSize(11);
+//     doc.setFont("helvetica", "bold");
+//     doc.setTextColor(15, 23, 42);
+//     doc.text("Visual Evidence Analysis", 14, doc.lastAutoTable.finalY + 15);
+
+//     const evidenceUrl = aiDetails.evidenceUrl.startsWith("http") 
+//       ? aiDetails.evidenceUrl 
+//       : `${API_BASE}/${aiDetails.evidenceUrl.replace(/\\/g, "/")}`;
+
+//     const base64CropImg = await fetchImageBase64(evidenceUrl);
+//     if (base64CropImg) {
+//       doc.addImage(base64CropImg, "JPEG", 14, doc.lastAutoTable.finalY + 20, 80, 60);
+//     }
+//   }
+
+//   // --- DIGITAL STAMP AND SIGNATURE ---
+//   if (farmlinkStamp) {
+//     const stampY = doc.lastAutoTable.finalY + 20; 
+//     doc.addImage(farmlinkStamp, "PNG", 140, stampY, 40, 40);
+    
+//     doc.setFontSize(8);
+//     doc.setFont("helvetica", "normal");
+//     doc.setTextColor(100, 116, 139);
+//     doc.text("Digitally Approved by FarmLink AI", 160, stampY + 45, { align: "center" });
+//   }
+
+//   // --- DOWNLOAD ACTION ---
+//   doc.save(`FarmLink_AI_Report_${contract.cropDetails?.cropName || "Crop"}_${contract._id?.slice(-6) || "ID"}.pdf`);
+// };
+
+// /* =========================================================
+//    MAIN TIMELINE COMPONENT
+// ========================================================= */
+
+// export default function CultivationTimeline({
+//   contract, // <--- ADDED CONTRACT PROP HERE
+//   stages = [],
+//   role, 
+//   seedSupply,
+//   aiQualityDetails,
+//   onUpload,
+//   onVerify,
+//   onView,
+//   onAiAction,
+// }) {
+//   const allStagesFinished = stages.length > 0 && stages.every((s) => s.buyerVerified === true);
+  
+//   const aiCompleted = aiQualityDetails && 
+//                       aiQualityDetails.grade && 
+//                       aiQualityDetails.grade !== "Pending";
+
+//   const aiCurrent = allStagesFinished && !aiCompleted;
+
+//   return (
+//     <div className="bg-white rounded-[1.8rem] border border-slate-200/60 p-8 shadow-xl shadow-slate-200/40">
+//       {/* Header */}
+//       <div className="flex justify-between items-center mb-10 pb-5 border-b border-slate-100">
+//         <div>
+//           <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+//             <Clock size={16} className="text-emerald-600" /> Cultivation Lifecycle
+//           </h2>
+//           <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-wider">Milestone Tracking & Evidence Verification</p>
+//         </div>
+
+//         {role === "BUYER" && aiCompleted && (
+//           <button 
+//             onClick={onAiAction}
+//             className="text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <Cpu size={14} /> Full AI Analysis
+//           </button>
+//         )}
+//       </div>
+
+//       {/* Timeline Container */}
+//       <div className="relative pl-12">
+//         {/* Continuous Vertical Line */}
+//         <div className="absolute left-[19px] top-2 bottom-2 w-[3px] bg-slate-100 rounded-full" />
+
+//         {/* 1-6: Cultivation Stages */}
+//         {stages.map((stage) => (
+//           <StageItem
+//             key={stage._id}
+//             stage={stage}
+//             role={role}
+//             seedSupply={seedSupply}
+//             onUpload={onUpload}
+//             onVerify={onVerify}
+//             onView={onView}
+//           />
+//         ))}
+
+//         {/* 7: AI QUALITY VERIFICATION */}
+//         {allStagesFinished && (
+//           <AiStageItem 
+//             contract={contract} // <--- PASSED TO AI STAGE ITEM
+//             aiDetails={aiQualityDetails}
+//             isCurrent={aiCurrent}
+//             isCompleted={aiCompleted}
+//             role={role}
+//           />
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    AI STAGE ITEM (STAGE 7)
+// ========================================================= */
+
+// function AiStageItem({ contract, aiDetails, isCurrent, isCompleted, role }) {
+//   return (
+//     <div className="relative flex gap-6 mb-4 animate-in fade-in slide-in-from-left-4 duration-500">
+//       <div className="absolute left-[-48px] top-1 z-10 flex items-center justify-center w-10 h-10">
+//         {isCompleted ? (
+//           <div className="bg-emerald-600 p-2 rounded-xl shadow-lg shadow-emerald-100">
+//             <ShieldCheck size={20} className="text-white" />
+//           </div>
+//         ) : (
+//           <div className="relative">
+//             <Cpu size={24} className={`${isCurrent ? "text-emerald-500 animate-pulse" : "text-slate-300"} bg-white rounded-full`} />
+//             {isCurrent && <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-25"></span>}
+//           </div>
+//         )}
+//       </div>
+
+//       <div className={`w-full rounded-2xl border-2 transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-emerald-50/50 border-emerald-100" : "bg-slate-50 border-slate-200 border-dashed"
+//       }`}>
+//         <div className="flex justify-between items-center mb-4">
+//           <div className="flex items-center gap-3">
+//             <div className={`p-2.5 rounded-xl ${isCompleted ? "bg-emerald-100 text-emerald-700" : "bg-white text-slate-400 border border-slate-200"}`}>
+//               <Cpu size={18} />
+//             </div>
+//             <div>
+//               <h3 className={`text-sm font-black uppercase tracking-widest ${isCompleted ? "text-emerald-900" : "text-slate-600"}`}>
+//                 Phase 07: AI Quality Protocol
+//               </h3>
+//               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Automated Crop Grading & Purity Check</p>
+//             </div>
+//           </div>
+//           <span className={`text-[10px] font-black uppercase tracking-[0.1em] px-3 py-1.5 rounded-lg border ${
+//             isCompleted ? "bg-emerald-600 text-white border-emerald-600 shadow-md" : "bg-white text-slate-500 border-slate-200"
+//           }`}>
+//             {isCompleted ? "Protocol Verified" : "Awaiting Input"}
+//           </span>
+//         </div>
+
+//         {isCompleted ? (
+//           <div className="mt-5 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-colors">
+//             <div>
+//               <p className="text-[11px] text-emerald-700 font-black uppercase tracking-[0.2em] mb-2">
+//                 Digital Grade Certificate
+//               </p>
+//               <h4 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+//                 {aiDetails.grade}
+//               </h4>
+//               <div className="flex items-center gap-3 mt-3 mb-4">
+//                 <div className="h-2 w-32 bg-slate-100 rounded-full overflow-hidden">
+//                    <div className="h-full bg-emerald-500" style={{width: `${aiDetails.confidence}%`}}></div>
+//                 </div>
+//                 <span className="text-[11px] text-slate-600 font-black tracking-widest">CONFIDENCE: {aiDetails.confidence?.toFixed(1)}%</span>
+//               </div>
+              
+//               {/* 🚀 NEW DOWNLOAD REPORT BUTTON */}
+//               <button 
+//                 onClick={() => generateAiReportPDF(contract, aiDetails)}
+//                 className="px-4 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-md active:scale-[0.98]"
+//               >
+//                 Download Quality Report PDF
+//               </button>
+
+//             </div>
+            
+//             {aiDetails.evidenceUrl ? (
+//               <div className="relative group">
+//                 <img 
+//                   src={aiDetails.evidenceUrl} 
+//                   alt="Verified Crop" 
+//                   className="w-24 h-24 object-cover rounded-xl border-4 border-slate-50 shadow-md transform group-hover:scale-105 transition-transform" 
+//                 />
+//                 <div className="absolute -top-3 -right-3 bg-emerald-600 text-white p-1.5 rounded-full border-2 border-white shadow-sm">
+//                    <ShieldCheck size={14}/>
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="w-24 h-24 bg-slate-50 rounded-xl border-2 border-slate-100 flex items-center justify-center">
+//                 <CheckCircle2 className="text-emerald-500 opacity-30" size={32} />
+//               </div>
+//             )}
+//           </div>
+//         ) : (
+//           <div className="mt-3">
+//             <p className="text-[12px] font-bold text-slate-500 leading-relaxed uppercase tracking-tight">
+//               Physical production phase finished. Farmer must provide high-resolution harvest images in the specialized upload section below to trigger AI analysis.
+//             </p>
+//             {role === "FARMER" && (
+//               <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-white border border-emerald-200 w-fit px-4 py-2 rounded-xl shadow-sm">
+//                 <UploadCloud size={14} className="animate-bounce" />
+//                 Upload portal active below
+//               </div>
+//             )}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    STANDARD STAGE ITEM (STAGES 1-6)
+// ========================================================= */
+
+// function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
+//   const isCompleted = stage.buyerVerified === true;
+//   const isCurrent = stage.status === "PENDING" || stage.status === "IN_PROGRESS";
+//   const isSowingStage = stage.name?.toLowerCase().includes("sowing") || stage.stageIndex === 0;
+
+//   // DEPENDENCY CHECK
+//   const seedBlocked =
+//     isSowingStage &&
+//     seedSupply?.provider === "BUYER" &&
+//     seedSupply?.status !== "VERIFIED";
+
+//   // BACKEND OVERDUE LOGIC 
+//   const isOverdue = !isCompleted && (stage.isOverdue || stage.reminder?.levelSent >= 2);
+
+//   return (
+//     <div className="relative flex gap-8 mb-12 group">
+//       <div className="absolute left-[-42px] top-1 z-10">
+//         <TimelineIcon
+//           isCompleted={isCompleted}
+//           isCurrent={isCurrent}
+//           isOverdue={isOverdue}
+//         />
+//       </div>
+
+//       <div className={`w-full rounded-2xl border transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-white border-slate-200" : 
+//         isOverdue ? "bg-rose-50/50 border-rose-200 shadow-lg shadow-rose-100/50" : 
+//         isCurrent ? "bg-white border-blue-200 shadow-xl shadow-blue-50" : "bg-slate-50/50 border-slate-100 grayscale opacity-60"
+//       }`}>
+//         <div className="flex justify-between items-start">
+//           <div className="min-w-0">
+//             <div className="flex items-center gap-2 mb-1">
+//               <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Phase 0{stage.stageIndex + 1 || stage.name.split(" ")[0]}</span>
+//               {isCurrent && <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>}
+//             </div>
+            
+//             <h3 className={`text-[17px] font-black tracking-tight ${isCompleted ? "text-slate-900" : isOverdue ? "text-rose-900" : "text-slate-800"}`}>
+//               {stage.name}
+//             </h3>
+
+//             {/* ALERTS: OVERDUE DEADLINE */}
+//             {isOverdue && (
+//               <p className="text-[11px] font-black text-rose-700 uppercase mt-2 tracking-widest flex items-center gap-1.5 bg-rose-100/80 w-fit px-3 py-1 rounded-lg border border-rose-300 shadow-sm">
+//                 <AlertTriangle size={14}/> DEADLINE BREACHED: {Math.abs(stage.daysRemaining || 0)} DAYS LATE
+//               </p>
+//             )}
+
+//             {stage.completedDate && (
+//               <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-widest flex items-center gap-1.5">
+//                 <CheckCircle2 size={12} className="text-emerald-500"/> Finalized on {new Date(stage.completedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+//               </p>
+//             )}
+//           </div>
+//           <StatusBadge isCompleted={isCompleted} isCurrent={isCurrent} isOverdue={isOverdue} />
+//         </div>
+
+//         {/* LOGGED EVIDENCE */}
+//         {stage.farmerImages?.length > 0 && (
+//           <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
+//             <div className="flex items-center gap-3">
+//                <div className="flex -space-x-2">
+//                  {stage.farmerImages.slice(0, 3).map((_, i) => (
+//                     <div key={i} className="w-10 h-10 rounded-xl bg-slate-200 border-2 border-white flex items-center justify-center shadow-sm">
+//                        <ImageIcon size={14} className="text-slate-500"/>
+//                     </div>
+//                  ))}
+//                </div>
+//                <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Evidence Logged</span>
+//             </div>
+//             <button
+//               onClick={() => onView?.(stage)}
+//               className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm"
+//             >
+//               Inspect File
+//             </button>
+//           </div>
+//         )}
+
+//         {/* ALERT: SEED DEPENDENCY BLOCK */}
+//         {role === "FARMER" && isCurrent && seedBlocked && (
+//           <div className="mt-5 flex items-start gap-3 text-[11px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 p-4 rounded-xl border border-amber-200">
+//             <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+//             <span>Dependency Lock: You must verify Seed Receipt in the section above before uploading Sowing evidence.</span>
+//           </div>
+//         )}
+
+//         {/* ALERT: AWAITING BUYER VERIFICATION */}
+//         {stage.farmerConfirmed && !isCompleted && (
+//           <div className="mt-5 flex flex-col md:flex-row md:items-center justify-between bg-blue-50 border border-blue-200 p-4 rounded-xl gap-4">
+//              <div className="flex items-start md:items-center gap-3">
+//                <ShieldCheck size={20} className="text-blue-600 shrink-0"/>
+//                <div>
+//                  <span className="text-[11px] font-black text-blue-900 uppercase tracking-widest block">
+//                    {role === "BUYER" ? "Action Required: Verify Evidence" : "Awaiting Buyer Audit"}
+//                  </span>
+//                  <span className="text-[12px] font-bold text-blue-700 mt-0.5 block">
+//                    {role === "BUYER" ? "Review the farmer's upload and approve or request a fix." : "Evidence logged. Cultivation will advance once the buyer approves."}
+//                  </span>
+//                </div>
+//              </div>
+//              <button onClick={() => onView?.(stage)} className="shrink-0 text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-white text-blue-700 rounded-xl hover:bg-blue-600 hover:text-white transition-all border border-blue-200 shadow-sm">
+//                Review Files
+//              </button>
+//           </div>
+//         )}
+
+//         {/* FARMER SUBMIT BUTTON */}
+//         {role === "FARMER" && isCurrent && !stage.farmerConfirmed && !seedBlocked && (
+//           <button
+//             onClick={() => onUpload(stage)}
+//             className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-3.5 text-[11px] font-black uppercase tracking-widest bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <UploadCloud size={16} /> Submit Phase Evidence
+//           </button>
+//         )}
+
+//         {/* BUYER VERIFICATION ACTIONS */}
+//         {role === "BUYER" && stage.farmerConfirmed && !isCompleted && (
+//           <div className="mt-6 flex flex-col sm:flex-row gap-3">
+//             <button
+//               onClick={() => onVerify(stage, true)}
+//               className="flex-1 flex items-center justify-center gap-2 py-3.5 text-[11px] font-black uppercase tracking-widest bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-[0.98]"
+//             >
+//               <ShieldCheck size={16} /> Approve Phase
+//             </button>
+//             <button
+//               onClick={() => onVerify(stage, false)}
+//               className="flex-1 py-3.5 text-[11px] font-black uppercase tracking-widest border border-rose-200 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+//             >
+//               Reject / Request Fix
+//             </button>
+//           </div>
+//         )}
+
+//         {/* PENDING SUBMISSION STATUS */}
+//         {isCurrent && !isCompleted && !stage.farmerConfirmed && !seedBlocked && (
+//           <div className="mt-5 flex items-center gap-1.5 text-[11px] font-black text-slate-400 uppercase tracking-widest italic">
+//             <Clock size={12}/> Pending {role === "FARMER" ? "your submission" : "farmer logs"}...
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    UI HELPERS
+// ========================================================= */
+
+// function TimelineIcon({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return (
+//     <div className="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-100 border-4 border-white transition-all">
+//        <CheckCircle2 size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isOverdue) return (
+//     <div className="w-10 h-10 rounded-2xl bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-100 border-4 border-white transition-all animate-pulse">
+//        <AlertTriangle size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isCurrent) return (
+//     <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-100 border-4 border-white transition-all">
+//        <CircleDot size={18} className="text-white" />
+//     </div>
+//   );
+//   return (
+//     <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center border-4 border-white">
+//        <CircleDashed size={18} className="text-slate-400" />
+//     </div>
+//   );
+// }
+
+// function StatusBadge({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return <Badge label="Verified" color="green" icon={<ShieldCheck size={12}/>} />;
+//   if (isOverdue) return <Badge label="Overdue" color="red" icon={<AlertCircle size={12}/>} />;
+//   if (isCurrent) return <Badge label="Active" color="blue" icon={<Activity size={12}/>} />;
+//   return <Badge label="Queued" color="gray" />;
+// }
+
+// function Badge({ label, color, icon }) {
+//   const colors = {
+//     green: "bg-emerald-50 text-emerald-700 border-emerald-200",
+//     blue: "bg-blue-50 text-blue-700 border-blue-200",
+//     red: "bg-rose-50 text-rose-700 border-rose-200",
+//     gray: "bg-slate-50 text-slate-500 border-slate-200",
+//   };
+//   return (
+//     <span className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border flex items-center gap-1.5 shadow-sm ${colors[color]}`}>
+//       {icon} {label}
+//     </span>
+//   );
+// }
+
+// function Activity({ size }) {
+//   return (
+//     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+//   );
+// }
+
+// function AlertCircle({ size }) {
+//     return (
+//       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+//     );
+// }
+
+// import {
+//   CheckCircle2,
+//   CircleDot,
+//   CircleDashed,
+//   AlertTriangle,
+//   Image as ImageIcon,
+//   UploadCloud,
+//   ShieldCheck,
+//   Cpu,
+//   Clock
+// } from "lucide-react";
+
+// // NEW IMPORTS FOR PDF GENERATION
+// import jsPDF from "jspdf";
+// import "jspdf-autotable";
+// import farmlinkStamp from "../../../assets/farmlink-stamp.png";
+
+// /* =========================================================
+//    PDF GENERATOR: AI QUALITY REPORT
+// ========================================================= */
+// const generateAiReportPDF = async (contract, aiDetails) => {
+//   if (!contract || !aiDetails) {
+//     alert("Missing contract or AI details to generate report.");
+//     return;
+//   }
+
+//   const doc = new jsPDF("p", "mm", "a4");
+//   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+//   // --- HELPER: Convert Image to Base64 (Prevents CORS issues in PDF) ---
+//   const fetchImageBase64 = async (url) => {
+//     try {
+//       const response = await fetch(url);
+//       const blob = await response.blob();
+//       return new Promise((resolve) => {
+//         const reader = new FileReader();
+//         reader.onloadend = () => resolve(reader.result);
+//         reader.readAsDataURL(blob);
+//       });
+//     } catch (e) {
+//       console.error("Failed to load image for PDF", e);
+//       return null;
+//     }
+//   };
+
+//   // --- HEADER SECTION ---
+//   doc.setFontSize(16);
+//   doc.setFont("helvetica", "bold");
+//   doc.setTextColor(15, 23, 42);
+//   doc.text("FARMLINK DIGITAL AGRICULTURE", 105, 20, { align: "center" });
+
+//   doc.setFontSize(12);
+//   doc.setFont("helvetica", "normal");
+//   doc.setTextColor(100, 116, 139);
+//   doc.text("AI Crop Quality Verification Certificate", 105, 27, { align: "center" });
+
+//   doc.setDrawColor(226, 232, 240);
+//   doc.line(14, 32, 196, 32);
+
+//   // --- CONTRACT DETAILS SECTION ---
+//   doc.setFontSize(10);
+//   doc.setTextColor(15, 23, 42);
+//   doc.setFont("helvetica", "bold");
+//   doc.text(`Contract ID: ${contract._id?.toUpperCase() || "N/A"}`, 14, 42);
+//   doc.text(`Date of Analysis: ${new Date(aiDetails.verifiedAt || Date.now()).toLocaleString()}`, 14, 48);
+
+//   // Parties Table
+//   doc.autoTable({
+//     startY: 55,
+//     theme: 'plain',
+//     styles: { fontSize: 10, cellPadding: 2, textColor: [15, 23, 42] },
+//     body: [
+//       [{ content: "Farmer Information", fontStyle: "bold" }, { content: "Buyer Information", fontStyle: "bold" }],
+//       [`Name: ${contract.farmer?.name || "N/A"}`, `Name: ${contract.buyer?.name || "N/A"}`],
+//       [`Address: ${contract.farmer?.address || "N/A"}`, `Address: ${contract.buyer?.address || "N/A"}`]
+//     ]
+//   });
+
+//   // Crop Details Table
+//   doc.autoTable({
+//     startY: doc.lastAutoTable.finalY + 8,
+//     theme: 'grid',
+//     headStyles: { fillColor: [248, 250, 252], textColor: [15, 23, 42], fontStyle: "bold", lineColor: [226, 232, 240] },
+//     styles: { fontSize: 10, textColor: [71, 85, 105], lineColor: [226, 232, 240] },
+//     head: [["Crop Name", "Variety", "Season", "Expected Yield"]],
+//     body: [[
+//       contract.cropDetails?.cropName || "-", 
+//       contract.cropDetails?.variety || "-", 
+//       contract.cropDetails?.season || "-", 
+//       contract.cropDetails?.expectedYield || "-"
+//     ]]
+//   });
+
+//   // --- AI GRADING RESULTS ---
+//   const startY = doc.lastAutoTable.finalY + 15;
+  
+//   doc.setFillColor(236, 253, 245); 
+//   doc.setDrawColor(16, 185, 129); 
+//   doc.roundedRect(14, startY, 182, 28, 3, 3, "FD");
+
+//   doc.setFontSize(11);
+//   doc.setFont("helvetica", "bold");
+//   doc.setTextColor(4, 120, 87);
+//   doc.text("AI GRADING VERDICT", 20, startY + 8);
+  
+//   doc.setFontSize(16);
+//   doc.text(aiDetails.grade?.toUpperCase() || "PENDING", 20, startY + 18);
+
+//   doc.setFontSize(10);
+//   doc.text(`CONFIDENCE LEVEL: ${aiDetails.confidence?.toFixed(2) || 0}%`, 120, startY + 18);
+
+//   // --- COMPOSITION BREAKDOWN ---
+//   if (aiDetails.breakdown) {
+//     doc.autoTable({
+//       startY: startY + 35,
+//       theme: 'grid',
+//       headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] },
+//       head: [["Quality Parameter", "Detected Composition (%)"]],
+//       body: [
+//         ["Premium Grains", `${((aiDetails.breakdown.Premium || 0) * 100).toFixed(1)}%`],
+//         ["Chalky Grains", `${((aiDetails.breakdown.Chalky || 0) * 100).toFixed(1)}%`],
+//         ["Discolored Grains", `${((aiDetails.breakdown.Discolored || 0) * 100).toFixed(1)}%`]
+//       ]
+//     });
+//   }
+
+//   // --- UPLOADED CROP EVIDENCE IMAGE ---
+//   if (aiDetails.evidenceUrl) {
+//     doc.setFontSize(11);
+//     doc.setFont("helvetica", "bold");
+//     doc.setTextColor(15, 23, 42);
+//     doc.text("Visual Evidence Analysis", 14, doc.lastAutoTable.finalY + 15);
+
+//     const evidenceUrl = aiDetails.evidenceUrl.startsWith("http") 
+//       ? aiDetails.evidenceUrl 
+//       : `${API_BASE}/${aiDetails.evidenceUrl.replace(/\\/g, "/")}`;
+
+//     const base64CropImg = await fetchImageBase64(evidenceUrl);
+//     if (base64CropImg) {
+//       doc.addImage(base64CropImg, "JPEG", 14, doc.lastAutoTable.finalY + 20, 80, 60);
+//     }
+//   }
+
+//   // --- DIGITAL STAMP AND SIGNATURE ---
+//   if (farmlinkStamp) {
+//     const stampY = doc.lastAutoTable.finalY + 20; 
+//     doc.addImage(farmlinkStamp, "PNG", 140, stampY, 40, 40);
+    
+//     doc.setFontSize(8);
+//     doc.setFont("helvetica", "normal");
+//     doc.setTextColor(100, 116, 139);
+//     doc.text("Digitally Approved by FarmLink AI", 160, stampY + 45, { align: "center" });
+//   }
+
+//   // --- DOWNLOAD ACTION ---
+//   doc.save(`FarmLink_AI_Report_${contract.cropDetails?.cropName || "Crop"}_${contract._id?.slice(-6) || "ID"}.pdf`);
+// };
+
+// /* =========================================================
+//    MAIN TIMELINE COMPONENT
+// ========================================================= */
+
+// export default function CultivationTimeline({
+//   contract, // <--- ADDED CONTRACT PROP HERE
+//   stages = [],
+//   role, 
+//   seedSupply,
+//   aiQualityDetails,
+//   onUpload,
+//   onVerify,
+//   onView,
+//   onAiAction,
+// }) {
+//   const allStagesFinished = stages.length > 0 && stages.every((s) => s.buyerVerified === true);
+  
+//   const aiCompleted = aiQualityDetails && 
+//                       aiQualityDetails.grade && 
+//                       aiQualityDetails.grade !== "Pending";
+
+//   const aiCurrent = allStagesFinished && !aiCompleted;
+
+//   return (
+//     <div className="bg-white rounded-[1.8rem] border border-slate-200/60 p-8 shadow-xl shadow-slate-200/40">
+//       {/* Header */}
+//       <div className="flex justify-between items-center mb-10 pb-5 border-b border-slate-100">
+//         <div>
+//           <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+//             <Clock size={16} className="text-emerald-600" /> Cultivation Lifecycle
+//           </h2>
+//           <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-wider">Milestone Tracking & Evidence Verification</p>
+//         </div>
+
+//         {role === "BUYER" && aiCompleted && (
+//           <button 
+//             onClick={onAiAction}
+//             className="text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <Cpu size={14} /> Full AI Analysis
+//           </button>
+//         )}
+//       </div>
+
+//       {/* Timeline Container */}
+//       <div className="relative pl-12">
+//         {/* Continuous Vertical Line */}
+//         <div className="absolute left-[19px] top-2 bottom-2 w-[3px] bg-slate-100 rounded-full" />
+
+//         {/* 1-6: Cultivation Stages */}
+//         {stages.map((stage) => (
+//           <StageItem
+//             key={stage._id}
+//             stage={stage}
+//             role={role}
+//             seedSupply={seedSupply}
+//             onUpload={onUpload}
+//             onVerify={onVerify}
+//             onView={onView}
+//           />
+//         ))}
+
+//         {/* 7: AI QUALITY VERIFICATION */}
+//         {allStagesFinished && (
+//           <AiStageItem 
+//             contract={contract} // <--- PASSED TO AI STAGE ITEM
+//             aiDetails={aiQualityDetails}
+//             isCurrent={aiCurrent}
+//             isCompleted={aiCompleted}
+//             role={role}
+//           />
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    AI STAGE ITEM (STAGE 7)
+// ========================================================= */
+
+// function AiStageItem({ contract, aiDetails, isCurrent, isCompleted, role }) {
+//   return (
+//     <div className="relative flex gap-6 mb-4 animate-in fade-in slide-in-from-left-4 duration-500">
+//       <div className="absolute left-[-48px] top-1 z-10 flex items-center justify-center w-10 h-10">
+//         {isCompleted ? (
+//           <div className="bg-emerald-600 p-2 rounded-xl shadow-lg shadow-emerald-100">
+//             <ShieldCheck size={20} className="text-white" />
+//           </div>
+//         ) : (
+//           <div className="relative">
+//             <Cpu size={24} className={`${isCurrent ? "text-emerald-500 animate-pulse" : "text-slate-300"} bg-white rounded-full`} />
+//             {isCurrent && <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-25"></span>}
+//           </div>
+//         )}
+//       </div>
+
+//       <div className={`w-full rounded-2xl border-2 transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-emerald-50/50 border-emerald-100" : "bg-slate-50 border-slate-200 border-dashed"
+//       }`}>
+//         <div className="flex justify-between items-center mb-4">
+//           <div className="flex items-center gap-3">
+//             <div className={`p-2.5 rounded-xl ${isCompleted ? "bg-emerald-100 text-emerald-700" : "bg-white text-slate-400 border border-slate-200"}`}>
+//               <Cpu size={18} />
+//             </div>
+//             <div>
+//               <h3 className={`text-sm font-black uppercase tracking-widest ${isCompleted ? "text-emerald-900" : "text-slate-600"}`}>
+//                 Phase 07: AI Quality Protocol
+//               </h3>
+//               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Automated Crop Grading & Purity Check</p>
+//             </div>
+//           </div>
+//           <span className={`text-[10px] font-black uppercase tracking-[0.1em] px-3 py-1.5 rounded-lg border ${
+//             isCompleted ? "bg-emerald-600 text-white border-emerald-600 shadow-md" : "bg-white text-slate-500 border-slate-200"
+//           }`}>
+//             {isCompleted ? "Protocol Verified" : "Awaiting Input"}
+//           </span>
+//         </div>
+
+//         {isCompleted ? (
+//           <div className="mt-5 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-colors">
+//             <div>
+//               <p className="text-[11px] text-emerald-700 font-black uppercase tracking-[0.2em] mb-2">
+//                 Digital Grade Certificate
+//               </p>
+//               <h4 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+//                 {aiDetails.grade}
+//               </h4>
+//               <div className="flex items-center gap-3 mt-3 mb-4">
+//                 <div className="h-2 w-32 bg-slate-100 rounded-full overflow-hidden">
+//                    <div className="h-full bg-emerald-500" style={{width: `${aiDetails.confidence}%`}}></div>
+//                 </div>
+//                 <span className="text-[11px] text-slate-600 font-black tracking-widest">CONFIDENCE: {aiDetails.confidence?.toFixed(1)}%</span>
+//               </div>
+              
+//               {/* 🚀 NEW DOWNLOAD REPORT BUTTON */}
+//               <button 
+//                 onClick={() => generateAiReportPDF(contract, aiDetails)}
+//                 className="px-4 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-md active:scale-[0.98]"
+//               >
+//                 Download Quality Report PDF
+//               </button>
+
+//             </div>
+            
+//             {aiDetails.evidenceUrl ? (
+//               <div className="relative group">
+//                 <img 
+//                   src={aiDetails.evidenceUrl} 
+//                   alt="Verified Crop" 
+//                   className="w-24 h-24 object-cover rounded-xl border-4 border-slate-50 shadow-md transform group-hover:scale-105 transition-transform" 
+//                 />
+//                 <div className="absolute -top-3 -right-3 bg-emerald-600 text-white p-1.5 rounded-full border-2 border-white shadow-sm">
+//                    <ShieldCheck size={14}/>
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="w-24 h-24 bg-slate-50 rounded-xl border-2 border-slate-100 flex items-center justify-center">
+//                 <CheckCircle2 className="text-emerald-500 opacity-30" size={32} />
+//               </div>
+//             )}
+//           </div>
+//         ) : (
+//           <div className="mt-3">
+//             <p className="text-[12px] font-bold text-slate-500 leading-relaxed uppercase tracking-tight">
+//               Physical production phase finished. Farmer must provide high-resolution harvest images in the specialized upload section below to trigger AI analysis.
+//             </p>
+//             {role === "FARMER" && (
+//               <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-white border border-emerald-200 w-fit px-4 py-2 rounded-xl shadow-sm">
+//                 <UploadCloud size={14} className="animate-bounce" />
+//                 Upload portal active below
+//               </div>
+//             )}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    STANDARD STAGE ITEM (STAGES 1-6)
+// ========================================================= */
+
+// function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
+//   const isCompleted = stage.buyerVerified === true;
+//   const isCurrent = stage.status === "PENDING" || stage.status === "IN_PROGRESS";
+//   const isSowingStage = stage.name?.toLowerCase().includes("sowing") || stage.stageIndex === 0;
+
+//   // DEPENDENCY CHECK
+//   const seedBlocked =
+//     isSowingStage &&
+//     seedSupply?.provider === "BUYER" &&
+//     seedSupply?.status !== "VERIFIED";
+
+//   // BACKEND OVERDUE LOGIC 
+//   const isOverdue = !isCompleted && (stage.isOverdue || stage.reminder?.levelSent >= 2);
+
+//   return (
+//     <div className="relative flex gap-8 mb-12 group">
+//       <div className="absolute left-[-42px] top-1 z-10">
+//         <TimelineIcon
+//           isCompleted={isCompleted}
+//           isCurrent={isCurrent}
+//           isOverdue={isOverdue}
+//         />
+//       </div>
+
+//       <div className={`w-full rounded-2xl border transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-white border-slate-200" : 
+//         isOverdue ? "bg-rose-50/50 border-rose-200 shadow-lg shadow-rose-100/50" : 
+//         isCurrent ? "bg-white border-blue-200 shadow-xl shadow-blue-50" : "bg-slate-50/50 border-slate-100 grayscale opacity-60"
+//       }`}>
+//         <div className="flex justify-between items-start">
+//           <div className="min-w-0">
+//             <div className="flex items-center gap-2 mb-1">
+//               <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Phase 0{stage.stageIndex + 1 || stage.name.split(" ")[0]}</span>
+//               {isCurrent && <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>}
+//             </div>
+            
+//             <h3 className={`text-[17px] font-black tracking-tight ${isCompleted ? "text-slate-900" : isOverdue ? "text-rose-900" : "text-slate-800"}`}>
+//               {stage.name}
+//             </h3>
+
+//             {/* ALERTS: OVERDUE DEADLINE */}
+//             {isOverdue && (
+//               <p className="text-[11px] font-black text-rose-700 uppercase mt-2 tracking-widest flex items-center gap-1.5 bg-rose-100/80 w-fit px-3 py-1 rounded-lg border border-rose-300 shadow-sm">
+//                 <AlertTriangle size={14}/> DEADLINE BREACHED: {Math.abs(stage.daysRemaining || 0)} DAYS LATE
+//               </p>
+//             )}
+
+//             {stage.completedDate && (
+//               <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-widest flex items-center gap-1.5">
+//                 <CheckCircle2 size={12} className="text-emerald-500"/> Finalized on {new Date(stage.completedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+//               </p>
+//             )}
+//           </div>
+//           <StatusBadge isCompleted={isCompleted} isCurrent={isCurrent} isOverdue={isOverdue} />
+//         </div>
+
+//         {/* LOGGED EVIDENCE */}
+//         {stage.farmerImages?.length > 0 && (
+//           <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
+//             <div className="flex items-center gap-3">
+//                <div className="flex -space-x-2">
+//                  {stage.farmerImages.slice(0, 3).map((_, i) => (
+//                     <div key={i} className="w-10 h-10 rounded-xl bg-slate-200 border-2 border-white flex items-center justify-center shadow-sm">
+//                        <ImageIcon size={14} className="text-slate-500"/>
+//                     </div>
+//                  ))}
+//                </div>
+//                <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Evidence Logged</span>
+//             </div>
+//             <button
+//               onClick={() => onView?.(stage)}
+//               className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm"
+//             >
+//               Inspect File
+//             </button>
+//           </div>
+//         )}
+
+//         {/* ALERT: SEED DEPENDENCY BLOCK */}
+//         {role === "FARMER" && isCurrent && seedBlocked && (
+//           <div className="mt-5 flex items-start gap-3 text-[11px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 p-4 rounded-xl border border-amber-200">
+//             <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+//             <span>Dependency Lock: You must verify Seed Receipt in the section above before uploading Sowing evidence.</span>
+//           </div>
+//         )}
+
+//         {/* ALERT: AWAITING BUYER VERIFICATION */}
+//         {stage.farmerConfirmed && !isCompleted && (
+//           <div className="mt-5 flex flex-col md:flex-row md:items-center justify-between bg-blue-50 border border-blue-200 p-4 rounded-xl gap-4">
+//              <div className="flex items-start md:items-center gap-3">
+//                <ShieldCheck size={20} className="text-blue-600 shrink-0"/>
+//                <div>
+//                  <span className="text-[11px] font-black text-blue-900 uppercase tracking-widest block">
+//                    {role === "BUYER" ? "Action Required: Verify Evidence" : "Awaiting Buyer Audit"}
+//                  </span>
+//                  <span className="text-[12px] font-bold text-blue-700 mt-0.5 block">
+//                    {role === "BUYER" ? "Review the farmer's upload and approve or request a fix." : "Evidence logged. Cultivation will advance once the buyer approves."}
+//                  </span>
+//                </div>
+//              </div>
+//              <button onClick={() => onView?.(stage)} className="shrink-0 text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-white text-blue-700 rounded-xl hover:bg-blue-600 hover:text-white transition-all border border-blue-200 shadow-sm">
+//                Review Files
+//              </button>
+//           </div>
+//         )}
+
+//         {/* FARMER SUBMIT BUTTON */}
+//         {role === "FARMER" && isCurrent && !stage.farmerConfirmed && !seedBlocked && (
+//           <button
+//             onClick={() => onUpload(stage)}
+//             className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-3.5 text-[11px] font-black uppercase tracking-widest bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <UploadCloud size={16} /> Submit Phase Evidence
+//           </button>
+//         )}
+
+//         {/* BUYER VERIFICATION ACTIONS */}
+//         {role === "BUYER" && stage.farmerConfirmed && !isCompleted && (
+//           <div className="mt-6 flex flex-col sm:flex-row gap-3">
+//             <button
+//               onClick={() => onVerify(stage, true)}
+//               className="flex-1 flex items-center justify-center gap-2 py-3.5 text-[11px] font-black uppercase tracking-widest bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-[0.98]"
+//             >
+//               <ShieldCheck size={16} /> Approve Phase
+//             </button>
+//             <button
+//               onClick={() => onVerify(stage, false)}
+//               className="flex-1 py-3.5 text-[11px] font-black uppercase tracking-widest border border-rose-200 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+//             >
+//               Reject / Request Fix
+//             </button>
+//           </div>
+//         )}
+
+//         {/* PENDING SUBMISSION STATUS */}
+//         {isCurrent && !isCompleted && !stage.farmerConfirmed && !seedBlocked && (
+//           <div className="mt-5 flex items-center gap-1.5 text-[11px] font-black text-slate-400 uppercase tracking-widest italic">
+//             <Clock size={12}/> Pending {role === "FARMER" ? "your submission" : "farmer logs"}...
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// /* =========================================================
+//    UI HELPERS
+// ========================================================= */
+
+// function TimelineIcon({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return (
+//     <div className="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-100 border-4 border-white transition-all">
+//        <CheckCircle2 size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isOverdue) return (
+//     <div className="w-10 h-10 rounded-2xl bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-100 border-4 border-white transition-all animate-pulse">
+//        <AlertTriangle size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isCurrent) return (
+//     <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-100 border-4 border-white transition-all">
+//        <CircleDot size={18} className="text-white" />
+//     </div>
+//   );
+//   return (
+//     <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center border-4 border-white">
+//        <CircleDashed size={18} className="text-slate-400" />
+//     </div>
+//   );
+// }
+
+// function StatusBadge({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return <Badge label="Verified" color="green" icon={<ShieldCheck size={12}/>} />;
+//   if (isOverdue) return <Badge label="Overdue" color="red" icon={<AlertCircle size={12}/>} />;
+//   if (isCurrent) return <Badge label="Active" color="blue" icon={<Activity size={12}/>} />;
+//   return <Badge label="Queued" color="gray" />;
+// }
+
+// function Badge({ label, color, icon }) {
+//   const colors = {
+//     green: "bg-emerald-50 text-emerald-700 border-emerald-200",
+//     blue: "bg-blue-50 text-blue-700 border-blue-200",
+//     red: "bg-rose-50 text-rose-700 border-rose-200",
+//     gray: "bg-slate-50 text-slate-500 border-slate-200",
+//   };
+//   return (
+//     <span className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border flex items-center gap-1.5 shadow-sm ${colors[color]}`}>
+//       {icon} {label}
+//     </span>
+//   );
+// }
+
+// function Activity({ size }) {
+//   return (
+//     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+//   );
+// }
+
+// function AlertCircle({ size }) {
+//     return (
+//       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+//     );
+// }
+// import {
+//   CheckCircle2,
+//   CircleDot,
+//   CircleDashed,
+//   AlertTriangle,
+//   Image as ImageIcon,
+//   UploadCloud,
+//   ShieldCheck,
+//   Cpu,
+//   Clock
+// } from "lucide-react";
+
+// // FIXED IMPORTS FOR PDF GENERATION
+// import jsPDF from "jspdf";
+// import autoTable from "jspdf-autotable"; // Using direct import to avoid "not a function" error
+// import farmlinkStamp from "../../../assets/farmlink-stamp.png";
+
+// /* =========================================================
+//    PDF GENERATOR: AI QUALITY REPORT
+// ========================================================= */
+// const generateAiReportPDF = async (contract, aiDetails) => {
+//   if (!contract || !aiDetails) {
+//     alert("Missing contract or AI details to generate report.");
+//     return;
+//   }
+
+//   const doc = new jsPDF("p", "mm", "a4");
+//   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+//   // --- HELPER: Convert Image to Base64 ---
+//   const fetchImageBase64 = async (url) => {
+//     try {
+//       const response = await fetch(url);
+//       const blob = await response.blob();
+//       return new Promise((resolve) => {
+//         const reader = new FileReader();
+//         reader.onloadend = () => resolve(reader.result);
+//         reader.readAsDataURL(blob);
+//       });
+//     } catch (e) {
+//       console.error("Failed to load image for PDF", e);
+//       return null;
+//     }
+//   };
+
+//   // --- HEADER SECTION ---
+//   doc.setFontSize(16);
+//   doc.setFont("helvetica", "bold");
+//   doc.setTextColor(15, 23, 42);
+//   doc.text("FARMLINK DIGITAL AGRICULTURE", 105, 20, { align: "center" });
+
+//   doc.setFontSize(12);
+//   doc.setFont("helvetica", "normal");
+//   doc.setTextColor(100, 116, 139);
+//   doc.text("AI Crop Quality Verification Certificate", 105, 27, { align: "center" });
+
+//   doc.setDrawColor(226, 232, 240);
+//   doc.line(14, 32, 196, 32);
+
+//   // --- CONTRACT DETAILS SECTION ---
+//   doc.setFontSize(10);
+//   doc.setTextColor(15, 23, 42);
+//   doc.setFont("helvetica", "bold");
+//   doc.text(`Contract ID: ${contract._id?.toUpperCase() || "N/A"}`, 14, 42);
+//   doc.text(`Date of Analysis: ${new Date(aiDetails.verifiedAt || Date.now()).toLocaleString()}`, 14, 48);
+
+//   // Parties Table - FIXED CALL
+//   autoTable(doc, {
+//     startY: 55,
+//     theme: 'plain',
+//     styles: { fontSize: 10, cellPadding: 2, textColor: [15, 23, 42] },
+//     body: [
+//       [{ content: "Farmer Information", fontStyle: "bold" }, { content: "Buyer Information", fontStyle: "bold" }],
+//       [`Name: ${contract.farmer?.name || "N/A"}`, `Name: ${contract.buyer?.name || "N/A"}`],
+//       [`Address: ${contract.farmer?.address || "N/A"}`, `Address: ${contract.buyer?.address || "N/A"}`]
+//     ]
+//   });
+
+//   // Crop Details Table - FIXED CALL
+//   autoTable(doc, {
+//     startY: doc.lastAutoTable.finalY + 8,
+//     theme: 'grid',
+//     headStyles: { fillColor: [248, 250, 252], textColor: [15, 23, 42], fontStyle: "bold", lineColor: [226, 232, 240] },
+//     styles: { fontSize: 10, textColor: [71, 85, 105], lineColor: [226, 232, 240] },
+//     head: [["Crop Name", "Variety", "Season", "Expected Yield"]],
+//     body: [[
+//       contract.cropDetails?.cropName || "-", 
+//       contract.cropDetails?.variety || "-", 
+//       contract.cropDetails?.season || "-", 
+//       contract.cropDetails?.expectedYield || "-"
+//     ]]
+//   });
+
+//   // --- AI GRADING RESULTS ---
+//   const startY = doc.lastAutoTable.finalY + 15;
+  
+//   doc.setFillColor(236, 253, 245); 
+//   doc.setDrawColor(16, 185, 129); 
+//   doc.roundedRect(14, startY, 182, 28, 3, 3, "FD");
+
+//   doc.setFontSize(11);
+//   doc.setFont("helvetica", "bold");
+//   doc.setTextColor(4, 120, 87);
+//   doc.text("AI GRADING VERDICT", 20, startY + 8);
+  
+//   doc.setFontSize(16);
+//   doc.text(aiDetails.grade?.toUpperCase() || "PENDING", 20, startY + 18);
+
+//   doc.setFontSize(10);
+//   doc.text(`CONFIDENCE LEVEL: ${aiDetails.confidence?.toFixed(2) || 0}%`, 120, startY + 18);
+
+//   // --- COMPOSITION BREAKDOWN - FIXED CALL ---
+//   if (aiDetails.breakdown) {
+//     autoTable(doc, {
+//       startY: startY + 35,
+//       theme: 'grid',
+//       headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] },
+//       head: [["Quality Parameter", "Detected Composition (%)"]],
+//       body: [
+//         ["Premium Grains", `${((aiDetails.breakdown.Premium || 0) * 100).toFixed(1)}%`],
+//         ["Chalky Grains", `${((aiDetails.breakdown.Chalky || 0) * 100).toFixed(1)}%`],
+//         ["Discolored Grains", `${((aiDetails.breakdown.Discolored || 0) * 100).toFixed(1)}%`]
+//       ]
+//     });
+//   }
+
+//   // --- UPLOADED CROP EVIDENCE IMAGE ---
+//   if (aiDetails.evidenceUrl) {
+//     doc.setFontSize(11);
+//     doc.setFont("helvetica", "bold");
+//     doc.setTextColor(15, 23, 42);
+//     doc.text("Visual Evidence Analysis", 14, doc.lastAutoTable.finalY + 15);
+
+//     const evidenceUrl = aiDetails.evidenceUrl.startsWith("http") 
+//       ? aiDetails.evidenceUrl 
+//       : `${API_BASE}/${aiDetails.evidenceUrl.replace(/\\/g, "/")}`;
+
+//     const base64CropImg = await fetchImageBase64(evidenceUrl);
+//     if (base64CropImg) {
+//       doc.addImage(base64CropImg, "JPEG", 14, doc.lastAutoTable.finalY + 20, 80, 60);
+//     }
+//   }
+
+//   // --- DIGITAL STAMP AND SIGNATURE ---
+//   if (farmlinkStamp) {
+//     const stampY = doc.lastAutoTable.finalY + 20; 
+//     doc.addImage(farmlinkStamp, "PNG", 140, stampY, 40, 40);
+    
+//     doc.setFontSize(8);
+//     doc.setFont("helvetica", "normal");
+//     doc.setTextColor(100, 116, 139);
+//     doc.text("Digitally Approved by FarmLink AI", 160, stampY + 45, { align: "center" });
+//   }
+
+//   // --- DOWNLOAD ACTION ---
+//   doc.save(`FarmLink_AI_Report_${contract.cropDetails?.cropName || "Crop"}_${contract._id?.slice(-6) || "ID"}.pdf`);
+// };
+
+// /* =========================================================
+//    MAIN TIMELINE COMPONENT
+// ========================================================= */
+
+// export default function CultivationTimeline({
+//   contract, 
+//   stages = [],
+//   role, 
+//   seedSupply,
+//   aiQualityDetails,
+//   onUpload,
+//   onVerify,
+//   onView,
+//   onAiAction,
+// }) {
+//   const allStagesFinished = stages.length > 0 && stages.every((s) => s.buyerVerified === true);
+  
+//   const aiCompleted = aiQualityDetails && 
+//                       aiQualityDetails.grade && 
+//                       aiQualityDetails.grade !== "Pending";
+
+//   const aiCurrent = allStagesFinished && !aiCompleted;
+
+//   return (
+//     <div className="bg-white rounded-[1.8rem] border border-slate-200/60 p-8 shadow-xl shadow-slate-200/40">
+//       <div className="flex justify-between items-center mb-10 pb-5 border-b border-slate-100">
+//         <div>
+//           <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+//             <Clock size={16} className="text-emerald-600" /> Cultivation Lifecycle
+//           </h2>
+//           <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-wider">Milestone Tracking & Evidence Verification</p>
+//         </div>
+
+//         {role === "BUYER" && aiCompleted && (
+//           <button 
+//             onClick={onAiAction}
+//             className="text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <Cpu size={14} /> Full AI Analysis
+//           </button>
+//         )}
+//       </div>
+
+//       <div className="relative pl-12">
+//         <div className="absolute left-[19px] top-2 bottom-2 w-[3px] bg-slate-100 rounded-full" />
+
+//         {stages.map((stage) => (
+//           <StageItem
+//             key={stage._id}
+//             stage={stage}
+//             role={role}
+//             seedSupply={seedSupply}
+//             onUpload={onUpload}
+//             onVerify={onVerify}
+//             onView={onView}
+//           />
+//         ))}
+
+//         {allStagesFinished && (
+//           <AiStageItem 
+//             contract={contract}
+//             aiDetails={aiQualityDetails}
+//             isCurrent={aiCurrent}
+//             isCompleted={aiCompleted}
+//             role={role}
+//           />
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// function AiStageItem({ contract, aiDetails, isCurrent, isCompleted, role }) {
+//   return (
+//     <div className="relative flex gap-6 mb-4 animate-in fade-in slide-in-from-left-4 duration-500">
+//       <div className="absolute left-[-48px] top-1 z-10 flex items-center justify-center w-10 h-10">
+//         {isCompleted ? (
+//           <div className="bg-emerald-600 p-2 rounded-xl shadow-lg shadow-emerald-100">
+//             <ShieldCheck size={20} className="text-white" />
+//           </div>
+//         ) : (
+//           <div className="relative">
+//             <Cpu size={24} className={`${isCurrent ? "text-emerald-500 animate-pulse" : "text-slate-300"} bg-white rounded-full`} />
+//             {isCurrent && <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-25"></span>}
+//           </div>
+//         )}
+//       </div>
+
+//       <div className={`w-full rounded-2xl border-2 transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-emerald-50/50 border-emerald-100" : "bg-slate-50 border-slate-200 border-dashed"
+//       }`}>
+//         <div className="flex justify-between items-center mb-4">
+//           <div className="flex items-center gap-3">
+//             <div className={`p-2.5 rounded-xl ${isCompleted ? "bg-emerald-100 text-emerald-700" : "bg-white text-slate-400 border border-slate-200"}`}>
+//               <Cpu size={18} />
+//             </div>
+//             <div>
+//               <h3 className={`text-sm font-black uppercase tracking-widest ${isCompleted ? "text-emerald-900" : "text-slate-600"}`}>
+//                 Phase 07: AI Quality Protocol
+//               </h3>
+//               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Automated Crop Grading & Purity Check</p>
+//             </div>
+//           </div>
+//           <span className={`text-[10px] font-black uppercase tracking-[0.1em] px-3 py-1.5 rounded-lg border ${
+//             isCompleted ? "bg-emerald-600 text-white border-emerald-600 shadow-md" : "bg-white text-slate-500 border-slate-200"
+//           }`}>
+//             {isCompleted ? "Protocol Verified" : "Awaiting Input"}
+//           </span>
+//         </div>
+
+//         {isCompleted ? (
+//           <div className="mt-5 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-colors">
+//             <div>
+//               <p className="text-[11px] text-emerald-700 font-black uppercase tracking-[0.2em] mb-2">
+//                 Digital Grade Certificate
+//               </p>
+//               <h4 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+//                 {aiDetails.grade}
+//               </h4>
+//               <div className="flex items-center gap-3 mt-3 mb-4">
+//                 <div className="h-2 w-32 bg-slate-100 rounded-full overflow-hidden">
+//                    <div className="h-full bg-emerald-500" style={{width: `${aiDetails.confidence}%`}}></div>
+//                 </div>
+//                 <span className="text-[11px] text-slate-600 font-black tracking-widest">CONFIDENCE: {aiDetails.confidence?.toFixed(1)}%</span>
+//               </div>
+              
+//               <button 
+//                 onClick={() => generateAiReportPDF(contract, aiDetails)}
+//                 className="px-4 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-md active:scale-[0.98]"
+//               >
+//                 Download Quality Report PDF
+//               </button>
+
+//             </div>
+            
+//             {aiDetails.evidenceUrl ? (
+//               <div className="relative group">
+//                 <img 
+//                   src={aiDetails.evidenceUrl} 
+//                   alt="Verified Crop" 
+//                   className="w-24 h-24 object-cover rounded-xl border-4 border-slate-50 shadow-md transform group-hover:scale-105 transition-transform" 
+//                 />
+//                 <div className="absolute -top-3 -right-3 bg-emerald-600 text-white p-1.5 rounded-full border-2 border-white shadow-sm">
+//                    <ShieldCheck size={14}/>
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="w-24 h-24 bg-slate-50 rounded-xl border-2 border-slate-100 flex items-center justify-center">
+//                 <CheckCircle2 className="text-emerald-500 opacity-30" size={32} />
+//               </div>
+//             )}
+//           </div>
+//         ) : (
+//           <div className="mt-3">
+//             <p className="text-[12px] font-bold text-slate-500 leading-relaxed uppercase tracking-tight">
+//               Physical production phase finished. Farmer must provide high-resolution harvest images in the specialized upload section below to trigger AI analysis.
+//             </p>
+//             {role === "FARMER" && (
+//               <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-white border border-emerald-200 w-fit px-4 py-2 rounded-xl shadow-sm">
+//                 <UploadCloud size={14} className="animate-bounce" />
+//                 Upload portal active below
+//               </div>
+//             )}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
+//   const isCompleted = stage.buyerVerified === true;
+//   const isCurrent = stage.status === "PENDING" || stage.status === "IN_PROGRESS";
+//   const isSowingStage = stage.name?.toLowerCase().includes("sowing") || stage.stageIndex === 0;
+
+//   const seedBlocked =
+//     isSowingStage &&
+//     seedSupply?.provider === "BUYER" &&
+//     seedSupply?.status !== "VERIFIED";
+
+//   const isOverdue = !isCompleted && (stage.isOverdue || stage.reminder?.levelSent >= 2);
+
+//   return (
+//     <div className="relative flex gap-8 mb-12 group">
+//       <div className="absolute left-[-42px] top-1 z-10">
+//         <TimelineIcon
+//           isCompleted={isCompleted}
+//           isCurrent={isCurrent}
+//           isOverdue={isOverdue}
+//         />
+//       </div>
+
+//       <div className={`w-full rounded-2xl border transition-all duration-300 p-6 ${
+//         isCompleted ? "bg-white border-slate-200" : 
+//         isOverdue ? "bg-rose-50/50 border-rose-200 shadow-lg shadow-rose-100/50" : 
+//         isCurrent ? "bg-white border-blue-200 shadow-xl shadow-blue-50" : "bg-slate-50/50 border-slate-100 grayscale opacity-60"
+//       }`}>
+//         <div className="flex justify-between items-start">
+//           <div className="min-w-0">
+//             <div className="flex items-center gap-2 mb-1">
+//               <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Phase 0{stage.stageIndex + 1 || stage.name.split(" ")[0]}</span>
+//               {isCurrent && <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>}
+//             </div>
+            
+//             <h3 className={`text-[17px] font-black tracking-tight ${isCompleted ? "text-slate-900" : isOverdue ? "text-rose-900" : "text-slate-800"}`}>
+//               {stage.name}
+//             </h3>
+
+//             {isOverdue && (
+//               <p className="text-[11px] font-black text-rose-700 uppercase mt-2 tracking-widest flex items-center gap-1.5 bg-rose-100/80 w-fit px-3 py-1 rounded-lg border border-rose-300 shadow-sm">
+//                 <AlertTriangle size={14}/> DEADLINE BREACHED: {Math.abs(stage.daysRemaining || 0)} DAYS LATE
+//               </p>
+//             )}
+
+//             {stage.completedDate && (
+//               <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-widest flex items-center gap-1.5">
+//                 <CheckCircle2 size={12} className="text-emerald-500"/> Finalized on {new Date(stage.completedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+//               </p>
+//             )}
+//           </div>
+//           <StatusBadge isCompleted={isCompleted} isCurrent={isCurrent} isOverdue={isOverdue} />
+//         </div>
+
+//         {stage.farmerImages?.length > 0 && (
+//           <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
+//             <div className="flex items-center gap-3">
+//                <div className="flex -space-x-2">
+//                  {stage.farmerImages.slice(0, 3).map((_, i) => (
+//                     <div key={i} className="w-10 h-10 rounded-xl bg-slate-200 border-2 border-white flex items-center justify-center shadow-sm">
+//                        <ImageIcon size={14} className="text-slate-500"/>
+//                     </div>
+//                  ))}
+//                </div>
+//                <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Evidence Logged</span>
+//             </div>
+//             <button
+//               onClick={() => onView?.(stage)}
+//               className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm"
+//             >
+//               Inspect File
+//             </button>
+//           </div>
+//         )}
+
+//         {role === "FARMER" && isCurrent && seedBlocked && (
+//           <div className="mt-5 flex items-start gap-3 text-[11px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 p-4 rounded-xl border border-amber-200">
+//             <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+//             <span>Dependency Lock: You must verify Seed Receipt in the section above before uploading Sowing evidence.</span>
+//           </div>
+//         )}
+
+//         {stage.farmerConfirmed && !isCompleted && (
+//           <div className="mt-5 flex flex-col md:flex-row md:items-center justify-between bg-blue-50 border border-blue-200 p-4 rounded-xl gap-4">
+//              <div className="flex items-start md:items-center gap-3">
+//                <ShieldCheck size={20} className="text-blue-600 shrink-0"/>
+//                <div>
+//                  <span className="text-[11px] font-black text-blue-900 uppercase tracking-widest block">
+//                    {role === "BUYER" ? "Action Required: Verify Evidence" : "Awaiting Buyer Audit"}
+//                  </span>
+//                  <span className="text-[12px] font-bold text-blue-700 mt-0.5 block">
+//                    {role === "BUYER" ? "Review the farmer's upload and approve or request a fix." : "Evidence logged. Cultivation will advance once the buyer approves."}
+//                  </span>
+//                </div>
+//              </div>
+//              <button onClick={() => onView?.(stage)} className="shrink-0 text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-white text-blue-700 rounded-xl hover:bg-blue-600 hover:text-white transition-all border border-blue-200 shadow-sm">
+//                Review Files
+//              </button>
+//           </div>
+//         )}
+
+//         {role === "FARMER" && isCurrent && !stage.farmerConfirmed && !seedBlocked && (
+//           <button
+//             onClick={() => onUpload(stage)}
+//             className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-3.5 text-[11px] font-black uppercase tracking-widest bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200 active:scale-[0.98]"
+//           >
+//             <UploadCloud size={16} /> Submit Phase Evidence
+//           </button>
+//         )}
+
+//         {role === "BUYER" && stage.farmerConfirmed && !isCompleted && (
+//           <div className="mt-6 flex flex-col sm:flex-row gap-3">
+//             <button
+//               onClick={() => onVerify(stage, true)}
+//               className="flex-1 flex items-center justify-center gap-2 py-3.5 text-[11px] font-black uppercase tracking-widest bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-[0.98]"
+//             >
+//               <ShieldCheck size={16} /> Approve Phase
+//             </button>
+//             <button
+//               onClick={() => onVerify(stage, false)}
+//               className="flex-1 py-3.5 text-[11px] font-black uppercase tracking-widest border border-rose-200 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+//             >
+//               Reject / Request Fix
+//             </button>
+//           </div>
+//         )}
+
+//         {isCurrent && !isCompleted && !stage.farmerConfirmed && !seedBlocked && (
+//           <div className="mt-5 flex items-center gap-1.5 text-[11px] font-black text-slate-400 uppercase tracking-widest italic">
+//             <Clock size={12}/> Pending {role === "FARMER" ? "your submission" : "farmer logs"}...
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// function TimelineIcon({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return (
+//     <div className="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-100 border-4 border-white transition-all">
+//        <CheckCircle2 size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isOverdue) return (
+//     <div className="w-10 h-10 rounded-2xl bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-100 border-4 border-white transition-all animate-pulse">
+//        <AlertTriangle size={18} className="text-white" />
+//     </div>
+//   );
+//   if (isCurrent) return (
+//     <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-100 border-4 border-white transition-all">
+//        <CircleDot size={18} className="text-white" />
+//     </div>
+//   );
+//   return (
+//     <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center border-4 border-white">
+//        <CircleDashed size={18} className="text-slate-400" />
+//     </div>
+//   );
+// }
+
+// function StatusBadge({ isCompleted, isCurrent, isOverdue }) {
+//   if (isCompleted) return <Badge label="Verified" color="green" icon={<ShieldCheck size={12}/>} />;
+//   if (isOverdue) return <Badge label="Overdue" color="red" icon={<AlertCircle size={12}/>} />;
+//   if (isCurrent) return <Badge label="Active" color="blue" icon={<Activity size={12}/>} />;
+//   return <Badge label="Queued" color="gray" />;
+// }
+
+// function Badge({ label, color, icon }) {
+//   const colors = {
+//     green: "bg-emerald-50 text-emerald-700 border-emerald-200",
+//     blue: "bg-blue-50 text-blue-700 border-blue-200",
+//     red: "bg-rose-50 text-rose-700 border-rose-200",
+//     gray: "bg-slate-50 text-slate-500 border-slate-200",
+//   };
+//   return (
+//     <span className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border flex items-center gap-1.5 shadow-sm ${colors[color]}`}>
+//       {icon} {label}
+//     </span>
+//   );
+// }
+
+// function Activity({ size }) {
+//   return (
+//     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+//   );
+// }
+
+// function AlertCircle({ size }) {
+//     return (
+//       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+//     );
+// }
 import {
   CheckCircle2,
   CircleDot,
@@ -859,15 +3217,165 @@ import {
   UploadCloud,
   ShieldCheck,
   Cpu,
-  ChevronRight,
   Clock
 } from "lucide-react";
+
+// FIXED IMPORTS FOR PDF GENERATION
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; 
+import farmlinkStamp from "../../../assets/farmlink-stamp.png";
+
+/* =========================================================
+   PDF GENERATOR: AI QUALITY REPORT (WITH IMAGE FIX)
+========================================================= */
+const generateAiReportPDF = async (contract, aiDetails) => {
+  if (!contract || !aiDetails) {
+    alert("Missing contract or AI details to generate report.");
+    return;
+  }
+
+  const doc = new jsPDF("p", "mm", "a4");
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // --- HELPER: Convert Image to Base64 (Handles CORS & Canvas Rendering) ---
+  const fetchImageBase64 = async (url) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.setAttribute("crossOrigin", "anonymous"); // CRITICAL: Allows PDF to read image data
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = this.width;
+        canvas.height = this.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(this, 0, 0);
+        resolve(canvas.toDataURL("image/jpeg"));
+      };
+      img.onerror = function () {
+        console.error("PDF Generator: Could not load image at", url);
+        resolve(null);
+      };
+      img.src = url;
+    });
+  };
+
+  // --- HEADER SECTION ---
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(15, 23, 42);
+  doc.text("FARMLINK DIGITAL AGRICULTURE", 105, 20, { align: "center" });
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100, 116, 139);
+  doc.text("AI Crop Quality Verification Certificate", 105, 27, { align: "center" });
+
+  doc.setDrawColor(226, 232, 240);
+  doc.line(14, 32, 196, 32);
+
+  // --- CONTRACT DETAILS SECTION ---
+  doc.setFontSize(10);
+  doc.setTextColor(15, 23, 42);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Contract ID: ${contract._id?.toUpperCase() || "N/A"}`, 14, 42);
+  doc.text(`Date of Analysis: ${new Date(aiDetails.verifiedAt || Date.now()).toLocaleString()}`, 14, 48);
+
+  // Parties Table
+  autoTable(doc, {
+    startY: 55,
+    theme: 'plain',
+    styles: { fontSize: 10, cellPadding: 2, textColor: [15, 23, 42] },
+    body: [
+      [{ content: "Farmer Information", fontStyle: "bold" }, { content: "Buyer Information", fontStyle: "bold" }],
+      [`Name: ${contract.farmer?.name || "N/A"}`, `Name: ${contract.buyer?.name || "N/A"}`],
+      [`Address: ${contract.farmer?.address || "N/A"}`, `Address: ${contract.buyer?.address || "N/A"}`]
+    ]
+  });
+
+  // Crop Details Table
+  autoTable(doc, {
+    startY: doc.lastAutoTable.finalY + 8,
+    theme: 'grid',
+    headStyles: { fillColor: [248, 250, 252], textColor: [15, 23, 42], fontStyle: "bold", lineColor: [226, 232, 240] },
+    styles: { fontSize: 10, textColor: [71, 85, 105], lineColor: [226, 232, 240] },
+    head: [["Crop Name", "Variety", "Season", "Expected Yield"]],
+    body: [[
+      contract.cropDetails?.cropName || "-", 
+      contract.cropDetails?.variety || "-", 
+      contract.cropDetails?.season || "-", 
+      contract.cropDetails?.expectedYield || "-"
+    ]]
+  });
+
+  // --- AI GRADING RESULTS ---
+  const startY = doc.lastAutoTable.finalY + 15;
+  doc.setFillColor(236, 253, 245); 
+  doc.setDrawColor(16, 185, 129); 
+  doc.roundedRect(14, startY, 182, 28, 3, 3, "FD");
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(4, 120, 87);
+  doc.text("AI GRADING VERDICT", 20, startY + 8);
+  
+  doc.setFontSize(16);
+  doc.text(aiDetails.grade?.toUpperCase() || "PENDING", 20, startY + 18);
+
+  doc.setFontSize(10);
+  doc.text(`CONFIDENCE LEVEL: ${aiDetails.confidence?.toFixed(2) || 0}%`, 120, startY + 18);
+
+  // --- COMPOSITION BREAKDOWN ---
+  if (aiDetails.breakdown) {
+    autoTable(doc, {
+      startY: startY + 35,
+      theme: 'grid',
+      headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] },
+      head: [["Quality Parameter", "Detected Composition (%)"]],
+      body: [
+        ["Premium Grains", `${((aiDetails.breakdown.Premium || 0) * 100).toFixed(1)}%`],
+        ["Chalky Grains", `${((aiDetails.breakdown.Chalky || 0) * 100).toFixed(1)}%`],
+        ["Discolored Grains", `${((aiDetails.breakdown.Discolored || 0) * 100).toFixed(1)}%`]
+      ]
+    });
+  }
+
+  // --- UPLOADED CROP EVIDENCE IMAGE ---
+  if (aiDetails.evidenceUrl) {
+    const evidenceUrl = aiDetails.evidenceUrl.startsWith("http") 
+      ? aiDetails.evidenceUrl 
+      : `${API_BASE}${aiDetails.evidenceUrl.startsWith('/') ? '' : '/'}${aiDetails.evidenceUrl.replace(/\\/g, "/")}`;
+
+    const base64CropImg = await fetchImageBase64(evidenceUrl);
+    
+    if (base64CropImg) {
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("Visual Evidence Analysis", 14, doc.lastAutoTable.finalY + 15);
+      doc.addImage(base64CropImg, "JPEG", 14, doc.lastAutoTable.finalY + 20, 80, 60);
+    }
+  }
+
+  // --- DIGITAL STAMP AND SIGNATURE ---
+  if (farmlinkStamp) {
+    const stampY = doc.lastAutoTable.finalY + 25; 
+    doc.addImage(farmlinkStamp, "PNG", 140, stampY, 40, 40);
+    
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 116, 139);
+    doc.text("Digitally Approved by FarmLink AI", 160, stampY + 45, { align: "center" });
+  }
+
+  // --- DOWNLOAD ACTION ---
+  doc.save(`FarmLink_AI_Report_${contract.cropDetails?.cropName || "Crop"}_${contract._id?.slice(-6) || "ID"}.pdf`);
+};
 
 /* =========================================================
    MAIN TIMELINE COMPONENT
 ========================================================= */
 
 export default function CultivationTimeline({
+  contract, 
   stages = [],
   role, 
   seedSupply,
@@ -886,33 +3394,29 @@ export default function CultivationTimeline({
   const aiCurrent = allStagesFinished && !aiCompleted;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-10 pb-4 border-b border-slate-100">
+    <div className="bg-white rounded-[1.8rem] border border-slate-200/60 p-8 shadow-xl shadow-slate-200/40">
+      <div className="flex justify-between items-center mb-10 pb-5 border-b border-slate-100">
         <div>
           <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
             <Clock size={16} className="text-emerald-600" /> Cultivation Lifecycle
           </h2>
-          <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-wider">Milestone Tracking & Evidence Verification</p>
+          <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-wider">Milestone Tracking & Evidence Verification</p>
         </div>
 
         {role === "BUYER" && aiCompleted && (
           <button 
             onClick={onAiAction}
-            className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200"
+            className="text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200 active:scale-[0.98]"
           >
-            <Cpu size={14} /> Full AI Analysis Report
+            <Cpu size={14} /> Full AI Analysis
           </button>
         )}
       </div>
 
-      {/* Timeline Container */}
       <div className="relative pl-12">
-        {/* Continuous Vertical Line - More Prominent */}
         <div className="absolute left-[19px] top-2 bottom-2 w-[3px] bg-slate-100 rounded-full" />
 
-        {/* 1-6: Cultivation Stages */}
-        {stages.map((stage, index) => (
+        {stages.map((stage) => (
           <StageItem
             key={stage._id}
             stage={stage}
@@ -924,9 +3428,9 @@ export default function CultivationTimeline({
           />
         ))}
 
-        {/* 7: AI QUALITY VERIFICATION */}
         {allStagesFinished && (
           <AiStageItem 
+            contract={contract}
             aiDetails={aiQualityDetails}
             isCurrent={aiCurrent}
             isCompleted={aiCompleted}
@@ -942,7 +3446,7 @@ export default function CultivationTimeline({
    AI STAGE ITEM (STAGE 7)
 ========================================================= */
 
-function AiStageItem({ aiDetails, isCurrent, isCompleted, role }) {
+function AiStageItem({ contract, aiDetails, isCurrent, isCompleted, role }) {
   return (
     <div className="relative flex gap-6 mb-4 animate-in fade-in slide-in-from-left-4 duration-500">
       <div className="absolute left-[-48px] top-1 z-10 flex items-center justify-center w-10 h-10">
@@ -963,38 +3467,46 @@ function AiStageItem({ aiDetails, isCurrent, isCompleted, role }) {
       }`}>
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${isCompleted ? "bg-emerald-100 text-emerald-700" : "bg-white text-slate-400 border border-slate-200"}`}>
+            <div className={`p-2.5 rounded-xl ${isCompleted ? "bg-emerald-100 text-emerald-700" : "bg-white text-slate-400 border border-slate-200"}`}>
               <Cpu size={18} />
             </div>
             <div>
-              <h3 className={`text-sm font-black uppercase tracking-widest ${isCompleted ? "text-emerald-900" : "text-slate-500"}`}>
+              <h3 className={`text-sm font-black uppercase tracking-widest ${isCompleted ? "text-emerald-900" : "text-slate-600"}`}>
                 Phase 07: AI Quality Protocol
               </h3>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Automated Crop Grading & Purity Check</p>
+              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Automated Crop Grading & Purity Check</p>
             </div>
           </div>
-          <span className={`text-[9px] font-black uppercase tracking-[0.1em] px-3 py-1 rounded-lg border ${
-            isCompleted ? "bg-emerald-600 text-white border-emerald-600 shadow-md" : "bg-white text-slate-400 border-slate-200"
+          <span className={`text-[10px] font-black uppercase tracking-[0.1em] px-3 py-1.5 rounded-lg border ${
+            isCompleted ? "bg-emerald-600 text-white border-emerald-600 shadow-md" : "bg-white text-slate-500 border-slate-200"
           }`}>
             {isCompleted ? "Protocol Verified" : "Awaiting Input"}
           </span>
         </div>
 
         {isCompleted ? (
-          <div className="mt-4 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-colors">
+          <div className="mt-5 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-colors">
             <div>
-              <p className="text-[9px] text-emerald-600 font-black uppercase tracking-[0.2em] mb-2">
+              <p className="text-[11px] text-emerald-700 font-black uppercase tracking-[0.2em] mb-2">
                 Digital Grade Certificate
               </p>
               <h4 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
                 {aiDetails.grade}
               </h4>
-              <div className="flex items-center gap-2 mt-2">
-                <div className="h-1.5 w-24 bg-slate-100 rounded-full overflow-hidden">
+              <div className="flex items-center gap-3 mt-3 mb-4">
+                <div className="h-2 w-32 bg-slate-100 rounded-full overflow-hidden">
                    <div className="h-full bg-emerald-500" style={{width: `${aiDetails.confidence}%`}}></div>
                 </div>
-                <span className="text-[10px] text-slate-500 font-black">CONFIDENCE: {aiDetails.confidence?.toFixed(1)}%</span>
+                <span className="text-[11px] text-slate-600 font-black tracking-widest">CONFIDENCE: {aiDetails.confidence?.toFixed(1)}%</span>
               </div>
+              
+              <button 
+                onClick={() => generateAiReportPDF(contract, aiDetails)}
+                className="px-4 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-md active:scale-[0.98]"
+              >
+                Download Quality Report PDF
+              </button>
+
             </div>
             
             {aiDetails.evidenceUrl ? (
@@ -1002,25 +3514,25 @@ function AiStageItem({ aiDetails, isCurrent, isCompleted, role }) {
                 <img 
                   src={aiDetails.evidenceUrl} 
                   alt="Verified Crop" 
-                  className="w-20 h-20 object-cover rounded-xl border-4 border-slate-50 shadow-md transform group-hover:scale-105 transition-transform" 
+                  className="w-24 h-24 object-cover rounded-xl border-4 border-slate-50 shadow-md transform group-hover:scale-105 transition-transform" 
                 />
-                <div className="absolute -top-2 -right-2 bg-emerald-600 text-white p-1 rounded-full border-2 border-white shadow-sm">
-                   <ShieldCheck size={12}/>
+                <div className="absolute -top-3 -right-3 bg-emerald-600 text-white p-1.5 rounded-full border-2 border-white shadow-sm">
+                   <ShieldCheck size={14}/>
                 </div>
               </div>
             ) : (
-              <div className="w-20 h-20 bg-slate-50 rounded-xl border-2 border-slate-100 flex items-center justify-center">
+              <div className="w-24 h-24 bg-slate-50 rounded-xl border-2 border-slate-100 flex items-center justify-center">
                 <CheckCircle2 className="text-emerald-500 opacity-30" size={32} />
               </div>
             )}
           </div>
         ) : (
-          <div className="mt-2">
-            <p className="text-[11px] font-bold text-slate-600 leading-relaxed uppercase tracking-tight">
+          <div className="mt-3">
+            <p className="text-[12px] font-bold text-slate-500 leading-relaxed uppercase tracking-tight">
               Physical production phase finished. Farmer must provide high-resolution harvest images in the specialized upload section below to trigger AI analysis.
             </p>
             {role === "FARMER" && (
-              <div className="mt-4 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-emerald-600 bg-white border border-emerald-100 w-fit px-3 py-1.5 rounded-lg shadow-sm">
+              <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-white border border-emerald-200 w-fit px-4 py-2 rounded-xl shadow-sm">
                 <UploadCloud size={14} className="animate-bounce" />
                 Upload portal active below
               </div>
@@ -1038,7 +3550,7 @@ function AiStageItem({ aiDetails, isCurrent, isCompleted, role }) {
 
 function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
   const isCompleted = stage.buyerVerified === true;
-  const isCurrent = stage.status === "PENDING";
+  const isCurrent = stage.status === "PENDING" || stage.status === "IN_PROGRESS";
   const isSowingStage = stage.name?.toLowerCase().includes("sowing") || stage.stageIndex === 0;
 
   const seedBlocked =
@@ -1046,7 +3558,7 @@ function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
     seedSupply?.provider === "BUYER" &&
     seedSupply?.status !== "VERIFIED";
 
-  const isOverdue = !isCompleted && stage.expectedDays !== undefined && stage.reminder?.levelSent >= 2;
+  const isOverdue = !isCompleted && (stage.isOverdue || stage.reminder?.levelSent >= 2);
 
   return (
     <div className="relative flex gap-8 mb-12 group">
@@ -1058,7 +3570,7 @@ function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
         />
       </div>
 
-      <div className={`w-full rounded-2xl border transition-all duration-300 p-5 ${
+      <div className={`w-full rounded-2xl border transition-all duration-300 p-6 ${
         isCompleted ? "bg-white border-slate-200" : 
         isOverdue ? "bg-rose-50/50 border-rose-200 shadow-lg shadow-rose-100/50" : 
         isCurrent ? "bg-white border-blue-200 shadow-xl shadow-blue-50" : "bg-slate-50/50 border-slate-100 grayscale opacity-60"
@@ -1066,15 +3578,23 @@ function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
         <div className="flex justify-between items-start">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Phase 0{stage.stageIndex + 1}</span>
-              {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>}
+              <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Phase 0{stage.stageIndex + 1 || stage.name.split(" ")[0]}</span>
+              {isCurrent && <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>}
             </div>
-            <h3 className={`text-base font-black tracking-tight ${isCompleted ? "text-slate-900" : isOverdue ? "text-rose-900" : "text-slate-800"}`}>
+            
+            <h3 className={`text-[17px] font-black tracking-tight ${isCompleted ? "text-slate-900" : isOverdue ? "text-rose-900" : "text-slate-800"}`}>
               {stage.name}
             </h3>
-            {stage.completedAt && (
-              <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-tight flex items-center gap-1">
-                <CheckCircle2 size={10} className="text-emerald-500"/> Finalized on {new Date(stage.completedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+
+            {isOverdue && (
+              <p className="text-[11px] font-black text-rose-700 uppercase mt-2 tracking-widest flex items-center gap-1.5 bg-rose-100/80 w-fit px-3 py-1 rounded-lg border border-rose-300 shadow-sm">
+                <AlertTriangle size={14}/> DEADLINE BREACHED: {Math.abs(stage.daysRemaining || 0)} DAYS LATE
+              </p>
+            )}
+
+            {stage.completedDate && (
+              <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-widest flex items-center gap-1.5">
+                <CheckCircle2 size={12} className="text-emerald-500"/> Finalized on {new Date(stage.completedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
               </p>
             )}
           </div>
@@ -1082,20 +3602,20 @@ function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
         </div>
 
         {stage.farmerImages?.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
                <div className="flex -space-x-2">
                  {stage.farmerImages.slice(0, 3).map((_, i) => (
-                    <div key={i} className="w-8 h-8 rounded-lg bg-slate-200 border-2 border-white flex items-center justify-center">
-                       <ImageIcon size={12} className="text-slate-500"/>
+                    <div key={i} className="w-10 h-10 rounded-xl bg-slate-200 border-2 border-white flex items-center justify-center shadow-sm">
+                       <ImageIcon size={14} className="text-slate-500"/>
                     </div>
                  ))}
                </div>
-               <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Evidence Logged</span>
+               <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Evidence Logged</span>
             </div>
             <button
               onClick={() => onView?.(stage)}
-              className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-900 hover:text-white transition-all border border-slate-200"
+              className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm"
             >
               Inspect File
             </button>
@@ -1103,51 +3623,66 @@ function StageItem({ stage, role, seedSupply, onUpload, onVerify, onView }) {
         )}
 
         {role === "FARMER" && isCurrent && seedBlocked && (
-          <div className="mt-4 flex items-start gap-2 text-[10px] font-black uppercase tracking-tight text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-100">
-            <AlertTriangle size={14} className="shrink-0" />
-            <span>Dependency Error: Seed verification required before phase activation.</span>
+          <div className="mt-5 flex items-start gap-3 text-[11px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 p-4 rounded-xl border border-amber-200">
+            <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+            <span>Dependency Lock: You must verify Seed Receipt in the section above before uploading Sowing evidence.</span>
+          </div>
+        )}
+
+        {stage.farmerConfirmed && !isCompleted && (
+          <div className="mt-5 flex flex-col md:flex-row md:items-center justify-between bg-blue-50 border border-blue-200 p-4 rounded-xl gap-4">
+             <div className="flex items-start md:items-center gap-3">
+               <ShieldCheck size={20} className="text-blue-600 shrink-0"/>
+               <div>
+                 <span className="text-[11px] font-black text-blue-900 uppercase tracking-widest block">
+                   {role === "BUYER" ? "Action Required: Verify Evidence" : "Awaiting Buyer Audit"}
+                 </span>
+                 <span className="text-[12px] font-bold text-blue-700 mt-0.5 block">
+                   {role === "BUYER" ? "Review the farmer's upload and approve or request a fix." : "Evidence logged. Cultivation will advance once the buyer approves."}
+                 </span>
+               </div>
+             </div>
+             <button onClick={() => onView?.(stage)} className="shrink-0 text-[11px] font-black uppercase tracking-widest px-5 py-2.5 bg-white text-blue-700 rounded-xl hover:bg-blue-600 hover:text-white transition-all border border-blue-200 shadow-sm">
+               Review Files
+             </button>
           </div>
         )}
 
         {role === "FARMER" && isCurrent && !stage.farmerConfirmed && !seedBlocked && (
           <button
             onClick={() => onUpload(stage)}
-            className="mt-5 w-full flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] font-black uppercase tracking-widest bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 active:scale-[0.98]"
+            className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-3.5 text-[11px] font-black uppercase tracking-widest bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200 active:scale-[0.98]"
           >
-            <UploadCloud size={14} /> Submit Phase Evidence
+            <UploadCloud size={16} /> Submit Phase Evidence
           </button>
         )}
 
-        {role === "BUYER" && stage.farmerConfirmed && !stage.buyerVerified && (
-          <div className="mt-5 flex gap-2">
+        {role === "BUYER" && stage.farmerConfirmed && !isCompleted && (
+          <div className="mt-6 flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => onVerify(stage, true)}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-md transition-all active:scale-[0.98]"
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 text-[11px] font-black uppercase tracking-widest bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-[0.98]"
             >
-              <ShieldCheck size={14} /> Verify Phase
+              <ShieldCheck size={16} /> Approve Phase
             </button>
             <button
               onClick={() => onVerify(stage, false)}
-              className="flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest border-2 border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-all"
+              className="flex-1 py-3.5 text-[11px] font-black uppercase tracking-widest border border-rose-200 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm"
             >
-              Request Fix
+              Reject / Request Fix
             </button>
           </div>
         )}
 
-        {isCurrent && !isCompleted && !stage.farmerConfirmed && (
-          <div className="mt-4 flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-tighter italic">
-            <Clock size={10}/> Pending {role === "FARMER" ? "your submission" : "farmer logs"}...
+        {isCurrent && !isCompleted && !stage.farmerConfirmed && !seedBlocked && (
+          <div className="mt-5 flex items-center gap-1.5 text-[11px] font-black text-slate-400 uppercase tracking-widest italic">
+            <Clock size={12}/> Pending {role === "FARMER" ? "your submission" : "farmer logs"}...
           </div>
         )}
       </div>
     </div>
   );
 }
-
-/* =========================================================
-   UI HELPERS
-========================================================= */
 
 function TimelineIcon({ isCompleted, isCurrent, isOverdue }) {
   if (isCompleted) return (
@@ -1167,15 +3702,15 @@ function TimelineIcon({ isCompleted, isCurrent, isOverdue }) {
   );
   return (
     <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center border-4 border-white">
-       <CircleDashed size={18} className="text-slate-300" />
+       <CircleDashed size={18} className="text-slate-400" />
     </div>
   );
 }
 
 function StatusBadge({ isCompleted, isCurrent, isOverdue }) {
-  if (isCompleted) return <Badge label="Verified" color="green" icon={<ShieldCheck size={10}/>} />;
-  if (isOverdue) return <Badge label="Overdue" color="red" icon={<AlertCircle size={10}/>} />;
-  if (isCurrent) return <Badge label="Active" color="blue" icon={<Activity size={10}/>} />;
+  if (isCompleted) return <Badge label="Verified" color="green" icon={<ShieldCheck size={12}/>} />;
+  if (isOverdue) return <Badge label="Overdue" color="red" icon={<AlertCircle size={12}/>} />;
+  if (isCurrent) return <Badge label="Active" color="blue" icon={<Activity size={12}/>} />;
   return <Badge label="Queued" color="gray" />;
 }
 
@@ -1184,10 +3719,10 @@ function Badge({ label, color, icon }) {
     green: "bg-emerald-50 text-emerald-700 border-emerald-200",
     blue: "bg-blue-50 text-blue-700 border-blue-200",
     red: "bg-rose-50 text-rose-700 border-rose-200",
-    gray: "bg-slate-50 text-slate-400 border-slate-200",
+    gray: "bg-slate-50 text-slate-500 border-slate-200",
   };
   return (
-    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md border flex items-center gap-1 shadow-sm ${colors[color]}`}>
+    <span className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border flex items-center gap-1.5 shadow-sm ${colors[color]}`}>
       {icon} {label}
     </span>
   );
