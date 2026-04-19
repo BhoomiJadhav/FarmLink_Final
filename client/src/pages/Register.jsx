@@ -179,7 +179,7 @@ const RegisterPage = () => {
                 हिंदी
               </button>
               <button
-                onClick={() => i18n.changeLanguage("mar")}
+                onClick={() => i18n.changeLanguage("mr")}
                 className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
                   i18n.language === "mr"
                     ? "bg-white text-emerald-800"

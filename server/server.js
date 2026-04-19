@@ -37,6 +37,7 @@ const reviewRoutes = require("./Routes/reviewRoutes");
 const voiceRoutes = require("./Routes/voiceRoutes");
 // New AI Route
 const aiRoutes = require("./Routes/aiRoutes");
+const supportRoutes = require("./Routes/supportRoutes");
 
 const { runReminderCron } = require("./cron/reminderCron");
 const { runPaymentPenaltyCron } = require("./cron/paymentPenaltyCron");
@@ -139,6 +140,7 @@ app.use("/api", messageRoutes);
 app.use("/api", disputeRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api", voiceRoutes);
+app.use("/api", supportRoutes);
 // Register AI Route
 app.use("/api/ai", aiRoutes);
 

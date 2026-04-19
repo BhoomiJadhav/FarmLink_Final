@@ -101,5 +101,309 @@
   "september": "September",
   "october": "October",
   "november": "November",
-  "december": "December"
+  "december": "December",
+  "nav": {
+    "home": "Home",
+    "problems": "Problems",
+    "purpose": "Purpose",
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "contact": "Contact"
+  },
+  "auth": {
+    "login": "Log In",
+    "register": "Register"
+  },
+  "hero": {
+    "badge": "Assured Contract Farming Platform",
+    "title1": "Empowering Farmers",
+    "title2": "with Transparent Contracts",
+    "description": "FarmLink bridges traditional farming with modern technology. Get simple, farmer-friendly contracts, real-time tracking, and expert advisory services.",
+    "start": "Start Your Journey",
+    "learn": "Learn More",
+
+    "stats": {
+      "farmers": "Active Farmers",
+      "contracts": "Contracts",
+      "languages": "Languages"
+    },
+
+    "card1": {
+      "title": "Simple Contracts",
+      "desc": "Easy-to-understand, farmer-friendly contracts with minimal jargon."
+    },
+    "card2": {
+      "title": "Fair Negotiation",
+      "desc": "Transparent platform for secure contract deals."
+    }
+  },
+  "problems": {
+    "title1": "What Kind of Problems",
+    "title2": "Do Farmers Face?",
+    "description": "Under traditional farming systems, farmers rely on uncertain markets and manual decision-making, leading to price instability and unpredictable outcomes.",
+
+    "list": {
+      "price": {
+        "title": "Price Instability & Unfair Markets",
+        "desc": "Farmers have no control over prices due to middlemen and lack of transparency."
+      },
+      "climate": {
+        "title": "Climate Uncertainty & Crop Loss",
+        "desc": "Changing weather and diseases make farming risky and unpredictable."
+      },
+      "buyers": {
+        "title": "Lack of Assured Buyers & Delayed Payments",
+        "desc": "Farmers struggle with selling produce and often face payment delays."
+      }
+    }
+  },
+  "purpose": {
+    "title": "Our Purpose & Promise",
+
+    "items": {
+      "tech": {
+        "title": "Empower Farmers with Technology",
+        "desc": "We believe technology should be accessible and affordable for all farmers."
+      },
+      "buyers": {
+        "title": "Assured Buyers & Secure Payments",
+        "desc": "FarmLink ensures reliable buyers and timely payments with full transparency."
+      },
+      "contracts": {
+        "title": "Transparent and Fair Contracts",
+        "desc": "We provide clear, easy-to-understand digital contracts that protect both sides."
+      }
+    }
+  },
+  "how": {
+    "label": "How It Works",
+    "title1": "Your Journey to",
+    "title2": "Assured Farming Success",
+    "description": "Getting started with FarmLink is simple. Follow these steps to transform your farming business.",
+
+    "steps": {
+      "step1": {
+        "title": "Register & Profile",
+        "desc": "Create your account and set up your farmer or buyer profile."
+      },
+      "step2": {
+        "title": "Browse Contracts",
+        "desc": "Explore contracts or post your requirements."
+      },
+      "step3": {
+        "title": "Negotiate & Sign",
+        "desc": "Finalize terms and sign secure contracts."
+      },
+      "step4": {
+        "title": "Track & Grow",
+        "desc": "Monitor progress and grow your farming business."
+      }
+    }
+  },
+  "features": {
+    "tag": "Platform Features",
+    "title1": "Everything You Need for",
+    "title2": "Successful Contract Farming",
+    "description": "FarmLink provides tools to make contract farming simple and transparent.",
+
+    "list": {
+      "simple": {
+        "title": "Simple Contracts",
+        "desc": "Easy-to-understand contracts designed for farmers."
+      },
+      "negotiation": {
+        "title": "Transparent Negotiation",
+        "desc": "Secure and transparent contract negotiation."
+      },
+      "reminder": {
+        "title": "Automated Reminders",
+        "desc": "Get notified for important deadlines and events."
+      },
+      "tracking": {
+        "title": "Real-Time Tracking",
+        "desc": "Track your contract progress easily."
+      },
+      "advisory": {
+        "title": "Expert Advisory",
+        "desc": "Get expert advice on farming and contracts."
+      },
+      "dispute": {
+        "title": "Dispute Resolution",
+        "desc": "Resolve conflicts with professional support."
+      }
+    }
+  },
+  "testimonials": {
+    "label": "Testimonials",
+    "title1": "Trusted by Farmers",
+    "title2": "Across India",
+    "description": "Hear from farmers who transformed their business with FarmLink.",
+
+    "users": {
+      "rajesh": {
+        "role": "Wheat Farmer, Punjab",
+        "quote": "FarmLink has transformed how I do business. Payments are always on time."
+      },
+      "priya": {
+        "role": "Rice Farmer, Andhra Pradesh",
+        "quote": "Now I have assured buyers and better prices. My yield improved significantly."
+      },
+      "ali": {
+        "role": "Vegetable Farmer, Maharashtra",
+        "quote": "Real-time tracking gives me full transparency and confidence."
+      }
+    }
+  },
+  "benefits": {
+    "label": "Benefits",
+    "title1": "Win-Win for",
+    "title2": "Farmers & Buyers",
+    "description": "FarmLink creates value through transparency and fairness.",
+
+    "farmers": {
+      "title": "For Farmers",
+      "subtitle": "Secure your future with assured contracts",
+      "cta": "Register as Farmer",
+      "list": {
+        "1": "Guaranteed market access",
+        "2": "Protection from price volatility",
+        "3": "Access to quality inputs",
+        "4": "Timely payments",
+        "5": "Reduced risk",
+        "6": "Expert advisory"
+      }
+    },
+
+    "buyers": {
+      "title": "For Buyers",
+      "subtitle": "Source quality produce with confidence",
+      "cta": "Register as Buyer",
+      "list": {
+        "1": "Consistent supply",
+        "2": "Traceability",
+        "3": "Reduced uncertainty",
+        "4": "Direct relationships",
+        "5": "Quality compliance",
+        "6": "Sustainable sourcing"
+      }
+    },
+
+    "stats": {
+      "contract": "Contract Value",
+      "dispute": "Dispute Resolution",
+      "payment": "Avg Payment Time",
+      "rating": "User Rating"
+    }
+  },
+  "cta": {
+    "title1": "Ready to Transform Your",
+    "title2": "Farming Business?",
+    "description": "Join farmers benefiting from FarmLink.",
+    "start": "Get Started Free",
+    "demo": "Schedule a Demo",
+    "note": "No credit card required",
+
+    "error": "Something went wrong.",
+    "networkError": "Network error.",
+
+    "modal": {
+      "title": "Schedule a Demo",
+      "desc": "Leave your details and we will contact you.",
+      "email": "Email Address",
+      "phone": "Contact Number",
+      "submit": "Request Demo",
+      "submitting": "Submitting...",
+      "successTitle": "Request Submitted",
+      "successDesc": "We will contact you soon.",
+      "close": "Close"
+    }
+  },
+  "stats": {
+    "title": "Our Impact",
+    "subtitle": "Transforming agriculture with technology",
+
+    "farmers": "Active Farmers",
+    "acres": "Acres Monitored",
+    "yield": "Yield Increase",
+    "uptime": "Uptime"
+  },
+  "footer": {
+    "desc": "Smart agricultural solutions for modern farming.",
+    "product": "Product",
+    "features": "Features",
+    "how": "How It Works",
+    "pricing": "Pricing",
+
+    "company": "Company",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact",
+
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookies Policy",
+
+    "rights": "All rights reserved.",
+
+    "twitter": "Twitter",
+    "facebook": "Facebook",
+    "linkedin": "LinkedIn"
+  },
+  "topnav": {
+    "searchPlaceholder": "Search contracts, crops, buyers...",
+
+    "role": "Role",
+    "reviews": "reviews",
+    "trust": "Trust",
+    "phone": "Phone",
+    "location": "Location",
+
+    "profile": {
+      "title": "View Profile & Settings",
+      "logout": "Logout"
+    }
+  },
+  "farmerDashboard": {
+    "welcome": "Welcome !",
+    "overview": "Overview of your farming activities and contracts.",
+    "stats": {
+      "totalContracts": "Total Contracts",
+      "activeContracts": "Active Contracts",
+      "pendingContracts": "Pending Contracts",
+      "negotiations": "Negotiations"
+    },
+    "policyRejected": "Policy Rejected",
+    "policyAccepted": "Policy Accepted",
+    "policyRejectedDesc": "Your policy request has been rejected. Please resubmit.",
+    "resubmit": "Resubmit Policy",
+    "GovtScheme": "Government Schemes",
+    "QuickActions": "Quick Actions",
+    "harvest": "Harvest",
+    "contracts": "Contracts",
+    "Track": "Track",
+    "negotiate": "Negotiate",
+    "Insights": {
+      "Insights": "Insights",
+
+      "activeContracts": "{{count}} active contracts operating.",
+      "pendingRequests": "{{count}} requests awaiting response.",
+      "primaryCrop": "Primary crop: {{crop}}"
+    }
+  },
+  "common": {
+    "na": "N/A"
+  },
+  "market": "Market",
+  "policy": {
+    "title": "Re-submit Policy",
+    "provider": "Provider Name",
+    "number": "Policy Number",
+    "upload": "Upload Policy Document"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "harvestTrack": {}
 }

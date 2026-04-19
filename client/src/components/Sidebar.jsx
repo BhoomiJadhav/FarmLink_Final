@@ -295,6 +295,10 @@ export default function Sidebar({ onLogout, onSupportClick }) {
           <Headphones className="h-5 w-5 text-emerald-400" />
           Admin Contact
         </button>
+        <NavLink to="/support" className={linkClasses}>
+          <MessageSquare className="h-5 w-5 text-emerald-400" />
+          Support
+        </NavLink>
       </nav>
 
       {/* LOGOUT */}

@@ -12,6 +12,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 import NotificationPopup from "./NotificationPopup";
+import { useTranslation } from "react-i18next";
 
 export default function Topbar({
   profileData = null,
@@ -23,6 +24,7 @@ export default function Topbar({
   const [prevCount, setPrevCount] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [latestNotif, setLatestNotif] = useState(null);
+  const { t, i18n } = useTranslation();
 
   // 🔊 Audio object
   // const notificationSound = new Audio("../assets/sounds/notification.mp3");
@@ -189,7 +191,10 @@ export default function Topbar({
             value={search}
             onChange={handleSearchChange}
             className="w-full pl-11 pr-12 py-2.5 bg-slate-50/80 border border-slate-200/60 rounded-2xl text-slate-700 font-medium placeholder:text-slate-400 focus:bg-white focus:border-emerald-300 focus:ring-4 focus:ring-emerald-500/10 focus:outline-none transition-all duration-300 ease-out shadow-sm group-hover:bg-white group-hover:shadow-md group-hover:shadow-slate-200/40"
-            placeholder="Search contracts, crops, prices..."
+            placeholder={
+              t("topnav.searchPlaceholder") ||
+              "Search contracts, farmers, etc..."
+            }
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 pointer-events-none">
             <kbd className="hidden sm:inline-flex h-6 items-center gap-1 rounded border border-slate-200 bg-slate-100 px-2 font-sans text-[10px] font-bold text-slate-500 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.08)]">
@@ -201,6 +206,40 @@ export default function Topbar({
 
       {/* --- RIGHT: Actions & Profile --- */}
       <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex bg-slate-100 p-1 rounded-xl">
+          <button
+            onClick={() => i18n.changeLanguage("en")}
+            className={`px-2 py-1 text-xs font-bold rounded ${
+              i18n.language === "en"
+                ? "bg-white text-green-700"
+                : "text-gray-500"
+            }`}
+          >
+            EN
+          </button>
+
+          <button
+            onClick={() => i18n.changeLanguage("hi")}
+            className={`px-2 py-1 text-xs font-bold rounded ${
+              i18n.language === "hi"
+                ? "bg-white text-green-700"
+                : "text-gray-500"
+            }`}
+          >
+            हिंदी
+          </button>
+
+          <button
+            onClick={() => i18n.changeLanguage("mr")}
+            className={`px-2 py-1 text-xs font-bold rounded ${
+              i18n.language === "mr"
+                ? "bg-white text-green-700"
+                : "text-gray-500"
+            }`}
+          >
+            मराठी
+          </button>
+        </div>
         <div className="hidden lg:flex items-center gap-2 text-slate-500 bg-slate-50/80 px-3 py-1.5 rounded-full border border-slate-200/50">
           <CalendarDays size={14} className="text-emerald-600" />
           <span className="text-xs font-semibold tracking-wide uppercase">
@@ -305,7 +344,7 @@ export default function Topbar({
                           {ratingAvg ? ratingAvg.toFixed(1) : "0.0"}
                         </div>
                         <div className="text-xs text-gray-400">
-                          ({ratingCount} reviews)
+                          ({ratingCount} {t("topnav.reviews")})
                         </div>
                       </div>
                     </div>
@@ -316,7 +355,7 @@ export default function Topbar({
                         ⚡
                       </div>
                       <div className="leading-tight">
-                        <div className="font-medium">Trust</div>
+                        <div className="font-medium">{t("topnav.trust")}</div>
                         <div className="text-xs text-gray-500">{karma}/100</div>
                       </div>
                     </div>
@@ -355,8 +394,8 @@ export default function Topbar({
                     }}
                     className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 rounded-2xl transition-all active:scale-[0.98]"
                   >
-                    <Settings size={18} strokeWidth={2} /> View Profile &
-                    Settings
+                    <Settings size={18} strokeWidth={2} />{" "}
+                    {t("topnav.profile.title")}
                   </button>
 
                   <button
@@ -366,7 +405,8 @@ export default function Topbar({
                     }}
                     className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-2xl transition-all mt-1 active:scale-[0.98]"
                   >
-                    <LogOut size={18} strokeWidth={2} /> Logout
+                    <LogOut size={18} strokeWidth={2} />{" "}
+                    {t("topnav.profile.logout")}
                   </button>
                 </div>
               </div>

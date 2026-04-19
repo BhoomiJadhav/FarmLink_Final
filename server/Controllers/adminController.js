@@ -2289,45 +2289,6 @@ exports.getTickets = async (req, res) => {
   }
 };
 
-exports.updateTicket = async (req, res) => {
-  const { status, note, reply } = req.body;
-
-  const ticket = await Support.findById(req.params.id);
-
-  if (!ticket) return res.status(404).json({ msg: "Not found" });
-
-  if (status) ticket.status = status;
-
-  if (note) {
-    ticket.adminNotes.push({
-      text: note,
-      addedAt: new Date(),
-    });
-  }
-
-  if (reply) {
-    ticket.replies.push({
-      from: "ADMIN",
-      message: reply,
-      createdAt: new Date(),
-      seen: false,
-    });
-
-    ticket.waitingOn = "USER";
-
-    await Notification.create({
-      userId: ticket.userId,
-      message: "Admin replied to your ticket",
-      link: `/tickets/${ticket._id}`,
-    });
-  }
-
-  ticket.lastUpdatedAt = new Date();
-
-  await ticket.save();
-
-  res.json({ success: true });
-};
 // ADMIN REPLY
 
 // MARK MESSAGES AS SEEN
@@ -2461,6 +2422,51 @@ exports.createSupportTicket = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+exports.updateTicket = async (req, res) => {
+  try {
+    const { status, note, reply } = req.body;
+
+    const ticket = await Support.findById(req.params.id);
+
+    if (!ticket) return res.status(404).json({ msg: "Not found" });
+
+    if (status) ticket.status = status;
+
+    if (note) {
+      ticket.adminNotes.push({
+        text: note,
+        addedAt: new Date(),
+      });
+    }
+
+    if (reply) {
+      ticket.replies.push({
+        from: "ADMIN",
+        message: reply,
+        createdAt: new Date(),
+        seen: false,
+      });
+
+      ticket.waitingOn = "USER";
+
+      await Notification.create({
+        userId: ticket.userId,
+        title: "Support Update", // 🔥 ADD THIS
+        message: "Admin replied to your ticket",
+        link: `/tickets/${ticket._id}`,
+      });
+    }
+
+    ticket.lastUpdatedAt = new Date();
+
+    await ticket.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("UPDATE TICKET ERROR:", err); // 🔥 IMPORTANT
+    res.status(500).json({ message: err.message });
+  }
+};
 exports.adminReply = async (req, res) => {
   try {
     const { message } = req.body;
@@ -2486,6 +2492,7 @@ exports.adminReply = async (req, res) => {
     // 🔔 notify user
     await Notification.create({
       userId: ticket.userId,
+      title: "Support Update",
       message: "Admin replied to your ticket",
       link: `/tickets/${ticket._id}`,
     });
@@ -2519,6 +2526,7 @@ exports.userReply = async (req, res) => {
 
     // 🔔 notify admin (optional)
     await Notification.create({
+      title: "User Reply",
       message: "User replied to support ticket",
       link: `/admin/tickets/${ticket._id}`,
     });

@@ -151,8 +151,8 @@ const LoginPage = () => {
                 हिंदी
               </button>
               <button
-                onClick={() => changeLanguage("mar")}
-                className={`px-3 py-1 text-[10px] font-bold rounded-lg transition-all ${i18n.language === "hi" ? "bg-white text-emerald-800 shadow-sm" : "text-slate-400"}`}
+                onClick={() => changeLanguage("mr")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg transition-all ${i18n.language === "mr" ? "bg-white text-emerald-800 shadow-sm" : "text-slate-400"}`}
               >
                 मराठी
               </button>

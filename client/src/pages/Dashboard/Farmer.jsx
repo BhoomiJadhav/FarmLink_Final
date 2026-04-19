@@ -15,6 +15,7 @@ import Sidebar from "../../components/Sidebar.jsx";
 import Topbar from "../../components/topNav.jsx";
 import ProfileModal from "../../components/profileModal.jsx";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 /* ---------- COMPACT STAT CARD ---------- */
 function StatCard({ title, value, icon: Icon }) {
@@ -51,6 +52,7 @@ export default function FarmerDashboard() {
   const [govtUpdates, setGovtUpdates] = useState([]);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const [form, setForm] = useState({
     personal: {},
@@ -222,10 +224,12 @@ export default function FarmerDashboard() {
             {/* HEADER */}
             <div className="flex-shrink-0">
               <h1 className="text-2xl mt-4 font-bold text-[#064e3b] font-serif tracking-tight leading-none">
-                Welcome back, {profileData?.user?.name || "Farmer"}
+                {t("farmerDashboard.welcome", {
+                  name: profileData?.user?.name || "Farmer",
+                })}
               </h1>
               <p className="text-[14px] text-slate-500 mt-2 font-medium">
-                Here is an overview of your contracts and farm operations today.
+                {t("farmerDashboard.overview")}
                 🌱
               </p>
             </div>
@@ -233,22 +237,22 @@ export default function FarmerDashboard() {
             {/* STATS ROW */}
             <div className="grid grid-cols-2 xl:grid-cols-4 gap-10 mr-8 ml-8 flex-shrink-0">
               <StatCard
-                title="Total Contracts"
+                title={t("farmerDashboard.stats.totalContracts")}
                 value={stats.totalContracts}
                 icon={FileText}
               />
               <StatCard
-                title="Pending"
+                title={t("farmerDashboard.stats.pendingContracts")}
                 value={stats.pendingRequests}
                 icon={Timer}
               />
               <StatCard
-                title="Active Deals"
+                title={t("farmerDashboard.stats.activeContracts")}
                 value={stats.acceptedDeals}
                 icon={CheckCircle2}
               />
               <StatCard
-                title="Negotiations"
+                title={t("farmerDashboard.stats.negotiations")}
                 value={stats.activeNegotiations}
                 icon={MessageSquare}
               />
@@ -257,10 +261,10 @@ export default function FarmerDashboard() {
               <div className="mx-8 bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center justify-between">
                 <div>
                   <h3 className="text-red-700 font-bold text-sm">
-                    ⚠️ Policy Rejected
+                    ⚠️ {t("farmerDashboard.policyRejected")}
                   </h3>
                   <p className="text-xs text-red-600">
-                    Your insurance policy was rejected. Please re-submit.
+                    {t("farmerDashboard.policyRejectedDesc")}
                   </p>
                 </div>
 
@@ -273,7 +277,7 @@ export default function FarmerDashboard() {
                   }}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold"
                 >
-                  Re-submit Policy
+                  {t("farmerDashboard.resubmit")}
                 </button>
               </div>
             )}
@@ -285,7 +289,7 @@ export default function FarmerDashboard() {
                   <div className="p-1 bg-blue-50 text-blue-600 rounded">
                     <Landmark size={14} />
                   </div>
-                  Govt. Schemes
+                  {t("farmerDashboard.GovtScheme")}
                 </h2>
                 <div className="space-y-2 overflow-y-auto pr-1 flex-1 custom-scrollbar">
                   {govtUpdates.map((u) => (
@@ -310,16 +314,6 @@ export default function FarmerDashboard() {
                       >
                         {u.type}
                       </span>
-
-                      {u.link && (
-                        <a
-                          href={u.link}
-                          target="_blank"
-                          className="block text-xs text-blue-500 mt-1"
-                        >
-                          View Details →
-                        </a>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -333,31 +327,31 @@ export default function FarmerDashboard() {
                   <div className="p-1 bg-yellow-100 rounded text-yellow-600">
                     <Sparkles size={14} />
                   </div>
-                  Quick Actions
+                  {t("farmerDashboard.QuickActions")}
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                   <ActionBtn
                     onClick={() => navigate("/farmer/harvest-crop")}
                     icon="🌾"
-                    label="Harvest"
+                    label={t("farmerDashboard.harvest")}
                     col="emerald"
                   />
                   <ActionBtn
                     onClick={() => navigate("/farmer/contracts")}
                     icon="📄"
-                    label="Contracts"
+                    label={t("farmerDashboard.contracts")}
                     col="blue"
                   />
                   <ActionBtn
                     onClick={() => navigate("/farmer/harvest-contracts")}
                     icon="📍"
-                    label="Track"
+                    label={t("farmerDashboard.Track")}
                     col="amber"
                   />
                   <ActionBtn
                     onClick={() => navigate("/farmer/negotiations")}
                     icon="💬"
-                    label="Negotiate"
+                    label={t("farmerDashboard.negotiate")}
                     col="purple"
                   />
                 </div>
@@ -367,17 +361,25 @@ export default function FarmerDashboard() {
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full"></div>
                 <h2 className="font-bold text-lg mb-3 font-serif flex items-center gap-2">
                   <div className="bg-white/20 p-1.5 rounded-lg text-sm">📈</div>{" "}
-                  Insights
+                  {t("farmerDashboard.Insights.Insights")}
                 </h2>
                 <ul className="text-sm text-emerald-50 space-y-3 font-medium relative z-10">
                   <InsightItem
-                    text={`${stats.acceptedDeals} active contracts operating.`}
+                    text={t("farmerDashboard.Insights.activeContracts", {
+                      count: stats.acceptedDeals,
+                    })}
                   />
+
                   <InsightItem
-                    text={`${stats.pendingRequests} requests awaiting response.`}
+                    text={t("farmerDashboard.Insights.pendingRequests", {
+                      count: stats.pendingRequests,
+                    })}
                   />
+
                   <InsightItem
-                    text={`Primary crop: ${contracts[0]?.cropName || "N/A"}`}
+                    text={t("farmerDashboard.Insights.primaryCrop", {
+                      crop: contracts[0]?.cropName || t("common.na"),
+                    })}
                   />
                 </ul>
               </div>
@@ -389,7 +391,7 @@ export default function FarmerDashboard() {
         <div className="h-10 bg-[#064e3b] border-t border-[#047857] flex items-center flex-shrink-0 z-40 overflow-hidden">
           <div className="px-3 h-full flex items-center bg-[#022c22] border-r border-[#047857] z-20">
             <span className="text-[10px] font-black text-white tracking-widest uppercase">
-              Market
+              {t("farmerDashboard.market")}
             </span>
           </div>
           <div className="flex-1 relative h-full flex items-center overflow-hidden">
@@ -488,6 +490,7 @@ const InsightItem = ({ text }) => (
   </li>
 );
 function ResubmitModal({ data, onClose, onSubmit }) {
+  const { t, i18n } = useTranslation();
   const [form, setForm] = useState({
     providerName: data?.insurance?.providerName || "",
     policyNumber: data?.insurance?.policyNumber || "",
@@ -502,7 +505,7 @@ function ResubmitModal({ data, onClose, onSubmit }) {
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-6 w-[400px] shadow-xl">
-        <h2 className="text-lg font-bold mb-4 text-[#064e3b]">
+        {/* <h2 className="text-lg font-bold mb-4 text-[#064e3b]">
           Re-submit Policy
         </h2>
 
@@ -546,6 +549,67 @@ function ResubmitModal({ data, onClose, onSubmit }) {
             className="px-4 py-2 bg-emerald-600 text-white rounded"
           >
             Submit
+          </button>
+        </div> */}
+        <h2 className="text-lg font-bold mb-4 text-[#064e3b]">
+          {t("policy.title")}
+        </h2>
+
+        {/* Form */}
+        <div className="space-y-4">
+          {/* Provider Name */}
+          <input
+            placeholder={t("policy.provider")}
+            value={form.providerName}
+            onChange={(e) => setForm({ ...form, providerName: e.target.value })}
+            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+
+          {/* Policy Number */}
+          <input
+            placeholder={t("policy.number")}
+            value={form.policyNumber}
+            onChange={(e) => setForm({ ...form, policyNumber: e.target.value })}
+            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+
+          {/* Valid Till */}
+          <input
+            type="date"
+            value={form.policyValidTill}
+            onChange={(e) =>
+              setForm({ ...form, policyValidTill: e.target.value })
+            }
+            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+
+          {/* File Upload */}
+          <div className="text-sm">
+            <label className="block mb-1 text-gray-600">
+              {t("policy.upload")}
+            </label>
+            <input
+              type="file"
+              onChange={(e) => setForm({ ...form, file: e.target.files[0] })}
+              className="w-full border border-gray-300 p-2 rounded-lg"
+            />
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-3 mt-6">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
+          >
+            {t("common.cancel")}
+          </button>
+
+          <button
+            onClick={() => onSubmit(form)}
+            className="px-5 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition"
+          >
+            {t("common.submit")}
           </button>
         </div>
       </div>

@@ -19,6 +19,7 @@ const {
   adminReply,
   markSeen,
 } = require("../Controllers/adminController");
+
 const { createUpdate } = require("../Controllers/GovUpdateController");
 
 // 🔥 Dashboard test
@@ -66,4 +67,5 @@ router.post("/ticket/user-reply/:id", protect, userReply);
 router.patch("/ticket/mark-seen/:id", protect, markSeen);
 router.get("/analytics", protect, authorize("admin"), getAdminAnalytics);
 router.post("/govt-update", protect, authorize("admin"), createUpdate);
+
 module.exports = router;

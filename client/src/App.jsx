@@ -42,6 +42,7 @@ import PolicyVerificationPage from "./pages/admin/PolicyVerification.jsx";
 import AdminSupport from "./pages/admin/AdminSupport.jsx";
 import AdminAnalytics from "./pages/admin/AdminAnalytics.jsx";
 import FarmerList from "./pages/Dashboard/FarmerList.jsx";
+import SupportPage from "./pages/farmer/SupportPage.jsx";
 import "./styles/pdf-safe.css";
 
 const App = () => {
@@ -225,6 +226,8 @@ const App = () => {
 
             <Route path="/farmer/policy" element={<FarmerPolicy />} />
             <Route path="/buyer/policy" element={<BuyerPolicy />} />
+            <Route path="/support" element={<SupportPage />} />
+            <Route path="*" element={<h1>404 - Not Found</h1>} />
           </Routes>
         </ContractProvider>
       </BrowserRouter>

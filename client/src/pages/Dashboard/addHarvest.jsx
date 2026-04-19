@@ -367,40 +367,7 @@ const AddHarvestListing = () => {
 
         {/* HERO SECTION */}
         <div className="w-full bg-gradient-to-r from-[#064e3b] via-[#065f46] to-[#064e3b] animate-bg-pan pt-16 pb-32 px-4 text-center relative shadow-inner">
-          <div className="flex justify-end mb-4">
-            <div className="flex bg-slate-100 p-1 rounded-xl">
-              <button
-                onClick={() => i18n.changeLanguage("en")}
-                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
-                  i18n.language === "en"
-                    ? "bg-white text-emerald-800"
-                    : "text-slate-400"
-                }`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => i18n.changeLanguage("hi")}
-                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
-                  i18n.language === "hi"
-                    ? "bg-white text-emerald-800"
-                    : "text-slate-400"
-                }`}
-              >
-                हिंदी
-              </button>
-              <button
-                onClick={() => i18n.changeLanguage("mar")}
-                className={`px-3 py-1 text-[10px] font-bold rounded-lg ${
-                  i18n.language === "mr"
-                    ? "bg-white text-emerald-800"
-                    : "text-slate-400"
-                }`}
-              >
-                मराठी
-              </button>
-            </div>
-          </div>
+          <div className="flex justify-end mb-4"></div>
           <div className="relative z-10 flex flex-col items-center justify-center">
             <h1 className="text-3xl md:text-[40px] font-bold text-white tracking-tight font-serif mb-2">
               {t("addHarvestListing")}
