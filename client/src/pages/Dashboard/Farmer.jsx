@@ -49,6 +49,15 @@ export default function FarmerDashboard() {
   const [showSupport, setShowSupport] = useState(false);
   const [resubmitData, setResubmitData] = useState(null);
   const [govtUpdates, setGovtUpdates] = useState([]);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    personal: {},
+    farm: {},
+    insurance: {},
+    preferences: {},
+  });
   const getPolicyStatus = (c) => {
     return (
       c.policyVerification?.status ||
@@ -93,6 +102,46 @@ export default function FarmerDashboard() {
     }
     loadProfile();
   }, []);
+  useEffect(() => {
+    if (profileData?.profile) {
+      setForm({
+        personal: profileData.profile.personal || {},
+        farm: profileData.profile.farm || {},
+        insurance: profileData.profile.insurance || {},
+        preferences: profileData.profile.preferences || {},
+      });
+    }
+  }, [profileData]);
+  const handleFormChange = (section, key, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [key]: value,
+      },
+    }));
+  };
+  const saveProfile = async () => {
+    try {
+      setSaving(true);
+
+      await api.post("/profile/save", {
+        personal: form.personal,
+        farm: form.farm,
+        preferences: form.preferences,
+        insurance: form.insurance,
+      });
+
+      const res = await api.get("/profile/me");
+      setProfileData(res.data);
+
+      setEditing(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
   useEffect(() => {
     async function loadUpdates() {
       const res = await api.get("/farmer/govt-updates");
@@ -375,11 +424,16 @@ export default function FarmerDashboard() {
         )}
         {showSupport && <SupportModal onClose={() => setShowSupport(false)} />}
       </main>
-
       <ProfileModal
         show={showProfileModal}
         onClose={() => setShowProfileModal(false)}
         profileData={profileData}
+        form={form}
+        editing={editing}
+        setEditing={setEditing}
+        saving={saving}
+        saveProfile={saveProfile}
+        handleFormChange={handleFormChange}
       />
 
       <style

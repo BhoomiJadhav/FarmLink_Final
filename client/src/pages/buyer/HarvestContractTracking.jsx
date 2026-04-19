@@ -754,7 +754,11 @@ export default function HarvestContractTracking() {
                               strokeWidth={3}
                               className="mr-0.5"
                             />
-                            {c.payment?.totalAmount?.toLocaleString()}
+                            {(
+                              c.payment?.amount ||
+                              c.payment?.totalAmount ||
+                              0
+                            ).toLocaleString()}
                           </div>
                         </div>
                         <div className="mt-3">

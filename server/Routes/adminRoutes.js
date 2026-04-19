@@ -15,6 +15,9 @@ const {
   getTickets,
   updateTicket,
   getAdminAnalytics,
+  userReply,
+  adminReply,
+  markSeen,
 } = require("../Controllers/adminController");
 const { createUpdate } = require("../Controllers/GovUpdateController");
 
@@ -55,6 +58,12 @@ router.patch(
 router.get("/tickets", protect, authorize("admin"), getTickets);
 
 router.patch("/ticket/:id", protect, authorize("admin"), updateTicket);
+// Admin reply
+router.post("/ticket/admin-reply/:id", protect, authorize("admin"), adminReply);
+
+// User reply
+router.post("/ticket/user-reply/:id", protect, userReply);
+router.patch("/ticket/mark-seen/:id", protect, markSeen);
 router.get("/analytics", protect, authorize("admin"), getAdminAnalytics);
 router.post("/govt-update", protect, authorize("admin"), createUpdate);
 module.exports = router;

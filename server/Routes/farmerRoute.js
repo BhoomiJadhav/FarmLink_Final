@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Profile = require("../Models/Profile");
+const Review = require("../Models/Review");
 const CultivationContract = require("../Models/CultivationContract");
 const HarvestContract = require("../Models/HarvestSaleContract");
 const { protect } = require("../middleware/auth");
@@ -68,17 +69,89 @@ router.get("/dashboard", protect, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// router.get("/farmers", protect, async (req, res) => {
+//   try {
+//     const farmers = await Profile.find({
+//       availabilityStatus: "AVAILABLE",
+//     }).populate("userId", "_id name role");
+
+//     const enrichedFarmers = await Promise.all(
+//       farmers.map(async (f) => {
+//         const reviews = await Review.find({
+//           "reviewee.userId": f.userId._id,
+//         });
+
+//         const avgRating =
+//           reviews.length > 0
+//             ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+//             : 0;
+
+//         return {
+//           _id: f._id,
+//           userId: f.userId,
+
+//           personal: {
+//             fullName: f.personal?.fullName,
+//             phone: f.personal?.phone,
+//             address: f.personal?.address,
+//           },
+
+//           farm: {
+//             farmLocation: f.farm?.farmLocation,
+//             farmSize: f.farm?.farmSize,
+//             cropTypes: f.farm?.cropTypes,
+//             irrigation: f.farm?.irrigation,
+//             machinery: f.farm?.machinery,
+//           },
+
+//           rating: avgRating,
+//           reviewsCount: reviews.length,
+//           trustScore: Math.min(100, avgRating * 20 + reviews.length * 2),
+//         };
+//       }),
+//     );
+
+//     res.status(200).json(enrichedFarmers);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
 router.get("/farmers", protect, async (req, res) => {
   try {
     const farmers = await Profile.find({
       availabilityStatus: "AVAILABLE",
     })
       .select(
-        "personal.fullName farm.farmLocation farm.landSize farm.cropTypes farm.insurance",
+        "personal.fullName personal.phone farm.farmLocation farm.farmSize farm.cropTypes farm.irrigation farm.machinery userId",
       )
-      .populate("userId", "role");
+      .populate("userId", "_id role");
 
-    res.status(200).json(farmers);
+    // 🔥 attach rating + reviews
+    const enrichedFarmers = await Promise.all(
+      farmers.map(async (f) => {
+        const reviews = await Review.find({
+          "reviewee.userId": f.userId._id,
+        });
+
+        const reviewsCount = reviews.length;
+
+        const avgRating =
+          reviewsCount > 0
+            ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviewsCount
+            : 0;
+
+        return {
+          ...f.toObject(),
+          rating: avgRating,
+          reviewsCount,
+          trustScore: Math.min(100, avgRating * 20), // simple logic
+        };
+      }),
+    );
+
+    res.json(enrichedFarmers);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

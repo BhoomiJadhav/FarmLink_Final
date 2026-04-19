@@ -157,10 +157,7 @@ export default function Topbar({
     activeProfile?.farm?.farmLocation ||
     activeData?.address ||
     "No Location";
-  const displayInsurance =
-    activeProfile?.insurance?.provider ||
-    activeProfile?.farm?.insurance?.provider ||
-    "No Insurance";
+
   const ratingAvg = activeUser?.rating?.average ?? 0;
   const ratingCount = activeUser?.rating?.count ?? 0;
 
@@ -297,46 +294,42 @@ export default function Topbar({
                 </div>
 
                 <div className="px-6 py-5 space-y-4 bg-white/50">
-                  <div className="flex items-center gap-3 text-sm text-slate-600 group hover:text-emerald-700 transition-colors cursor-default">
+                  <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
                     {/* ⭐ Rating */}
-                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                    <div className="flex items-center gap-2">
                       <div className="p-1.5 rounded-lg bg-yellow-100 text-yellow-600">
                         ⭐
                       </div>
-
-                      <span className="font-medium">
-                        {ratingAvg ? ratingAvg.toFixed(1) : "0.0"}
-                        <span className="text-xs text-gray-400 ml-1">
+                      <div className="leading-tight">
+                        <div className="font-medium">
+                          {ratingAvg ? ratingAvg.toFixed(1) : "0.0"}
+                        </div>
+                        <div className="text-xs text-gray-400">
                           ({ratingCount} reviews)
-                        </span>
-                      </span>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* ⚡ Karma */}
-                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                    {/* ⚡ Trust Score */}
+                    <div className="flex items-center gap-2">
                       <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-600">
                         ⚡
                       </div>
+                      <div className="leading-tight">
+                        <div className="font-medium">Trust</div>
+                        <div className="text-xs text-gray-500">{karma}/100</div>
+                      </div>
+                    </div>
 
-                      <span className="font-medium">
-                        Trust Score: {karma}/100
+                    {/* 📞 Phone */}
+                    <div className="flex items-center gap-2 col-span-2">
+                      <div className="p-1.5 rounded-lg bg-slate-100">
+                        <Phone size={14} />
+                      </div>
+                      <span className="font-medium truncate">
+                        {displayPhone}
                       </span>
                     </div>
-                    {karma > 80 && (
-                      <div className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full w-fit">
-                        Trusted User
-                      </div>
-                    )}
-
-                    {karma < 40 && karma > 0 && (
-                      <div className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-full w-fit">
-                        Low Trust
-                      </div>
-                    )}
-                    <div className="p-1.5 rounded-lg bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-600 transition-colors">
-                      <Phone size={14} />
-                    </div>
-                    <span className="font-medium">{displayPhone}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-slate-600 group hover:text-emerald-700 transition-colors cursor-default">
                     <div className="p-1.5 rounded-lg bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-600 transition-colors">
@@ -347,12 +340,8 @@ export default function Topbar({
                     </span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-slate-600 group hover:text-emerald-700 transition-colors cursor-default">
-                    <div className="p-1.5 rounded-lg bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-600 transition-colors">
-                      <ShieldCheck size={14} />
-                    </div>
-                    <span className="line-clamp-1 font-medium">
-                      {displayInsurance}
-                    </span>
+                    <div className="p-1.5 rounded-lg bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-600 transition-colors"></div>
+                    <span className="line-clamp-1 font-medium"></span>
                   </div>
                 </div>
 

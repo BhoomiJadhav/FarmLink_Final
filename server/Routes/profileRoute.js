@@ -12,7 +12,7 @@ const {
 router.get("/", protect, getProfile);
 
 // Save or update profile (current user)
-router.post("/", protect, saveProfile);
+router.post("/save", protect, saveProfile);
 
 // list farmers (public)
 router.get("/farmers", getAllFarmers);

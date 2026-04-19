@@ -68,7 +68,7 @@ exports.getBuyerDetails = async (req, res) => {
     const buyerId = req.user.id; // from auth middleware
 
     const user = await User.findById(buyerId).select(
-      "_id name email role isProfileComplete"
+      "_id name email role isProfileComplete",
     );
 
     if (!user || user.role !== "buyer") {
@@ -76,7 +76,7 @@ exports.getBuyerDetails = async (req, res) => {
     }
 
     const buyerProfile = await BuyerProfile.findOne({ user: buyerId }).select(
-      "buyerType phone address companyName contractDetails"
+      "buyerType phone address companyName contractDetails",
     );
 
     res.status(200).json({
@@ -90,5 +90,35 @@ exports.getBuyerDetails = async (req, res) => {
   } catch (error) {
     console.error("Get buyer details failed:", error);
     res.status(500).json({ message: "Failed to fetch buyer details" });
+  }
+};
+exports.saveBuyerProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { personal, buyer } = req.body;
+
+    let profile = await BuyerProfile.findOne({ user: userId });
+
+    if (!profile) {
+      profile = new BuyerProfile({ user: userId });
+    }
+
+    profile.phone = buyer?.phone || personal?.phone || profile.phone;
+    profile.address = buyer?.address || personal?.address || profile.address;
+    profile.buyerType = buyer?.buyerType || profile.buyerType;
+    profile.companyName = buyer?.companyName || profile.companyName;
+    profile.contractDetails = buyer?.contractDetails || profile.contractDetails;
+
+    await profile.save();
+
+    await User.findByIdAndUpdate(userId, {
+      name: personal?.fullName,
+      isProfileComplete: true,
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
   }
 };

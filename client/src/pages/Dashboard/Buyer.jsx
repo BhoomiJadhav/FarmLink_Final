@@ -31,19 +31,118 @@ function AppLayout({ children }) {
   const [profileData, setProfileData] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSupport, setShowSupport] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    personal: {
+      fullName: "",
+      phone: "",
+      email: "",
+      address: "",
+    },
+    buyer: {
+      buyerType: "",
+      companyName: "",
+      phone: "",
+      address: "",
+      contractDetails: "",
+    },
+  });
 
   useEffect(() => {
     async function loadProfile() {
       try {
-        const res = await api.get("/profile/me");
-        setProfileData(res.data);
+        const res = await api.get("/buyer/details");
+        const data = res.data;
+
+        setProfileData({
+          user: {
+            name: data.name,
+            email: data.email,
+            role: data.role,
+          },
+          profile: {
+            personal: {
+              fullName: data.name,
+              phone: data.buyerProfile?.phone || "",
+              email: data.email,
+              address: data.buyerProfile?.address || "",
+            },
+            buyer: {
+              buyerType: data.buyerProfile?.buyerType || "",
+              companyName: data.buyerProfile?.companyName || "",
+              phone: data.buyerProfile?.phone || "",
+              address: data.buyerProfile?.address || "",
+              contractDetails: data.buyerProfile?.contractDetails || "",
+            },
+          },
+        });
       } catch (err) {
         console.error(err);
       }
     }
     loadProfile();
   }, []);
+  useEffect(() => {
+    if (profileData?.profile) {
+      setForm({
+        personal: profileData.profile.personal || {},
+        buyer: profileData.profile.buyer || {},
+      });
+    }
+  }, [profileData]);
+  const handleFormChange = (section, key, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [key]: value,
+      },
+    }));
+  };
+  const saveProfile = async () => {
+    try {
+      setSaving(true);
 
+      await api.post("/buyer/save", {
+        personal: form.personal,
+        buyer: form.buyer,
+      });
+
+      const res = await api.get("/buyer/details");
+      const data = res.data;
+
+      setProfileData({
+        user: {
+          name: data.name,
+          email: data.email,
+          role: data.role,
+        },
+        profile: {
+          personal: {
+            fullName: data.name,
+            phone: data.buyerProfile?.phone || "",
+            email: data.email,
+            address: data.buyerProfile?.address || "",
+          },
+          buyer: {
+            buyerType: data.buyerProfile?.buyerType || "",
+            companyName: data.buyerProfile?.companyName || "",
+            phone: data.buyerProfile?.phone || "",
+            address: data.buyerProfile?.address || "",
+            contractDetails: data.buyerProfile?.contractDetails || "",
+          },
+        },
+      });
+
+      setEditing(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
   function handleLogout() {
     localStorage.removeItem("token");
     window.location.href = "/login";
@@ -72,6 +171,12 @@ function AppLayout({ children }) {
         show={showProfileModal}
         onClose={() => setShowProfileModal(false)}
         profileData={profileData}
+        form={form}
+        editing={editing}
+        setEditing={setEditing}
+        saving={saving}
+        saveProfile={saveProfile}
+        handleFormChange={handleFormChange}
       />
       {showSupport && (
         <BuyerSupportModal onClose={() => setShowSupport(false)} />

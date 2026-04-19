@@ -26,7 +26,7 @@ const respondToCultivationContract = async (req, res) => {
 
       await Profile.findOneAndUpdate(
         { userId: farmerId },
-        { availabilityStatus: "CONTRACTED" }
+        { availabilityStatus: "CONTRACTED" },
       );
     }
 
@@ -35,7 +35,7 @@ const respondToCultivationContract = async (req, res) => {
 
       await Profile.findOneAndUpdate(
         { userId: farmerId },
-        { availabilityStatus: "AVAILABLE" }
+        { availabilityStatus: "AVAILABLE" },
       );
     }
 

@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   completeProfile,
   getBuyerDetails,
+  saveBuyerProfile,
 } = require("../Controllers/buyercontroller");
 const {
   getBuyerDashboardStats,
@@ -17,6 +18,7 @@ const { protect } = require("../middleware/auth");
 
 router.post("/profile/:id", protect, completeProfile);
 router.get("/details", protect, getBuyerDetails);
+router.post("/save", protect, saveBuyerProfile);
 router.post("/support", protect, faqUpload.single("file"), createSupportTicket);
 router.get("/dashboard-stats", protect, getBuyerDashboardStats);
 

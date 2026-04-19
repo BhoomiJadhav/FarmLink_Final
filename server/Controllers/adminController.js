@@ -2290,15 +2290,47 @@ exports.getTickets = async (req, res) => {
 };
 
 exports.updateTicket = async (req, res) => {
-  try {
-    const ticket = await Support.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
+  const { status, note, reply } = req.body;
+
+  const ticket = await Support.findById(req.params.id);
+
+  if (!ticket) return res.status(404).json({ msg: "Not found" });
+
+  if (status) ticket.status = status;
+
+  if (note) {
+    ticket.adminNotes.push({
+      text: note,
+      addedAt: new Date(),
     });
-    res.json({ success: true, ticket });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
   }
+
+  if (reply) {
+    ticket.replies.push({
+      from: "ADMIN",
+      message: reply,
+      createdAt: new Date(),
+      seen: false,
+    });
+
+    ticket.waitingOn = "USER";
+
+    await Notification.create({
+      userId: ticket.userId,
+      message: "Admin replied to your ticket",
+      link: `/tickets/${ticket._id}`,
+    });
+  }
+
+  ticket.lastUpdatedAt = new Date();
+
+  await ticket.save();
+
+  res.json({ success: true });
 };
+// ADMIN REPLY
+
+// MARK MESSAGES AS SEEN
 
 /* ============================================================
    DASHBOARD KPI SUMMARY
@@ -2399,23 +2431,127 @@ exports.resubmitPolicy = async (req, res) => {
 // };
 exports.createSupportTicket = async (req, res) => {
   try {
+    const urgentKeywords = ["payment", "fraud", "money", "not received"];
+
+    let priority = "LOW";
+    if (
+      urgentKeywords.some((word) =>
+        req.body.problem.toLowerCase().includes(word),
+      )
+    ) {
+      priority = "HIGH";
+    }
+
     const ticket = await Support.create({
       userId: req.user._id,
-
-      // ✅ NEW (VERY IMPORTANT)
-      role: req.user.role, // "farmer" or "buyer"
-
+      role: req.user.role,
       subject: req.body.subject,
       problem: req.body.problem,
 
-      fileUrl: req.file ? req.file.path : null,
+      files: req.files ? req.files.map((f) => f.path) : [],
+
+      priority,
     });
 
     res.json({
       success: true,
-      message: "Support ticket created successfully",
       ticket,
     });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+exports.adminReply = async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    const ticket = await Support.findById(req.params.id);
+
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    ticket.replies.push({
+      from: "ADMIN",
+      message,
+      seen: false,
+      createdAt: new Date(),
+    });
+
+    ticket.waitingOn = "USER";
+    ticket.lastUpdatedAt = new Date();
+
+    await ticket.save();
+
+    // 🔔 notify user
+    await Notification.create({
+      userId: ticket.userId,
+      message: "Admin replied to your ticket",
+      link: `/tickets/${ticket._id}`,
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+exports.userReply = async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    const ticket = await Support.findById(req.params.id);
+
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    ticket.replies.push({
+      from: "USER",
+      message,
+      seen: false,
+      createdAt: new Date(),
+    });
+
+    ticket.waitingOn = "ADMIN";
+    ticket.lastUpdatedAt = new Date();
+
+    await ticket.save();
+
+    // 🔔 notify admin (optional)
+    await Notification.create({
+      message: "User replied to support ticket",
+      link: `/admin/tickets/${ticket._id}`,
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+exports.markSeen = async (req, res) => {
+  try {
+    const ticket = await Support.findById(req.params.id);
+
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    let updated = false;
+
+    const currentUserType = req.user.role === "admin" ? "ADMIN" : "USER";
+
+    ticket.replies.forEach((r) => {
+      if (r.from !== currentUserType && !r.seen) {
+        r.seen = true;
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      await ticket.save();
+    }
+
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

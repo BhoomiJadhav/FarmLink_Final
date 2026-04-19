@@ -5,13 +5,11 @@ const saveProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Destructure sections safely
-    const { personal, farm, preferences } = req.body;
+    const { personal, farm } = req.body;
 
     const updateData = {
       ...(personal && { personal }),
       ...(farm && { farm }),
-      ...(preferences && { preferences }),
     };
 
     const existing = await Profile.findOne({ userId });

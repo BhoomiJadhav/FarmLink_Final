@@ -28,7 +28,17 @@ router.get("/me", protect, async (req, res) => {
     }
 
     /* ---------- PROFILE ---------- */
-    const profile = await Profile.findOne({ userId });
+    /* ---------- PROFILE ---------- */
+    let profile = await Profile.findOne({ userId }).lean();
+
+    if (!profile) {
+      profile = {
+        personal: {},
+        farm: {},
+        insurance: {},
+        preferences: {},
+      };
+    }
 
     /* ---------- FARMER CONTRACTS (NEW MODEL) ---------- */
     const cultivationContracts = await CultivationContract.find({
