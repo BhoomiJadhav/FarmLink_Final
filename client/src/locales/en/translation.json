@@ -538,5 +538,27 @@
   "verified": "Verified",
   "pending": "Pending",
   "active": "Active",
-  "sent": "Sent"
+  "sent": "Sent",
+  "sidebar": {
+    "portal": "Farmer Portal",
+
+    "dashboard": "Dashboard",
+    "addHarvest": "Add Harvest Listing",
+
+    "harvestContracts": "Harvest Contracts",
+    "myHarvestListings": "My Harvest Listings",
+    "activeContracts": "Active Contracts",
+    "trackContracts": "Track Contracts",
+
+    "cultivationContracts": "Cultivation Contracts",
+    "myContracts": "My Contracts",
+
+    "negotiation": "Negotiation",
+    "policy": "Policy & Regulations",
+
+    "adminContact": "Admin Contact",
+    "support": "Support",
+
+    "logout": "Logout"
+  }
 }

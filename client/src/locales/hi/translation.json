@@ -534,5 +534,29 @@
   "notScheduled": "निर्धारित नहीं है",
   "trackDetails": "विवरण ट्रैक करें",
   "verified": "सत्यापित",
-  "pending": "लंबित"
+  "pending": "लंबित",
+  "active": "सक्रिय",
+  "sent": "भेजा गया",
+  "sidebar": {
+    "portal": "किसान पोर्टल",
+
+    "dashboard": "डैशबोर्ड",
+    "addHarvest": "फसल जोड़ें",
+
+    "harvestContracts": "फसल अनुबंध",
+    "myHarvestListings": "मेरी फसल सूची",
+    "activeContracts": "सक्रिय अनुबंध",
+    "trackContracts": "अनुबंध ट्रैक करें",
+
+    "cultivationContracts": "खेती अनुबंध",
+    "myContracts": "मेरे अनुबंध",
+
+    "negotiation": "बातचीत",
+    "policy": "नीतियां और नियम",
+
+    "adminContact": "एडमिन संपर्क",
+    "support": "सहायता",
+
+    "logout": "लॉग आउट"
+  }
 }

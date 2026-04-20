@@ -550,5 +550,28 @@
   "trackDetails": "तपशील ट्रॅक करा",
   "verified": "सत्यापित",
   "pending": "प्रलंबित",
-  "active": "सक्रिय"
+  "active": "सक्रिय",
+  "sent": "पाठवले",
+  "sidebar": {
+    "portal": "शेतकरी पोर्टल",
+
+    "dashboard": "डॅशबोर्ड",
+    "addHarvest": "पीक जोडा",
+
+    "harvestContracts": "पीक करार",
+    "myHarvestListings": "माझी पीक यादी",
+    "activeContracts": "सक्रिय करार",
+    "trackContracts": "करार ट्रॅक करा",
+
+    "cultivationContracts": "शेती करार",
+    "myContracts": "माझे करार",
+
+    "negotiation": "चर्चा",
+    "policy": "धोरणे आणि नियम",
+
+    "adminContact": "अॅडमिन संपर्क",
+    "support": "सपोर्ट",
+
+    "logout": "लॉगआउट"
+  }
 }
